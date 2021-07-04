@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>用 Hugo 重新搭建博客 - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="Hugo, Github" />
+
+
+<meta property="og:title" content="用 Hugo 重新搭建博客" />
+<meta name="twitter:title" content="用 Hugo 重新搭建博客" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/rebuild_blog/" /><meta property="og:description" content="本博客之前是用软件 Gridea 制作的，这是个静态博客写作客户端，可以作为 Markdown 编辑器，同时简单设置下就能一键生成静态页面并上传到网上，非常适合我这种电脑小白使用。不过前段时间发现怎么都没法上传本地写好的内容，于是决定重新用现在流行的 Hugo 来搭建博客。本文使用的是 0.84.4 版本的 Hugo 和 2.32.0 版本的 Git。" />
+<meta name="twitter:description" content="本博客之前是用软件 Gridea 制作的，这是个静态博客写作客户端，可以作为 Markdown 编辑器，同时简单设置下就能一键生成静态页面并上传到网上，非常适合我这种电脑小白使用。不过前段时间发现怎么都没法上传本地写好的内容，于是决定重新用现在流行的 Hugo 来搭建博客。本文使用的是 0.84.4 版本的 Hugo 和 2.32.0 版本的 Git。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-07-03T00:00:00+00:00" /><meta property="article:modified_time" content="2021-07-03T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/rebuild_blog/">用 Hugo 重新搭建博客</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-03</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2231 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/hugo">Hugo</a>&nbsp;<a href="/tags/github">Github</a>&nbsp;</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <p>本博客之前是用软件 <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> 制作的，这是个静态博客写作客户端，可以作为 Markdown 编辑器，同时简单设置下就能一键生成静态页面并上传到网上，非常适合我这种电脑小白使用。不过前段时间发现怎么都没法上传本地写好的内容，于是决定重新用现在流行的 Hugo 来搭建博客。本文使用的是 0.84.4 版本的 Hugo 和 2.32.0 版本的 Git。</p>
+<h2 id="hugo-的安装">Hugo 的安装</h2>
+<p>Hugo 是一个由 Go 语言实现的静态网站生成器，因为听说使用起来比较简单，并且主题也多，所以选了它。二进制安装包可以直接在其 Github Releases 页面中下载到，我选择的是 <code>hugo_extended_0.84.4_Windows-64bit.zip</code>。新建一个目录 <code>bin</code>，将安装包里解压出来的东西都丢进去，然后把 <code>bin</code> 目录的路径添加到环境变量中，安装就完事了。以后直接在命令行中调用命令即可。</p>
+<h2 id="hugo-的基本用法">Hugo 的基本用法</h2>
+<h3 id="新建网站">新建网站</h3>
+<p>在当前目录下新建网站</p>
+<pre><code class="language-bash">hugo new site ./ZhaJiMan.github.io
+</code></pre>
+<p>这样当前目录下会生成一个名为 <code>ZhaJiMan.github.io</code> 的网站目录，其结构为</p>
+<pre><code>.
+├── archetypes      # 存放文章模板
+├── config.toml     # 简单的配置文件
+├── content         # 存放文章
+├── data            # 存放生成静态页面时的配置文件
+├── layouts         # 存放页面布局的模板
+├── static          # 存放图片等静态内容
+└── themes          # 存放下载的主题
+</code></pre>
+<p>之后的所有操作需要 <code>cd</code> 到这个目录下进行。</p>
+<h3 id="添加主题">添加主题</h3>
+<p>主题可以在 <a href="https://themes.gohugo.io/" target="_blank">Hugo Themes</a> 网站上找到，我选择的是自带 TOC 和评论功能的 <a href="https://github.com/dsrkafuu/hugo-theme-fuji" target="_blank">Fuji</a>，通过 Git 命令安装。</p>
+<pre><code class="language-bash">git init
+git submodule add https://github.com/WingLim/hugo-tania themes/hugo-tania
+</code></pre>
+<p>然后主题就会下载到 <code>themes</code> 目录中。一般主题的目录里都会含有一个 <code>exampleSite</code> 目录，顾名思义这是作者做好的示例网站，直接把里面的内容复制到网站根目录下，就能完成该主题最基本的配置，并实现示例网站的效果。之后修改根目录下的 <code>config.tomal</code> 文件来自定义配置。</p>
+<h3 id="创建文章">创建文章</h3>
+<p>Hugo 中的文章都以 Markdown 格式写作。在 <code>content/post</code> 目录下新建一个 Markdown 文件</p>
+<pre><code class="language-bash">hugo new post/rebuild_blog.md
+</code></pre>
+<p>默认的文章模板会使 Markdown 文件带有这样的开头</p>
+<pre><code class="language-yaml">---
+title: &quot;rebuild_blog&quot;
+date: 2021-07-03T16:47:34+08:00
+draft: true
+---
+</code></pre>
+<p><code>---</code> 之间的内容服从 YAML 或 TOML 格式。<code>title</code> 即文章标题，默认与文件名相同；<code>date</code> 即日期时间；<code>draft</code> 表示该文章是否为草稿，如果是，那么后面生成静态页面时将不会含有该文章。此外还存在别的参数可供设置。<code>---</code> 之后的内容自然就是文章正文了。</p>
+<p>Fuji 主题还额外强调要在正文中插入简介分割线 <code>&lt;!--more--&gt;</code>，以让文章列表的文章预览部分样式正确。</p>
+<h3 id="预览网站">预览网站</h3>
+<p>建立一个本地服务器</p>
+<pre><code class="language-bash">hugo server
+</code></pre>
+<p>然后命令行会卡住，在浏览器内输入 <a href="http://localhost:1313/" target="_blank">http://localhost:1313/</a> 预览网站，命令行内 Ctrl+C 关闭服务器。Hugo 的一个特色是可以进行动态预览，当你修改本地内容时，变化会马上反映在浏览器中的页面上。</p>
+<h3 id="生成静态页面">生成静态页面</h3>
+<p>直接在生成在默认的 <code>public</code> 目录下</p>
+<pre><code class="language-bash">hugo
+</code></pre>
+<p>用 <code>-d</code> 参数可以指定目录，或者在配置文件里用 <code>publishDir</code> 参数指定默认的目录。</p>
+<h3 id="发布到-github-上">发布到 Github 上</h3>
+<p>这里用 Github Pages 来部署博客。首先在 <code>config.yaml</code> 里指定</p>
+<pre><code class="language-bash">publishDir: docs
+</code></pre>
+<p>然后再一个 <code>hugo</code> 命令，这样就把静态页面输出到 <code>docs</code> 目录下了。</p>
+<p>接着在 Github 上以 <code>ZhaJiMan.github.io</code> 的名字（根据自己的用户名而定）新建一个空仓库，进行下面的 Git 命令</p>
+<pre><code class="language-bash">git add .
+git commit -m &quot;first commit&quot;
+git branch -M main
+git remote add origin https://github.com/ZhaJiMan/ZhaJiMan.github.io.git
+git push -u origin main
+</code></pre>
+<p>这段改编自空仓库页面出现的提示，大意是</p>
+<ul>
+<li>将网站目录下的所有内容暂存。</li>
+<li>把暂存的内容提交给版本库。</li>
+<li>把主分支的名字从 <code>master</code> 改为 <code>main</code>。</li>
+<li>添加远程仓库。</li>
+<li>把本地内容推送到远程仓库里。</li>
+</ul>
+<p>推送成功后，进入仓库的设置页面，点击侧栏的 Pages，再把 Source 选项改为 main 分支下的 docs 目录，这样 Github Pages 就会根据我们推送上去的 docs 目录里的静态页面来显示网站。这里指定 docs 的好处是还可以把网站的所有文件都备份到仓库里。最后在与仓库同名的网站 <a href="https://zhajiman.github.io/" target="_blank">https://zhajiman.github.io/</a> 上看看自己的博客吧！</p>
+<h3 id="工作流">工作流</h3>
+<p>总结一下上面的流程</p>
+<ul>
+<li>用 Markdown 写作。</li>
+<li>用 <code>hugo server</code> 本地预览。</li>
+<li>用 <code>hugo</code> 生成静态页面。</li>
+<li>用 Git 的 <code>add</code>、<code>commit</code> 和 <code>push</code> 命令推送到网上。</li>
+</ul>
+<h2 id="其它功能">其它功能</h2>
+<h3 id="插入图片">插入图片</h3>
+<p>以名为 <code>capslock.jpg</code> 的图片为例，将该图片放入 <code>static</code> 目录下，再在 Markdown 文件中以 <code>/capslock.jpg</code> 的路径引用即可。路径这所以写成这个形式，是因为 Hugo 会自动在图片路径前追加 <code>static</code> 的路径。为了区分开不同文章的用图，还可以在 <code>static</code> 下新建子目录，例如下面的写法</p>
+<pre><code class="language-markdown">![capslock](/rebuild_blog/capslock.jpg)
+</code></pre>
+<p><img class="img-zoomable" src="/rebuild_blog/capslock.jpg" alt="capslock" />
+</p>
+<p>其实这种隐式的路径在上一节中也频繁出现过。虽然 Hugo 可以解析这种路径，但 Markdown 编辑器不能，所以在编辑器的预览中会看不到图片。</p>
+<h3 id="渲染公式">渲染公式</h3>
+<p>Fuji 主题支持用 KaTex 渲染公式，使用方法为在文章开头或配置文件中添加 <code>math: true</code> 或 <code>katex: true</code>。使用过程中发现，KaTex 不能正常渲染行内公式，参考 KaTex 官网 <a href="https://katex.org/docs/autorender.html" target="_blank">Auto-render Extension</a> 的例子，将 <code>themes/fuji/layouts/partials.math.html</code> 中的 KaTex 调用换成</p>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css&quot; integrity=&quot;sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc&quot; crossorigin=&quot;anonymous&quot;&gt;
+&lt;script defer src=&quot;https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js&quot; integrity=&quot;sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+&lt;script defer src=&quot;https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js&quot; integrity=&quot;sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+    document.addEventListener(&quot;DOMContentLoaded&quot;, function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError : false
+        });
+    });
+&lt;/script&gt;
+</code></pre>
+<p>这样行间公式与行内公式就都可以正常渲染。原理似乎是在函数 <code>renderMathInElement</code> 中指定识别公式的分隔符，不过具体细节我也不懂。本文便采用 KaTex 进行渲染，例如行内公式为 $e^{ix} = \cos{x} + i\sin{x}$，行间公式为
+$$
+P_e(\omega) = \frac{\hbar \omega^3}{4\pi^2 c^2} \frac{1}{\exp{(\hbar \omega / k_B T)} - 1}
+$$</p>
+<h3 id="评论系统">评论系统</h3>
+<p>Fuji 主题支持 Disqus、utterances 和 DisqusJS 三种评论系统，并且设置起来非常简单。这里采用依托于 Github issues 的 utterances。进入 <a href="https://utteranc.es/" target="_blank">https://utteranc.es/</a>，按指示把 utterances app 安装到存储博客的仓库，然后在 <code>config.toml</code> 中设置</p>
+<pre><code class="language-toml">  utterancesRepo = &quot;ZhaJiMan/ZhaJiMan.github.io&quot;    # 格式为username/username/github.io
+  utterancesIssueTerm = &quot;pathname&quot;                  # 以页面的pathname来生成issues
+</code></pre>
+<p>文章最下面就会出现评论区了，用 Github 账号登录即可发送评论。</p>
+<h3 id="设置网站图标">设置网站图标</h3>
+<p>依据 Fuji 主页的说明，把自己喜欢的图片上传到 <a href="https://realfavicongenerator.net/" target="_blank">https://realfavicongenerator.net/</a> 上，再把打包好的图标压缩包下载下来，解压到 <code>static</code> 目录中，接着把该网站提供的 HTML 代码粘贴到 <code>layouts/partials/favicon.html</code> 文件中，并修改一下 <code>href</code> 属性指向的路径即可。</p>
+<h3 id="修改样式">修改样式</h3>
+<p>依据 Fuji 主页的说明，利用 <code>assets/scss/_custom_var.scss</code> 文件修改 SCSS 变量（例如换颜色、换字体），利用 <code>assets/scss/_custom_rule.scss</code> 文件改写 SCSS 规则。</p>
+<h2 id="别人的博客">别人的博客</h2>
+<p>最后放两个别人用 Hugo + Fuji 搭的博客</p>
+<p><a href="https://marcoscheel.de/post/2020/10/20201011-my-blog-has-moved/" target="_blank">https://marcoscheel.de/post/2020/10/20201011-my-blog-has-moved/</a></p>
+<p><a href="https://masatakashiwagi.github.io/portfolio/post/hugo-portfolio/" target="_blank">https://masatakashiwagi.github.io/portfolio/post/hugo-portfolio/</a></p>
+<h2 id="参考链接">参考链接</h2>
+<p><a href="https://zhuanlan.zhihu.com/p/37752930" target="_blank">如何使用Hugo在GitHub Pages上搭建免费个人网站</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/315422417" target="_blank">生物信息基础：实用Git命令，掌握这些就够了</a></p>
+<p><a href="https://blog.csdn.net/qq_38340601/article/details/108900666" target="_blank">hugo 导入图片，两种方式</a></p>
+<p><a href="https://github.com/KaTeX/KaTeX/issues/712" target="_blank">single or double dollar sign as formula delimiter</a></p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/github/">Github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">Hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#hugo-的安装">Hugo 的安装</a></li>
+    <li><a href="#hugo-的基本用法">Hugo 的基本用法</a>
+      <ul>
+        <li><a href="#新建网站">新建网站</a></li>
+        <li><a href="#添加主题">添加主题</a></li>
+        <li><a href="#创建文章">创建文章</a></li>
+        <li><a href="#预览网站">预览网站</a></li>
+        <li><a href="#生成静态页面">生成静态页面</a></li>
+        <li><a href="#发布到-github-上">发布到 Github 上</a></li>
+        <li><a href="#工作流">工作流</a></li>
+      </ul>
+    </li>
+    <li><a href="#其它功能">其它功能</a>
+      <ul>
+        <li><a href="#插入图片">插入图片</a></li>
+        <li><a href="#渲染公式">渲染公式</a></li>
+        <li><a href="#评论系统">评论系统</a></li>
+        <li><a href="#设置网站图标">设置网站图标</a></li>
+        <li><a href="#修改样式">修改样式</a></li>
+      </ul>
+    </li>
+    <li><a href="#别人的博客">别人的博客</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/github/">Github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">Hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#hugo-的安装">Hugo 的安装</a></li>
+    <li><a href="#hugo-的基本用法">Hugo 的基本用法</a>
+      <ul>
+        <li><a href="#新建网站">新建网站</a></li>
+        <li><a href="#添加主题">添加主题</a></li>
+        <li><a href="#创建文章">创建文章</a></li>
+        <li><a href="#预览网站">预览网站</a></li>
+        <li><a href="#生成静态页面">生成静态页面</a></li>
+        <li><a href="#发布到-github-上">发布到 Github 上</a></li>
+        <li><a href="#工作流">工作流</a></li>
+      </ul>
+    </li>
+    <li><a href="#其它功能">其它功能</a>
+      <ul>
+        <li><a href="#插入图片">插入图片</a></li>
+        <li><a href="#渲染公式">渲染公式</a></li>
+        <li><a href="#评论系统">评论系统</a></li>
+        <li><a href="#设置网站图标">设置网站图标</a></li>
+        <li><a href="#修改样式">修改样式</a></li>
+      </ul>
+    </li>
+    <li><a href="#别人的博客">别人的博客</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2021-2021
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" integrity="sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js" integrity="sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError : false
+        });
+    });
+</script>
+
+
+
+</body>
+
+</html>

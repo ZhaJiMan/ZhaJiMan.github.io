@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hugo on 炸鸡人博客</title>
+    <link>https://zhajiman.github.io/tags/hugo/</link>
+    <description>Recent content in Hugo on 炸鸡人博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 03 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>用 Hugo 重新搭建博客</title>
+      <link>https://zhajiman.github.io/post/rebuild_blog/</link>
+      <pubDate>Sat, 03 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/rebuild_blog/</guid>
+      <description>&lt;p&gt;本博客之前是用软件 &lt;a href=&#34;https://github.com/getgridea/gridea&#34; target=&#34;_blank&#34;&gt;Gridea&lt;/a&gt; 制作的，这是个静态博客写作客户端，可以作为 Markdown 编辑器，同时简单设置下就能一键生成静态页面并上传到网上，非常适合我这种电脑小白使用。不过前段时间发现怎么都没法上传本地写好的内容，于是决定重新用现在流行的 Hugo 来搭建博客。本文使用的是 0.84.4 版本的 Hugo 和 2.32.0 版本的 Git。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

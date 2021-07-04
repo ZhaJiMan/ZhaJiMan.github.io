@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://zhajiman.github.io/tags/github/</loc>
+    <lastmod>2021-07-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/tags/hugo/</loc>
+    <lastmod>2021-07-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/post/</loc>
+    <lastmod>2021-07-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/</loc>
+    <lastmod>2021-07-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/post/rebuild_blog/</loc>
+    <lastmod>2021-07-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/about/</loc>
+    <lastmod>2020-04-11T19:15:32+08:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/tags/nonsense/</loc>
+    <lastmod>2019-08-22T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/post/fried_chicken_man/</loc>
+    <lastmod>2019-08-22T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/archives/</loc>
+  </url><url>
+    <loc>https://zhajiman.github.io/search/</loc>
+  </url>
+</urlset>

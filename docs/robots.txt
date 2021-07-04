@@ -1,0 +1,3 @@
+User-agent: *
+
+Sitemap: https://zhajiman.github.io/sitemap.xml
