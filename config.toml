@@ -8,6 +8,7 @@ enableRobotsTXT = true
 disableKinds = ["taxonomy"]
 ignoreErrors = ["error-disable-taxonomy"]
 
+# The output directory
 publishDir = "docs"
 
 ## Change this two to switch between different language
