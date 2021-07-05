@@ -27,3 +27,7 @@ tags:
 美味的英雄
 
 炸鸡人 炸鸡人
+
+<!--more-->
+
+![devil_man](/fried_chicken_man/devil_man.png)

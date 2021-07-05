@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>matplotlib on 炸鸡人博客</title>
+    <link>https://zhajiman.github.io/tags/matplotlib/</link>
+    <description>Recent content in matplotlib on 炸鸡人博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 05 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/matplotlib/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Matplotlib 系列：colormap 的设置</title>
+      <link>https://zhajiman.github.io/post/matplotlib_colormap/</link>
+      <pubDate>Mon, 05 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/matplotlib_colormap/</guid>
+      <description>&lt;h2 id=&#34;0-前言&#34;&gt;0. 前言&lt;/h2&gt;
+&lt;p&gt;所谓 colormap（颜色表），就是将一系列颜色按给定的顺序排列在一起。其用处是，我们可以通过某种映射关系，将一系列数值映射到一张 colormap 上去，使不同大小的数值对应不同的颜色。这样一来，在绘制填色图时便能直观地用颜色来反映数值的分布。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

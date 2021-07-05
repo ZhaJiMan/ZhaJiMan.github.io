@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Matplotlib 系列：colormap 的设置 - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="matplotlib" />
+
+
+<meta property="og:title" content="Matplotlib 系列：colormap 的设置" />
+<meta name="twitter:title" content="Matplotlib 系列：colormap 的设置" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/matplotlib_colormap/" /><meta property="og:description" content="0. 前言
+所谓 colormap（颜色表），就是将一系列颜色按给定的顺序排列在一起。其用处是，我们可以通过某种映射关系，将一系列数值映射到一张 colormap 上去，使不同大小的数值对应不同的颜色。这样一来，在绘制填色图时便能直观地用颜色来反映数值的分布。" />
+<meta name="twitter:description" content="0. 前言
+所谓 colormap（颜色表），就是将一系列颜色按给定的顺序排列在一起。其用处是，我们可以通过某种映射关系，将一系列数值映射到一张 colormap 上去，使不同大小的数值对应不同的颜色。这样一来，在绘制填色图时便能直观地用颜色来反映数值的分布。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-07-05T00:00:00+00:00" /><meta property="article:modified_time" content="2021-07-05T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/matplotlib_colormap/">Matplotlib 系列：colormap 的设置</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-05</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4735 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="0-前言">0. 前言</h2>
+<p>所谓 colormap（颜色表），就是将一系列颜色按给定的顺序排列在一起。其用处是，我们可以通过某种映射关系，将一系列数值映射到一张 colormap 上去，使不同大小的数值对应不同的颜色。这样一来，在绘制填色图时便能直观地用颜色来反映数值的分布。</p>
+<p>在 Matplotlib 中，数值到颜色的映射关系可以用下面这张图来表示</p>
+<p><img class="img-zoomable" src="/matplotlib_colormap/value_color_mapping.png" alt="value_color_mapping.png" />
+</p>
+<p>图中分为前后两部分</p>
+<ul>
+<li>首先将数组的数值归一化（Normalization）到浮点型的 [0.0, 1.0] 范围或整型的 [0, N - 1] 范围上去。</li>
+<li>再把归一化的数据输入给 colormap，输出数组数值对应的颜色（RGBA 值）。</li>
+</ul>
+<p>第二部分的映射关系基本上是固定不变的，但第一部分的映射关系可以通过 Matplotlib 的许多类来加以改变，进而实现对数色标、对称色标、离散色标等一系列可视化效果。</p>
+<p>本文将会依次介绍 <code>Colormap</code> 类、归一化会用到的类，以及实际应用的例子。</p>
+<h2 id="1-colormap">1. Colormap</h2>
+<p>很容易想到，一系列颜色可以用 N * 4 大小的 RGBA 数组表示。但是 matplotlib 中的 colormap 并非简单的数组，而是专门用一个 <code>Colormap</code> 类实现的，有着更加方便的重采样功能。内置的所有 colormap 存放在 <code>matplotlib.cm</code> 模块下，它们的名字在官网的 <a href="https://matplotlib.org/3.3.3/tutorials/colors/colormaps.html#sphx-glr-tutorials-colors-colormaps-py" target="_blank">Choosing Colormaps in Matplotlib</a> 页面中可以找到。</p>
+<p><code>Colormap</code> 有两个子类：<code>ListedColormap</code> 和 <code>LinearSegmentedColormap</code>，它们被存放在 <code>matplotlib.colors</code> 模块下。下面来分别介绍它们。</p>
+<h3 id="11-listedcolormap">1.1 ListedColormap</h3>
+<p>顾名思义，将所有颜色列举到一个列表中，便能生成这一类的 colormap。一个简单的例子如下</p>
+<pre><code class="language-Python">import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+cmap = mpl.colors.ListedColormap(
+    [&quot;darkorange&quot;, &quot;gold&quot;, &quot;lawngreen&quot;, &quot;lightseagreen&quot;]
+)
+</code></pre>
+<p>列表中的元素可以是 RGBA 值，也可以是颜色的名字。这个 colormap 看起来是这样的</p>
+<p><img class="img-zoomable" src="/matplotlib_colormap/ListedColormap_1.png" alt="ListedColormap_1" />
+</p>
+<p>正好是我们放入列表中的四种颜色。</p>
+<p><code>cmap.colors</code> 是这个 colormap 的所有颜色的 RGBA 值组成的元组，而 <code>cmap.N</code> 是颜色的总数，显然这里 N = 4。<code>cmap</code> 对象可以用数值参数调用，返回数值对应的颜色 RGBA 值，根据数值是整型还是浮点型，对应关系也会有所不同，如下图所示</p>
+<p><img class="img-zoomable" src="/matplotlib_colormap/mapping.png" alt="mapping" />
+</p>
+<p>当参数 x 为整数时，对应于第 x - 1 个颜色；当参数 x 为浮点数时，返回它落入的区间对应的颜色。当参数 x 超出 [0, N-1] 或 [0.0, 1.0] 的范围时，对应于第一个和最后一个颜色。这一特性能让我们很简单地索引 colormap 中的颜色，例如</p>
+<p><img class="img-zoomable" src="/matplotlib_colormap/color_indexing.png" alt="color_indexing" />
+</p>
+<p>可以看到用不同类型的参数索引出的 RGBA 数组是一致的。再举个利用索引结果创建新 colormap 的例子</p>
+<pre><code class="language-Python">cmap_new = mpl.colors.ListedColormap(
+    cmap(np.linspace(0, 1, 5))
+)
+</code></pre>
+<p><code>cmap_new</code> 看起来会是这个样子</p>
+<p><img class="img-zoomable" src="/matplotlib_colormap/ListedColormap_2.png" alt="ListedColormap_2" />
+</p>
+<p>因为给出的参数中，最后两个数落进了同一个区间，所以对应的颜色相同。</p>
+<h3 id="12-linearsegmentedcolormap">1.2 LinearSegmentedColormap</h3>
+<p>顾名思义，是通过线性分段构建的 colormap。首先给定几个颜色的锚点，然后锚点之间的颜色会通过线性插值得出。直接初始化该类的方法比较难以理解，所以一般会用 <code>LinearSegmentedColormap.from_list</code> 函数来创建对象，有需求的读者可以参阅文档。</p>
+<p>Matplotlib 中大部分 colormap 都属于 <code>LinearSegmentedColormap</code>，例如常用的 <code>jet</code></p>
+<pre><code class="language-Python">cmap = mpl.cm.jet
+</code></pre>
+<p>看起来是这样的</p>
+<p><img class="img-zoomable" src="/matplotlib_colormap/LinearSegmentedColormap_1.png" alt="LinearSegmentedColormap_1" />
+</p>
+<p>与 <code>ListedColormap</code> 相比，<code>LinearSegmentedColormap</code> 依旧有 <code>cmap.N</code> 属性，默认数值为 256。但是没有了 <code>cmap.colors</code>，不能直接列出这 N 个颜色的 RGBA 值。</p>
+<p><code>cmap</code> 依旧可以被直接调用：当参数 x 为整数时，对应于第 x + 1 个颜色；而当参数 x 为浮点数时，则会通过线性插值获取相邻两个颜色中间的颜色。因此，<code>LinearSegmentedColormap</code> 的重采样不仅不会出现重复的颜色，还能得到更为连续渐变的颜色。</p>
+<h3 id="13-get_cmap-函数">1.3 get_cmap 函数</h3>
+<p>有时我们希望通过重采样直接得到一个新的 colormap，而不是得到一组 RGBA 值，这个需求可以用 <code>mpl.cm.get_cmap</code> 函数实现，例如对 <code>jet</code> 采样 8 个颜色</p>
+<pre><code class="language-Python"># 等价于用mpl.cm.jet(np.linspace(0, 1, 8))的结果创建LinearSegmentedColormap.
+cmap = mpl.cm.get_cmap('jet', 8)
+</code></pre>
+<p>效果如下图。并且采样得到的 colormap 类型与被采样的保持一致。</p>
+<p><img class="img-zoomable" src="/matplotlib_colormap/LinearSegmentedColormap_2.png" alt="LinearSegmentedColormap_2" />
+</p>
+<h3 id="14-set_underset_over-与-set_bad">1.4 set_under、set_over 与 set_bad</h3>
+<p>1.1 节中提到过，直接调用 <code>cmap</code> 时，若参数 x 超出范围，那么会映射给第一个或最后一个颜色。而 <code>cmap.set_under</code> 方法能够改变 x &lt; 0 或 x &lt; 0.0 时对应的颜色，<code>cmap.set_over</code> 方法能够改变 x &gt; N - 1 或 x &gt; 1.0 时对应的颜色。<code>cmap.set_bad</code> 则能改变缺测值（<code>nan</code> 或 <code>masked</code>）对应的颜色（缺测值的绘图规则请参考之前的博文 <a href="https://zhajiman.github.io/post/numpy_missing_value" target="_blank">NumPy 系列：缺测值处理</a>）。</p>
+<p>使用 <code>fig.colorbar</code> 方法画 colorbar 时，通过 <code>extend</code> 参数可以指定是否在 colorbar 两端显示出 under 与 over 时的颜色。下面为一个例子</p>
+<pre><code class="language-Python">cmap = mpl.cm.get_cmap('jet', 8)
+cmap.set_under('black')
+cmap.set_over('white')
+</code></pre>
+<p><img class="img-zoomable" src="/matplotlib_colormap/LinearSegmentedColormap_3.png" alt="LinearSegmentedColormap_3" />
+</p>
+<h2 id="2-normalization">2. Normalization</h2>
+<p>上一节的重点是，colormap 能把 [0.0, 1.0] 或 [0, N - 1] 范围内的值映射到颜色上，那么这一节就要来叙述如何通过归一化（Normalization）把原始数据映射到 [0.0, 1.0] 或 [0, N - 1] 上。用于归一化的类都存放在 <code>mpl.colors</code> 模块中。</p>
+<h3 id="21-normalize">2.1 Normalize</h3>
+<p>各种二维绘图函数在进行归一化时都默认使用 <code>Normalize</code> 类。给定参数 <code>vmin</code> 和 <code>vmax</code>，它会按照线性关系</p>
+<p>$$
+y=\frac{x-vmin}{vmax-vmin}
+$$</p>
+<p>将原始数据 x 映射为 y。虽然这一操作叫做“归一化”，但显然只有 [vmin, vmax] 范围内的 x 会被映射到 [0.0, 1.0] 上，其它 x 映射出来的 y 会小于 0.0 或大于 1.0。不过若是不给定 <code>vmin</code> 和 <code>vmax</code>，则默认用 x 的最小值和最大值来代替，此时所有 x 都会被映射到 [0.0, 1.0] 上。下面是一个归一化后的结果都在 [0.0, 1.0] 范围内的例子</p>
+<p><img class="img-zoomable" src="/matplotlib_colormap/Normalize.png" alt="Normalize" />
+</p>
+<p>归一化后的值可以直接传给 colormap，以得到画图用的颜色。即便归一化后的结果超出了 [0.0, 1.0] 的范围，根据第 1 节中的说明，这些超出的值会被映射给第一个或最后一个颜色（或者 <code>set_under</code> 和 <code>set_over</code> 指定的颜色），换句话说，[vmin, vmax] 范围外的 x 自然对应于 colormap 两端的颜色。</p>
+<p>此外，<code>Normalize</code> 还有一个 <code>clip</code> 参数，当它为 True 时，能把 [vmin, vmax] 范围外的 x 映射为 0.0 或 1.0，不过这样一来，colormap 的 under 与 over 的设置便会失去作用。所以一般我们不用关心 <code>clip</code> 参数，让它默认为 False 就好了。</p>
+<h3 id="22-lognorm">2.2 LogNorm</h3>
+<p>类似于 <code>Normalize</code>，<code>LogNorm</code> 能将 [vmin, vmax] 范围内的 x 的对数线性映射到 [0.0, 1.0] 上，公式表示为
+$$
+y = \frac{\log_{10}(x) - \log_{10}(vmin)}{\log_{10}(vmax) - \log_{10}(vmin)}
+$$
+其中 <code>vmin</code> 和 <code>vmax</code> 必须为正数，否则会报错；x 可以小于等于 0，不过结果会缺测（<code>masked</code>）。例如</p>
+<p><img class="img-zoomable" src="/matplotlib_colormap/LogNorm.png" alt="LogNorm" />
+</p>
+<p>除了对数关系外，Matplotlib 还提供任意幂律关系的 <code>PowerNorm</code>，此处不再详细介绍。</p>
+<h3 id="23-boundarynorm">2.3 BoundaryNorm</h3>
+<p>除了线性和对数的映射，有时我们需要的映射关系像是往一组摆在一起的框里投球。例如下图这个例子</p>
+<p><img class="img-zoomable" src="/matplotlib_colormap/bin_example.png" alt="bin_example" />
+</p>
+<p>给出一系列边缘靠在一起的 bin（框子），原始数据落入第几个框（左闭右开区间），就对应于第几个颜色。因为这些框边缘的数值可以任意给定，所以很难用简单的函数表示。为了实现这种映射，这里引入 <code>BoundaryNorm</code>。</p>
+<p>参数 <code>boundaries</code> 为我们给出的这些 bin 的边缘数值，要求单调递增；<code>ncolors</code> 则是我们希望与之对应的 colormap 中颜色的数目（即 <code>cmap.N</code>），其数值大于等于 <code>nbin = len(boundaries) - 1</code>。</p>
+<p>当 ncolors = nbin 时，映射关系为：
+$$
+y = \begin{cases}
+i &amp;\text{if} \quad boundaries[i] \le x &lt; boundaries[i+1] \newline
+-1 &amp;\text{if} \quad x &lt; boundaries[0] \newline
+nbin &amp;\text{if} \quad x \ge boundaries[-1]
+\end{cases}
+$$
+可以看到，落入框中的 x 会被映射到 [0, nbin - 1] 上，而没有落入框中的 x 会映射为 -1 或 nbin。</p>
+<p>当 ncolors &gt; nbin 时，落入框中的 x 会被映射到 [0, ncolors - 1] 上。我觉得这种情况下的映射关系不是很直观，所以公式就不列了，平时我也会尽量避开这种情况。此外 <code>BoundaryNorm</code> 还有个 <code>extend</code> 参数，也会使映射关系复杂化，建议不要去设置它。下面举个例子</p>
+<p><img class="img-zoomable" src="/matplotlib_colormap/BoundaryNorm.png" alt="BoundaryNorm" />
+</p>
+<h3 id="24-centerednorm">2.4 CenteredNorm</h3>
+<p>这是 Matplotlib 3.4.0 新引入的归一化方法，给定对称中心 <code>vcenter</code> 和中心向两边的范围 <code>halfrange</code>，有映射关系
+$$
+y = \frac{x - (vcenter - halfrange)}{2 \times halfrange}
+$$
+意义很明确，即 <code>vcenter</code> 两边的 x 会被线性映射到 0.5 两边。由于这个类要求的 Matplotlib 版本太高，估计很多人还用不了，不过要用 <code>Normalize</code> 来实现相同的结果也很简单。</p>
+<h3 id="25-twoslopenorm">2.5 TwoSlopeNorm</h3>
+<p>类似于 <code>CenteredNorm</code>，也是会把 <code>vcenter</code> 两边的 x 线性映射到 0.5 两边，但是 <code>vcenter</code> 向两边延伸的范围可以不等。映射关系为
+$$
+y = \begin{cases}
+0.0 &amp;\text{if} \quad x &lt; vmin \newline
+(x - vmin) / (vcenter - vmin) &amp;\text{if} \quad vmin \le x &lt; vcenter \newline
+(x - vcenter) / (vmax - vcenter) &amp;\text{if} \quad vcenter \le x &lt; vcenter \newline
+1.0 &amp;\text{if} \quad x \ge vmax
+\end{cases}
+$$
+其内部是用 <code>np.interp</code> 函数完成计算的，所以超出 [vmin, vmax] 范围的 x 会被映射为 0.0 或 1.0。</p>
+<h2 id="3-实际应用">3 实际应用</h2>
+<h3 id="31-pcolor-和-contour-的异同">3.1 pcolor 和 contour 的异同</h3>
+<p>对于画马赛克图的 <code>pcolor</code>、<code>pcolormesh</code> 和 <code>imshow</code> 函数，实际使用时我们并不需要手动进行数据的归一化和颜色采样，只需在调用函数时通过 <code>cmap</code> 和 <code>norm</code> 参数把 colormap 和归一化的类传入即可，绘图函数会自动计算数据和颜色的对应关系。因为线性的归一化方法最为常用，所以这些函数都默认使用 <code>Normalize</code> 类，并默认用数据的最小最大值作为 <code>vmin</code> 和 <code>vmax</code>。下面是例子</p>
+<pre><code class="language-python"># 生成测试数据.
+x = np.linspace(0, 10, 100)
+y = np.linspace(0, 10, 100)
+X, Y = np.meshgrid(x, y)
+Z = 1E3 * np.exp(-(np.abs(X - 5)**2 + np.abs(Y - 5)**2))
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+cmap = mpl.cm.jet
+
+# 使用默认的线性归一化,可以直接给出vmin和vmax.
+im = axes[0].pcolormesh(
+    X, Y, Z, cmap=cmap, vmin=Z.min(), vmax=Z.max(),
+    shading='nearest'
+)
+cbar = fig.colorbar(im, ax=axes[0], extend='both')
+axes[0].set_title('Normalize')
+
+# 若在pcolormesh中给定了norm,就不能再指定vmin和vmax了.
+norm = mpl.colors.LogNorm(vmin=1E-3, vmax=1E3)
+im = axes[1].pcolormesh(
+    X, Y, Z, cmap=cmap, norm=norm,
+    shading='nearest'
+)
+# 使用LogNorm时,colorbar会自动选用_ColorbarLogLocator来设定ticks.
+cbar = fig.colorbar(im, ax=axes[1], extend='both')
+axes[1].set_title('LogNorm')
+
+plt.show()
+</code></pre>
+<p><img class="img-zoomable" src="/matplotlib_colormap/application_1.png" alt="application_1" />
+</p>
+<p>可以看到 <code>LogNorm</code> 能让数据的颜色分布不那么集中。</p>
+<p>而画等高线的 <code>contour</code> 和 <code>contourf</code> 则与 <code>pcolor</code> 有一些细节上的差异。这两个函数多了个 <code>levels</code> 参数，用于指定每条等高线对应的数值。它们默认使用 <code>Normalize(vmin=min(levels), max(levels))</code> 作为归一化的方法，如果我们给出了 <code>vmin</code> 和 <code>vmax</code>，则优先使用我们给出的值。对于 <code>contour</code>，每条等高线的颜色可以表示为 <code>cmap(norm(levels))</code>；对于 <code>contourf</code>，等高线间填充的颜色可以表示为</p>
+<pre><code class="language-python"># 在norm不是LogNorm的情况下,layers计算为levels的中点.详请参考matplotlib.contour模块.
+levels = np.array(levels)
+layers = 0.5 * (levels[1:] + levels[:-1])
+colors = cmap(norm(layers))
+</code></pre>
+<p><code>contourf</code> 默认不会填充 <code>levels</code> 范围以外的颜色，如果有这方面的需求，可以用 <code>extend</code> 参数指定是否让超出范围的数据被填上 colormap 两端的颜色（或 <code>set_under</code> 和 <code>set_over</code> 指定的颜色）。</p>
+<p>举个同时画出等高线和填色图的例子，填色设为半透明</p>
+<pre><code class="language-python"># 生成测试数据.
+x = np.linspace(0, 10, 100)
+y = np.linspace(0, 10, 100)
+X, Y = np.meshgrid(x, y)
+Z = (X - 5) ** 2 + (Y - 5) ** 2
+# 将Z的值缩放到[0, 100]内.
+Z = Z / Z.max() * 100
+
+# 设置一个简单的colormap.
+cmap = mpl.colors.ListedColormap(['blue', 'orange', 'red', 'purple'])
+fig, ax = plt.subplots()
+# contour和contourf默认使用levels的最小最大值作为vmin和vmax.
+levels = np.linspace(10, 60, 6)
+im1 = ax.contourf(X, Y, Z, levels=levels, cmap=cmap, alpha=0.5)
+im2 = ax.contour(X, Y, Z, levels=levels, cmap=cmap, linewidths=2)
+cbar = fig.colorbar(im1, ax=ax)
+# 为等高线添加标签.
+ax.clabel(im2, colors='k')
+
+plt.show()
+</code></pre>
+<p><img class="img-zoomable" src="/matplotlib_colormap/application_2.png" alt="application_2" />
+</p>
+<p>可以看到，<code>levels</code> 范围以外的部分直接露出了白色背景。等高线的颜色与等高线之间的填色并不完全一致，这是 <code>levels</code> 和 <code>layers</code> 之间的差异导致的。以上提到的这些参数都可以在 <code>contour</code> 和 <code>contourf</code> 函数返回的 <code>QuadContourSet</code> 对象的属性中找到，有兴趣的读者可以自己调试看看。</p>
+<h3 id="32-boundarynorm-的应用">3.2 BoundaryNorm 的应用</h3>
+<p>直接上例子</p>
+<pre><code class="language-python"># 生成测试数据.
+x = np.linspace(0, 10, 100)
+y = np.linspace(0, 10, 100)
+X, Y = np.meshgrid(x, y)
+Z = X ** 2 + Y ** 2
+# 将Z的值缩放到[0, 100]内.
+Z = Z / Z.max() * 100
+
+# 设置norm.
+bins = [1, 5, 10, 20, 40, 80]
+nbin = len(bins) - 1
+norm = mpl.colors.BoundaryNorm(bins, nbin)
+# 设置cmap.
+cmap = mpl.cm.get_cmap('jet', nbin)
+cmap.set_under('white')
+cmap.set_over('purple')
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+im1 = axes[0].pcolormesh(X, Y, Z, cmap=cmap, norm=norm, shading='nearest')
+cbar = fig.colorbar(im1, ax=axes[0], extend='both')
+axes[0].set_title('pcolormesh')
+
+# 注意contourf设置extend时,colorbar就不要设置extend了.
+im2 = axes[1].contourf(X, Y, Z, levels=bins, cmap=cmap, norm=norm, extend='both')
+cbar = fig.colorbar(im2, ax=axes[1])
+axes[1].set_title('contourf')
+
+plt.show()
+</code></pre>
+<p><img class="img-zoomable" src="/matplotlib_colormap/application_3.png" alt="application_3" />
+</p>
+<p>在对 <code>contourf</code> 应用 <code>BoundaryNorm</code> 时，很容易联想到，等高线就相当于 <code>bins</code> 的边缘，等高线之间的填色正好对应于每个 bin 中的颜色，所以指定 <code>levels=bins</code> 是非常自然的。如果不这样做，<code>contourf</code> 默认会根据数据的范围，利用 <code>MaxNLocator</code> 自动生成 <code>levels</code>，此时由于 <code>levels</code> 与 <code>bins</code> 不匹配，填色就会乱套。</p>
+<h3 id="33-红蓝-colormap">3.3 红蓝 colormap</h3>
+<p>当数据表示瞬时值与长时间平均值之间的差值时，我们常用两端分别为蓝色和红色的 colormap，并将数据的负值和正值分别映射到蓝色和红色上，这样画出来的图一眼就能看出哪里偏高哪里偏低。下面分别用 <code>Normalize</code> 和 <code>TwoSlopeNorm</code> 来实现</p>
+<pre><code class="language-python"># 生成测试数据.
+X, Y = np.meshgrid(np.linspace(-2, 2, 100), np.linspace(-2, 2, 100))
+Z1 = np.exp(-X**2 - Y**2)
+Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2)
+Z = ((Z1 - Z2) * 2)
+# 将Z的值缩放到[-5, 10]内.
+Z = (Z - Z.min()) / (Z.max() - Z.min()) * 15 - 5
+
+# 设定红蓝colormap与两种norm.
+cmap = mpl.cm.RdBu_r
+norm_list = [
+    mpl.colors.Normalize(vmin=-10, vmax=10),
+    mpl.colors.TwoSlopeNorm(vmin=-5, vcenter=0, vmax=10)
+]
+# levels需要与norm的范围相匹配.
+levels_list = [
+    np.linspace(-10, 10, 21),
+    np.linspace(-5, 10, 16)
+]
+# 图片需要的标题.
+title_list = [
+    'Normalize',
+    'TwoSlopeNorm'
+]
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+for i in range(2):
+    im = axes[i].contourf(
+        X, Y, Z, levels=levels_list[i], cmap=cmap,
+        norm=norm_list[i], extend='both'
+    )
+    cbar = fig.colorbar(im, ax=axes[i])
+    axes[i].set_title(title_list[i])
+
+plt.show()
+</code></pre>
+<p><img class="img-zoomable" src="/matplotlib_colormap/application_4.png" alt="application_4" />
+</p>
+<p>如果你的 Matplotlib 版本够高的话，还可以试试 <code>CenteredNorm</code>。这三种归一化方法都是线性的，非线性的方法有 <code>SymLogNorm</code>，或者用 <code>BoundaryNorm</code> 也可以实现。</p>
+<h3 id="34-自定义归一化方法">3.4 自定义归一化方法</h3>
+<p>请参考 Matplotlib 官网的 <a href="https://matplotlib.org/stable/tutorials/colors/colormapnorms.html" target="_blank">Colormap Normalization</a> 教程的最后一节。</p>
+<h2 id="4-结语">4. 结语</h2>
+<p>以上便是对 Matplotlib 中 colormap 的简要介绍，有错误的话烦请在评论区指出。下期将会接着介绍与之密不可分的 colorbar。</p>
+<h2 id="参考链接">参考链接</h2>
+<p>参考的全是 Matplotlib 官网的教程</p>
+<p><a href="https://matplotlib.org/stable/tutorials/colors/colorbar_only.html" target="_blank">Customized Colorbars Tutorial</a></p>
+<p><a href="https://matplotlib.org/stable/tutorials/colors/colormap-manipulation.html" target="_blank">Creating Colormaps in Matplotlib</a></p>
+<p><a href="https://matplotlib.org/stable/tutorials/colors/colormapnorms.html" target="_blank">Colormap Normalization</a></p>
+<p>如果想自定义 colormap 的话，可以参考</p>
+<p><a href="https://towardsdatascience.com/beautiful-custom-colormaps-with-matplotlib-5bab3d1f0e72" target="_blank">Beautiful custom colormaps with Matplotlib</a></p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/github/">Github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">Hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#0-前言">0. 前言</a></li>
+    <li><a href="#1-colormap">1. Colormap</a>
+      <ul>
+        <li><a href="#11-listedcolormap">1.1 ListedColormap</a></li>
+        <li><a href="#12-linearsegmentedcolormap">1.2 LinearSegmentedColormap</a></li>
+        <li><a href="#13-get_cmap-函数">1.3 get_cmap 函数</a></li>
+        <li><a href="#14-set_underset_over-与-set_bad">1.4 set_under、set_over 与 set_bad</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-normalization">2. Normalization</a>
+      <ul>
+        <li><a href="#21-normalize">2.1 Normalize</a></li>
+        <li><a href="#22-lognorm">2.2 LogNorm</a></li>
+        <li><a href="#23-boundarynorm">2.3 BoundaryNorm</a></li>
+        <li><a href="#24-centerednorm">2.4 CenteredNorm</a></li>
+        <li><a href="#25-twoslopenorm">2.5 TwoSlopeNorm</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-实际应用">3 实际应用</a>
+      <ul>
+        <li><a href="#31-pcolor-和-contour-的异同">3.1 pcolor 和 contour 的异同</a></li>
+        <li><a href="#32-boundarynorm-的应用">3.2 BoundaryNorm 的应用</a></li>
+        <li><a href="#33-红蓝-colormap">3.3 红蓝 colormap</a></li>
+        <li><a href="#34-自定义归一化方法">3.4 自定义归一化方法</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-结语">4. 结语</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/github/">Github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">Hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#0-前言">0. 前言</a></li>
+    <li><a href="#1-colormap">1. Colormap</a>
+      <ul>
+        <li><a href="#11-listedcolormap">1.1 ListedColormap</a></li>
+        <li><a href="#12-linearsegmentedcolormap">1.2 LinearSegmentedColormap</a></li>
+        <li><a href="#13-get_cmap-函数">1.3 get_cmap 函数</a></li>
+        <li><a href="#14-set_underset_over-与-set_bad">1.4 set_under、set_over 与 set_bad</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-normalization">2. Normalization</a>
+      <ul>
+        <li><a href="#21-normalize">2.1 Normalize</a></li>
+        <li><a href="#22-lognorm">2.2 LogNorm</a></li>
+        <li><a href="#23-boundarynorm">2.3 BoundaryNorm</a></li>
+        <li><a href="#24-centerednorm">2.4 CenteredNorm</a></li>
+        <li><a href="#25-twoslopenorm">2.5 TwoSlopeNorm</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-实际应用">3 实际应用</a>
+      <ul>
+        <li><a href="#31-pcolor-和-contour-的异同">3.1 pcolor 和 contour 的异同</a></li>
+        <li><a href="#32-boundarynorm-的应用">3.2 BoundaryNorm 的应用</a></li>
+        <li><a href="#33-红蓝-colormap">3.3 红蓝 colormap</a></li>
+        <li><a href="#34-自定义归一化方法">3.4 自定义归一化方法</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-结语">4. 结语</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2021-2021
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" integrity="sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js" integrity="sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError : false
+        });
+    });
+</script>
+
+
+
+</body>
+
+</html>
