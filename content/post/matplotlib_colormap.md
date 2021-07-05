@@ -153,7 +153,7 @@ $$
 
 除了线性和对数的映射，有时我们需要的映射关系像是往一组摆在一起的框里投球。例如下图这个例子
 
-![bin_example](/matplotlib_colormap/bin_example.png)
+![bins_example](/matplotlib_colormap/bins_example.png)
 
 给出一系列边缘靠在一起的 bin（框子），原始数据落入第几个框（左闭右开区间），就对应于第几个颜色。因为这些框边缘的数值可以任意给定，所以很难用简单的函数表示。为了实现这种映射，这里引入 `BoundaryNorm`。
 

@@ -212,7 +212,7 @@ $$
 <p>除了对数关系外，Matplotlib 还提供任意幂律关系的 <code>PowerNorm</code>，此处不再详细介绍。</p>
 <h3 id="23-boundarynorm">2.3 BoundaryNorm</h3>
 <p>除了线性和对数的映射，有时我们需要的映射关系像是往一组摆在一起的框里投球。例如下图这个例子</p>
-<p><img class="img-zoomable" src="/matplotlib_colormap/bin_example.png" alt="bin_example" />
+<p><img class="img-zoomable" src="/matplotlib_colormap/bins_example.png" alt="bins_example" />
 </p>
 <p>给出一系列边缘靠在一起的 bin（框子），原始数据落入第几个框（左闭右开区间），就对应于第几个颜色。因为这些框边缘的数值可以任意给定，所以很难用简单的函数表示。为了实现这种映射，这里引入 <code>BoundaryNorm</code>。</p>
 <p>参数 <code>boundaries</code> 为我们给出的这些 bin 的边缘数值，要求单调递增；<code>ncolors</code> 则是我们希望与之对应的 colormap 中颜色的数目（即 <code>cmap.N</code>），其数值大于等于 <code>nbin = len(boundaries) - 1</code>。</p>
