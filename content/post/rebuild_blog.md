@@ -4,8 +4,8 @@ date: 2021-07-03
 math: true
 showToc: true
 tags:
-- Hugo
-- Github
+- hugo
+- github
 ---
 
 本博客之前是用软件 [Gridea](https://github.com/getgridea/gridea) 制作的，这是个静态博客写作客户端，可以作为 Markdown 编辑器，同时简单设置下就能一键生成静态页面并上传到网上，非常适合我这种电脑小白使用。不过前段时间发现怎么都没法上传本地写好的内容，于是决定重新用现在流行的 Hugo 来搭建博客。本文使用的是 0.84.4 版本的 Hugo 和 2.32.0 版本的 Git。

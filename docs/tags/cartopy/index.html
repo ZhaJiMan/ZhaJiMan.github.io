@@ -21,7 +21,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<title>Search - 炸鸡人博客</title>
+<title>cartopy - 炸鸡人博客</title>
 
 
 <meta name="author" content="炸鸡人" />
@@ -30,14 +30,14 @@
 <meta name="description" content="A minimal Hugo theme with nice theme color." />
 
 
-<link rel="alternate" type="application/rss+xml" href="https://zhajiman.github.io/search/index.xml" title="炸鸡人博客" />
+<link rel="alternate" type="application/rss+xml" href="https://zhajiman.github.io/tags/cartopy/index.xml" title="炸鸡人博客" />
 
-<meta property="og:title" content="Search" />
-<meta name="twitter:title" content="Search" />
+<meta property="og:title" content="cartopy" />
+<meta name="twitter:title" content="cartopy" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://zhajiman.github.io/search/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta property="og:url" content="https://zhajiman.github.io/tags/cartopy/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2019-09-14T00:00:00+00:00" />
 
 
 <style>
@@ -102,34 +102,30 @@
                 
 
 <div class="page-info">
-    <form class="search-form" method="GET">
-        <div class="search-input">
-            <input name="s" type="search" autocapitalize="off" autocomplete="off" autocorrect="off"
-                   spellcheck="false" />
-            <button type="submit"><i class="iconfont icon-search-circle-sharp"></i></button>
-        </div>
-    </form>
+  <span>Posts with the tag cartopy: </span>
 </div>
 
-<div class="search-result-info" style="display: none;"><span>[NUM] results ([TIME] ms)</span></div>
-<div class="search-result-info" style="display: none;"><span>Results not found</span></div>
-<div class="search-result-info" style="display: none;"><span>Failed to load index file</span></div>
-<div id="search-result"></div>
-<script id="search-result-template" type="text/fuse-template">
-    <% for(var i = 0; i < $data.length; i++){ %>
-    <div class="post">
-        <h3 class="post-item post-title-archive">
-            <a href="<%= $data[i].item.permalink %>"><%= $data[i].item.title %></a>
-        </h3>
-        <div class="post-item post-meta-archive">
-            <span><i class="iconfont icon-today-sharp"></i>&nbsp;<%= $data[i].item.date %></span>
-            <span>
-                <i class="iconfont icon-pricetags-sharp"></i>&nbsp;<% if ($data[i].item.tags && $data[i].item.tags.length > 0) { %><% for(var j = 0; j < $data[i].item.tags.length; j++){ %><%= $data[i].item.tags[j] %>&nbsp;<% } %><% } else { %>No tag<% } %>
-            </span>
-        </div>
-    </div>
-    <% } %>
-</script>
+
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/cartopy_introduction/">Cartopy 系列：从入门到放弃</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2019-09-14</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5755 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="简介">简介</h2>
+<p>常用的地图可视化的编程工具有 MATLAB、IDL、GrADS、GMT、NCL 等。我之前一直使用的是脚本语言 NCL，易用性不错，画地图的效果也很好。然而 2019 年初，NCAR 宣布 NCL 将停止更新，并会在日后转为 Python 的绘图包。于是我开始考虑转投 Python，同时觉得在 Python 环境下如果还是用 PyNGL 那一套语法的话，未免有些换汤不换药。因此我选择用 Python 环境下专有的 Cartopy 包来画地图。</p>
+  </div>
+</div>
+
+
 
             </div>
             <aside class="col-12 col-md-3 float-left sidebar">
@@ -304,8 +300,10 @@
 </footer>
 
     
-<script defer src="https://cdn.jsdelivr.net/npm/art-template@4.13.2/lib/template-web.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
 
 
