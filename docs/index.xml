@@ -14,7 +14,17 @@
       
       <guid>https://zhajiman.github.io/post/matplotlib_colormap/</guid>
       <description>&lt;h2 id=&#34;0-前言&#34;&gt;0. 前言&lt;/h2&gt;
-&lt;p&gt;所谓 colormap（颜色表），就是将一系列颜色按给定的顺序排列在一起。其用处是，我们可以通过某种映射关系，将一系列数值映射到一张 colormap 上去，使不同大小的数值对应不同的颜色。这样一来，在绘制填色图时便能直观地用颜色来反映数值的分布。&lt;/p&gt;</description>
+&lt;p&gt;所谓 colormap（颜色表），就是将一系列颜色按给定的顺序排列在一起。其用处是，我们可以通过某种映射关系，将一系列数值映射到一张 colormap 上去，使不同大小的数值对应不同的颜色。这样一来，在绘制填色图时便能直观地用颜色来反映数值的分布。&lt;/p&gt;
+&lt;p&gt;在 Matplotlib 中，数值到颜色的映射关系可以用下面这张图来表示&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/matplotlib_colormap/value_color_mapping.png&#34; alt=&#34;value_color_mapping.png&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;图中分为前后两部分&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;首先将数组的数值归一化（Normalization）到浮点型的 [0.0, 1.0] 范围或整型的 [0, N - 1] 范围上去。&lt;/li&gt;
+&lt;li&gt;再把归一化的数据输入给 colormap，输出数组数值对应的颜色（RGBA 值）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;第二部分的映射关系基本上是固定不变的，但第一部分的映射关系可以通过 Matplotlib 的许多类来加以改变，进而实现对数色标、对称色标、离散色标等一系列可视化效果。&lt;/p&gt;
+&lt;p&gt;本文将会依次介绍 &lt;code&gt;Colormap&lt;/code&gt; 类、归一化会用到的类，以及实际应用的例子。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -27,6 +37,33 @@
     </item>
     
     <item>
+      <title>Cartopy 系列：为 Lambert 投影地图添加刻度</title>
+      <link>https://zhajiman.github.io/post/cartopy_lambert/</link>
+      <pubDate>Wed, 24 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/cartopy_lambert/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;Cartopy 中的 Plate Carrée 投影使用方便，但在展示中国地图时会使中国的形状显得很瘪，与之相比，Lambert 投影的效果会更加美观，下图显示了两种投影的差异&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/cartopy_lambert/comparison.png&#34; alt=&#34;comparison&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;所以本文将会介绍如何在 Cartopy 中实现 Lambert 投影，并为地图添上合适的刻度。文中 Cartopy 的版本是 0.18.0。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Cartopy 系列：从入门到放弃</title>
+      <link>https://zhajiman.github.io/post/cartopy_introduction/</link>
+      <pubDate>Tue, 23 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/cartopy_introduction/</guid>
+      <description>&lt;h2 id=&#34;简介&#34;&gt;简介&lt;/h2&gt;
+&lt;p&gt;常用的地图可视化的编程工具有 MATLAB、IDL、GrADS、GMT、NCL 等。我之前一直使用的是脚本语言 NCL，易用性不错，画地图的效果也很好。然而 2019 年初，NCAR 宣布 NCL 将停止更新，并会在日后转为 Python 的绘图包。于是我开始考虑转投 Python，同时觉得在 Python 环境下如果还是用 PyNGL 那一套语法的话，未免有些换汤不换药。因此我选择用 Python 环境下专有的 Cartopy 包来画地图。&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/cartopy_introduction/cartopy_log.png&#34; alt=&#34;cartopy_log&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;此前 Python 最常用的地图包是 Basemap，然而它将于 2020 年被弃用，官方推荐使用 Cartopy 包作为替代。Cartopy 是英国气象局开发的地图绘图包，实现了 Basemap 的大部分功能，还可以通过 Matplotlib 的 API 实现丰富的自定义效果。&lt;/p&gt;
+&lt;p&gt;本文将会从一个 NCL 转 Python 的入门者的角度，介绍如何安装 Cartopy，如何绘制地图，并实现一些常用的效果。代码基于 0.18.0 版本的 Cartopy。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>About</title>
       <link>https://zhajiman.github.io/about/</link>
       <pubDate>Sat, 11 Apr 2020 19:15:32 +0800</pubDate>
@@ -36,32 +73,13 @@
     </item>
     
     <item>
-      <title>Cartopy 系列：从入门到放弃</title>
-      <link>https://zhajiman.github.io/post/cartopy_introduction/</link>
-      <pubDate>Sat, 14 Sep 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://zhajiman.github.io/post/cartopy_introduction/</guid>
-      <description>&lt;h2 id=&#34;简介&#34;&gt;简介&lt;/h2&gt;
-&lt;p&gt;常用的地图可视化的编程工具有 MATLAB、IDL、GrADS、GMT、NCL 等。我之前一直使用的是脚本语言 NCL，易用性不错，画地图的效果也很好。然而 2019 年初，NCAR 宣布 NCL 将停止更新，并会在日后转为 Python 的绘图包。于是我开始考虑转投 Python，同时觉得在 Python 环境下如果还是用 PyNGL 那一套语法的话，未免有些换汤不换药。因此我选择用 Python 环境下专有的 Cartopy 包来画地图。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
       <title>炸 鸡 人</title>
       <link>https://zhajiman.github.io/post/fried_chicken_man/</link>
       <pubDate>Thu, 22 Aug 2019 00:00:00 +0000</pubDate>
       
       <guid>https://zhajiman.github.io/post/fried_chicken_man/</guid>
-      <description>&lt;p&gt;那是谁 是谁 是谁&lt;/p&gt;
-&lt;p&gt;那是炸鸡 炸鸡人 炸鸡人&lt;/p&gt;
-&lt;p&gt;背负着快餐的名义&lt;/p&gt;
-&lt;p&gt;舍弃了一切去战斗的男人&lt;/p&gt;
-&lt;p&gt;炸鸡之腿是手枪腿&lt;/p&gt;
-&lt;p&gt;炸鸡之块是原味鸡&lt;/p&gt;
-&lt;p&gt;炸鸡之翼是麦辣翅&lt;/p&gt;
-&lt;p&gt;炸鸡的特点是外脆里嫩&lt;/p&gt;
-&lt;p&gt;将炸鸡之力 集于一身&lt;/p&gt;
-&lt;p&gt;美味的英雄&lt;/p&gt;
-&lt;p&gt;炸鸡人 炸鸡人&lt;/p&gt;</description>
+      <description>&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/fried_chicken_man/devil_man.png&#34; alt=&#34;devil_man&#34; /&gt;
+&lt;/p&gt;</description>
     </item>
     
   </channel>

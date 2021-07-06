@@ -1,6 +1,6 @@
 ---
-title: 'Cartopy 系列：从入门到放弃'
-date: 2019-09-14
+title: "Cartopy 系列：从入门到放弃"
+date: 2021-03-23
 showToc: true
 tags:
 - cartopy
@@ -9,13 +9,13 @@ tags:
 
 常用的地图可视化的编程工具有 MATLAB、IDL、GrADS、GMT、NCL 等。我之前一直使用的是脚本语言 NCL，易用性不错，画地图的效果也很好。然而 2019 年初，NCAR 宣布 NCL 将停止更新，并会在日后转为 Python 的绘图包。于是我开始考虑转投 Python，同时觉得在 Python 环境下如果还是用 PyNGL 那一套语法的话，未免有些换汤不换药。因此我选择用 Python 环境下专有的 Cartopy 包来画地图。
 
-<!--more-->
-
 ![cartopy_log](/cartopy_introduction/cartopy_log.png)
 
 此前 Python 最常用的地图包是 Basemap，然而它将于 2020 年被弃用，官方推荐使用 Cartopy 包作为替代。Cartopy 是英国气象局开发的地图绘图包，实现了 Basemap 的大部分功能，还可以通过 Matplotlib 的 API 实现丰富的自定义效果。
 
 本文将会从一个 NCL 转 Python 的入门者的角度，介绍如何安装 Cartopy，如何绘制地图，并实现一些常用的效果。代码基于 0.18.0 版本的 Cartopy。
+
+<!--more-->
 
 ## 安装 Cartopy 和相关的库
 
