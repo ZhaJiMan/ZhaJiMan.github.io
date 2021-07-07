@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>python on 炸鸡人博客</title>
+    <link>https://zhajiman.github.io/tags/python/</link>
+    <description>Recent content in python on 炸鸡人博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 26 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python 中操作文件和目录的路径</title>
+      <link>https://zhajiman.github.io/post/python_path/</link>
+      <pubDate>Fri, 26 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/python_path/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;之前在 Linux 上用 Python 处理系统的文件和目录时，我都是简单粗暴地用 &lt;code&gt;os.system&lt;/code&gt; 函数直接执行 shell 命令来实现的。例如新建一个目录并把文件移动进去，我会这么写&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;dirpath = &#39;./result&#39;
+filepath = &#39;./data.txt&#39;
+os.system(f&#39;mkdir {dirpath}&#39;)
+os.system(f&#39;mv {filepath} {dirpath}&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;即把 shell 命令硬编码到程序中。但最近在 Windows 上运行老程序时，因为 &lt;code&gt;os.system&lt;/code&gt; 默认调用 CMD，所以这种写法的老代码全部木大。&lt;/p&gt;
+&lt;p&gt;其实借助 Python 标准库中用于系统交互和路径处理的模块，就能尽可能降低代码对平台的依赖，并且模块中也提供有许多方便的函数。本文会记录那些最常用的功能。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -102,7 +102,7 @@ gl.right_labels = False
 gl.rotate_labels = False
 ```
 
-![](/cartopy_lambert/default_2.png)
+![default_2](/cartopy_lambert/default_2.png)
 
 结果改善了很多，但仍然有很奇怪的地方：虽然关闭了右边的纬度标签，但经度的标签出现在了两边的 y 轴上。根据 [issue #1530](https://github.com/SciTools/cartopy/issues/1530)，一个很不优雅的解决方法是将网格线分两次来画
 

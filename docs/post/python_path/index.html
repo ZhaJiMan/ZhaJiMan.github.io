@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Python 中操作文件和目录的路径 - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="python" />
+
+
+<meta property="og:title" content="Python 中操作文件和目录的路径" />
+<meta name="twitter:title" content="Python 中操作文件和目录的路径" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/python_path/" /><meta property="og:description" content="前言
+之前在 Linux 上用 Python 处理系统的文件和目录时，我都是简单粗暴地用 os.system 函数直接执行 shell 命令来实现的。例如新建一个目录并把文件移动进去，我会这么写
+dirpath = &#39;./result&#39;
+filepath = &#39;./data.txt&#39;
+os.system(f&#39;mkdir {dirpath}&#39;)
+os.system(f&#39;mv {filepath} {dirpath}&#39;)
+
+即把 shell 命令硬编码到程序中。但最近在 Windows 上运行老程序时，因为 os.system 默认调用 CMD，所以这种写法的老代码全部木大。
+其实借助 Python 标准库中用于系统交互和路径处理的模块，就能尽可能降低代码对平台的依赖，并且模块中也提供有许多方便的函数。本文会记录那些最常用的功能。" />
+<meta name="twitter:description" content="前言
+之前在 Linux 上用 Python 处理系统的文件和目录时，我都是简单粗暴地用 os.system 函数直接执行 shell 命令来实现的。例如新建一个目录并把文件移动进去，我会这么写
+dirpath = &#39;./result&#39;
+filepath = &#39;./data.txt&#39;
+os.system(f&#39;mkdir {dirpath}&#39;)
+os.system(f&#39;mv {filepath} {dirpath}&#39;)
+
+即把 shell 命令硬编码到程序中。但最近在 Windows 上运行老程序时，因为 os.system 默认调用 CMD，所以这种写法的老代码全部木大。
+其实借助 Python 标准库中用于系统交互和路径处理的模块，就能尽可能降低代码对平台的依赖，并且模块中也提供有许多方便的函数。本文会记录那些最常用的功能。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-03-26T00:00:00+00:00" /><meta property="article:modified_time" content="2021-03-26T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/python_path/">Python 中操作文件和目录的路径</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-26</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4400 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="前言">前言</h2>
+<p>之前在 Linux 上用 Python 处理系统的文件和目录时，我都是简单粗暴地用 <code>os.system</code> 函数直接执行 shell 命令来实现的。例如新建一个目录并把文件移动进去，我会这么写</p>
+<pre><code class="language-Python">dirpath = './result'
+filepath = './data.txt'
+os.system(f'mkdir {dirpath}')
+os.system(f'mv {filepath} {dirpath}')
+</code></pre>
+<p>即把 shell 命令硬编码到程序中。但最近在 Windows 上运行老程序时，因为 <code>os.system</code> 默认调用 CMD，所以这种写法的老代码全部木大。</p>
+<p>其实借助 Python 标准库中用于系统交互和路径处理的模块，就能尽可能降低代码对平台的依赖，并且模块中也提供有许多方便的函数。本文会记录那些最常用的功能。</p>
+<h2 id="基础知识">基础知识</h2>
+<p>首先明确一些基础知识，以免后面发生混淆。目录（directory）即我们常说的文件夹，能够存放文件和其它目录。而路径（path）是用于标识文件和目录在文件系统中具体位置的字符串，路径的末尾是文件或者目录的名字，而前面则是一级一级的父目录，每一项通过路径分隔符隔开。</p>
+<p>Linux 和 Mac 的路径分隔符是正斜杠 <code>/</code>，而 Windows 用的是反斜杠 <code>\</code>。在 Python 的字符串中，因为反斜杠还有转义的作用，所以要么用 <code>\\</code> 表示一个反斜杠 ，要么使用 raw 字符串（不过以反斜杠结尾时会引起语法解析的错误）。例如</p>
+<pre><code class="language-Python"># Linux下的路径
+dirpath = './a/b/c'
+# Windows下的路径
+dirpath1 = './/a//b//c'
+dirpath2 = r'./a/b/c'
+</code></pre>
+<p>注意虽然程序中字面值是 <code>\\</code>，但打印或输出时是正常的 <code>\</code>。其实现在的 Windows 内核兼容正斜杠的写法，在 Python 程序中我们完全可以只使用正斜杠（甚至混用都没问题）。</p>
+<p>下面再来谈一谈目录的路径结尾是否该加上斜杠的问题。有些人习惯在目录的路径结尾再添上一个斜杠，以显示这个路径表示的是一个目录而不是文件，并且之后在进行字符串连接时也不必手动插入斜杠。在绝大多数情况下，加或不加并不会影响到命令行的行为。</p>
+<p>考虑到 Python 中许多函数在处理路径时会自动去掉结尾的斜杠，以免影响路径的分割（<code>os.path.basename</code>、<code>os.path.dirname</code> 等函数），本文中不会在结尾加上斜杠。</p>
+<h2 id="os">os</h2>
+<p>这个模块提供一些与操作系统进行交互的函数，例如创建和删除目录等。</p>
+<p><code>os.sep</code>：属性，值是系统所用的路径分隔符的字符串。</p>
+<p><code>os.getcwd</code>：获取工作目录的路径。</p>
+<p><code>os.chdir</code>：切换工作目录，功能同 shell 中的 <code>cd</code> 命令。</p>
+<p><code>os.listdir</code>：返回指定的目录（默认是工作目录）下所有文件和目录的名字组成的列表。注意列表元素的顺序是任意的（尽管我们的运行结果可能是有序的）。</p>
+<p><code>os.walk</code>：自上而下遍历一棵目录树，每到一个目录时 yield 一个 <code>(dirpath, dirnames, filenames)</code> 的三元组。其中 <code>dirpath</code> 是该目录的路径，<code>dirnames</code> 是该目录下子目录名字组成的列表，<code>filenames</code> 是该目录下文件名组成的列表。下面举个找出目录下所有文件的例子</p>
+<pre><code class="language-Python">def get_all_filepath(dirpath):
+    for dirpath, dirnames, filenames in os.walk(dirpath):
+        for filename in filenames:
+            yield os.path.join(dirpath, filename)
+</code></pre>
+<p><code>os.mkdir</code>：创建一个目录。</p>
+<p><code>os.makedirs</code>：递归地创建一个目录，即就算我们给出的路径中含有尚不存在的目录，系统也能顺便给创建了。</p>
+<p><code>os.rmdir</code>：删除一个空目录，如果目录非空则会报错。</p>
+<p><code>os.removedirs</code>：递归地删除空目录。即根据路径从右往左逐个删，碰到非空的目录时就会停下（不然那不得把你根目录给端了）。</p>
+<p><code>os.remove</code>：删除一个文件。如果路径指向目录的话会报错。</p>
+<p><code>os.rename</code>：给文件或目录重命名。如果重命名到另一个目录下面，就相当于剪切。当目标路径已经存在时，会有比较复杂的行为，建议不要这么做。</p>
+<p><code>os.replace</code>：相当于 <code>os.rename</code>，但当目标路径指向已经存在的目录时会报错，指向文件时则会直接替换。</p>
+<p><code>os</code> 模块中关于文件和目录的常用函数差不多就这些。你可能会问，怎么删除目录的函数都只能作用于空目录，那非空的目录怎么办？这就需要用到更高级的文件操作库——<code>shutil</code>。</p>
+<h2 id="shutil">shutil</h2>
+<p>这个模块提供正经的文件/目录的复制、剪切、删除操作。</p>
+<p><code>shutil.copyfile</code>：复制文件，要求两个参数都为文件路径。</p>
+<p><code>shutil.copy</code>：同样是复制文件，但目标路径可以为目录，这样相当于保持文件名不变复制过去。</p>
+<p><code>shutil.copytree</code>：顾名思义，直接复制一整棵目录树，即复制非空的目录。</p>
+<p><code>shutil.rmtree</code>：删除一整棵目录树。</p>
+<p><code>shutil.move</code>：将文件或非空目录移动到目标目录下面。</p>
+<h2 id="glob">glob</h2>
+<p>这个模块的功能非常单纯：提供 Unix shell 风格的路径搜索。即可以用通配符实现灵活的匹配，又能直接拿到文件和目录的路径，方便操作。</p>
+<p><code>glob.glob</code>：给出含通配符的路径，将与之匹配的路径汇集成列表返回。因为这个函数内部是由 <code>os.listdir</code> 实现的，所以也不能保证结果的顺序。Python 3.5 以后提供 <code>recursive</code> 选项，指定是否进行递归搜索，用 <code>**</code> 匹配目录下的所有内容。</p>
+<p>一些例子如下</p>
+<pre><code class="language-Python"># 得到路径dirpath下的文件和目录的路径
+glob.glob(os.path.join(dirpath, '*'))
+# 得到路径dirpath下所有py文件的路径
+glob.glob(os.path.join(dirpath, '**', '*.py'), recursive=True)
+</code></pre>
+<p>如果给出的路径是相对路径，那么结果也会是相对路径，绝对路径同理。</p>
+<p>如果希望搜索的结果有序排列，可以用列表的 <code>sort</code> 方法或 <code>sorted</code> 函数进行排序。下面举个搜索路径下所有图片，并按文件名排序的例子</p>
+<pre><code class="language-Python">dirpath = './pics'
+filepaths = glob.glob(os.path.join(dirpath, '*.png'))
+filepaths.sort(key=lambda x: os.path.basename(x))
+</code></pre>
+<p>如果需要节省内存，<code>glob</code> 模块还提供返回生成器的 <code>glob.iglob</code> 函数。</p>
+<h2 id="ospath">os.path</h2>
+<p>这个模块提供许多处理路径的函数，其实在前面的例子中已经出现过好几次了。</p>
+<p><code>os.path.normpath</code>：将路径规范化。能将多余的分隔符去掉，例如 <code>A//B</code> 、<code>A/B/</code> 和 <code>A/./B</code> 都会变成 <code>A/B</code>。可以看出，结尾有斜杠对于 Python 来说是不“规范”的。Windows 系统下还会将路径中的正斜杠都替换成反斜杠。</p>
+<p><code>os.path.abspath</code>：将路径转换为规范的绝对路径。</p>
+<p><code>os.path.relpath</code>：将路径转换为规范的相对路径。</p>
+<p><code>os.path.basename</code>：返回路径的基名（即文件或目录的名字）。需要注意，如果路径结尾有斜杠，那么会返回空字符串。</p>
+<p><code>os.path.dirname</code>：返回路径的父目录。需要注意，如果路径结尾有斜杠，那么返回的就只是去掉末尾斜杠的路径。</p>
+<p><code>os.path.splitext</code>：输入一个文件路径，返回一个二元组，第二个元素是这个文件的扩展名（含 <code>.</code>），第一个元素就是扩展名前面的路径。如果路径不指向文件，那么第二个元素会是空字符串。</p>
+<p><code>os.path.exists</code>：判断路径是否存在。</p>
+<p><code>os.path.isfile</code>：判断路径是否指向文件。</p>
+<p><code>os.path.isdir</code>：判断路径是否指向目录。路径结尾的斜杠不会影响结果。</p>
+<p><code>os.path.join</code>：最常用的函数之一，能将多个路径连接在一起，自动在每个路径之间依据 <code>os.sep</code> 的值添加分隔符。</p>
+<pre><code class="language-Python"># Linux下
+In : os.path.join('a', 'b', 'c')
+Out: 'a/b/c'
+
+# Windows下
+In : os.path.join('a', 'b', 'c')
+Out: 'a\\b\\c'
+</code></pre>
+<p>这个函数的行为有点复杂，下面再举几个例子</p>
+<pre><code class="language-Python"># Windows下
+# 路径中的正斜杠替换掉了os.sep
+In : os.path.join('a', 'b/', 'c')
+Out: 'a\\b/c'
+# 结尾的斜杠会被保留
+In : os.path.join('a', 'b', 'c/')
+Out: 'a\\b\\c/'
+# 最后一个路径为空字符串时,相当于在结尾添加斜杠
+In : os.path.join('a', 'b', '')
+Out: 'a\\b\\'
+</code></pre>
+<p>Linux 下的行为是一样的。另外还有什么路径如果在根目录或盘符下，那么连接时前面的路径会被忽略之类的行为，这里就不细说了。</p>
+<p><code>os.expanduser</code>：将一个路径中的 <code>~</code> 符号替换成 user 目录的路径。</p>
+<p><code>os.path</code> 模块是处理路径的经典模块，但我在使用中遇到的问题是，在 Windows 下如果想使用正斜杠，因为这个模块默认用反斜杠来进行连接和替换操作，会导致产生的字符串中两种斜杠相混杂。虽然这种路径完全合法，但作为结果输出时就很难看。可以考虑使用 <code>os.path.normpath</code> 函数来规范化，或者试试下一节将会介绍的模块。</p>
+<h2 id="pathlib">pathlib</h2>
+<p>于 Python 3.4 引入的新模块，提供了面向对象风格的路径操作，能够完全替代 <code>os.path</code> 和 <code>glob</code> 模块，并涵盖一部分 <code>os</code> 模块的功能。这里简单介绍一下其用法。</p>
+<p><img class="img-zoomable" src="/python_path/pathlib.png" alt="pathlib" />
+</p>
+<p><code>pathlib</code> 中的类由上面的图片表示。最顶层的是 <code>PurePath</code>，提供不涉及 I/O 的路径计算；<code>Path</code> 类又称 concrete path，继承 <code>PurePath</code> 的同时提供 I/O 的功能；剩下的几个类从名字可以看出是与平台相关的，我们一般不需要关心，让程序自动决定即可。</p>
+<p>前面提到的路径都是字符串，但 <code>pathlib</code> 会把路径作为一个对象</p>
+<pre><code class="language-Python">from pathlib import Path
+p = Path('a/b/c')
+
+# Linux下
+In : p
+Out: PosixPath('a/b/c')
+# 获取字符串
+In : str(p)
+Out: 'a/b/c'
+
+# Windows下
+In : p
+Out: WindowsPath('a/b/c')
+# 获取字符串
+In : str(p)
+Out: 'a\\b\\c'
+</code></pre>
+<p><code>Path</code> 对象内部以正斜杠的形式表示路径，在转换成字符串时会自动根据系统选取分隔符，另外还会自动去掉路径结尾的斜杠。这下我们就不用操心斜杠混用的问题。下面便来介绍 <code>Path</code> 对象的方法和属性。需要注意的是，很多方法返回的依然是 <code>Path</code> 对象。</p>
+<p><code>Path.exists</code>：判断路径是否存在。</p>
+<p><code>Path.is_file</code>：判断路径是否指向文件。</p>
+<p><code>Path.is_dir</code>：判断路径是否指向目录。</p>
+<p><code>Path.cwd</code>：同 <code>os.getcwd</code>。</p>
+<p><code>Path.iterdir</code>：同 <code>os.listdir</code>，不过返回的是生成器。</p>
+<p><code>Path.mkdir</code>：创建该路径表示的目录。<code>parent</code> 参数指定是否顺带着将不存在的父目录也也一并创建了，等同于 <code>os.makedirs</code> 的功能。</p>
+<p><code>Path.rmdir</code>：删除该路径表示的空目录。</p>
+<p><code>Path.touch</code>：创建该路径表示的文件。</p>
+<p><code>Path.open</code>：相当于对路径指向的文件调用 <code>open</code> 函数。</p>
+<p><code>Path.unlink</code>：删除一个文件或者符号链接。</p>
+<p><code>Path.rename</code>：同 <code>os.rename</code>。</p>
+<p><code>Path.replace</code>：同 <code>os.replace</code>。</p>
+<p><code>Path.resolve</code>：得到绝对路径，或解析符号链接。</p>
+<p><code>PurePath.name</code>：属性，同 <code>os.path.basename</code>。</p>
+<p><code>PurePath.parent</code>：属性，同 <code>os.path.dirname</code>。可以写出 <code>p.parent.parent</code> 这样的表达。</p>
+<p><code>PurePath.parents</code>：属性，由不同层级的父目录的路径组成的序列。例如 <code>p.parents[0]</code> 等于 <code>p.parent</code>，<code>p.parents[1]</code> 等于 <code>p.parent.parent</code>。</p>
+<p><code>PurePath.suffix</code>：属性，返回文件的扩展名（含 <code>.</code>），如果是目录则返回空字符串。</p>
+<p><code>PurePath.stem</code>：属性，返回文件名不含扩展名的那一部分，如果是目录就直接返回目录名。</p>
+<p><code>PurePath.joinpath</code>：同 <code>os.path.join</code>。不过现在通过重载运算符 <code>/</code>，有了更方便的表达</p>
+<pre><code class="language-Python">In : Path('a') / 'b' / 'c'
+Out: WindowsPath('a/b/c')
+</code></pre>
+<p><code>Path.expanduser</code>：同 <code>os.path.expanduser</code>。</p>
+<p><code>Path.glob</code>：同 <code>glob.iglob</code>，即返回的是生成器。不过现在不需要指定 <code>recursive</code> 参数，当模式中含有 <code>**</code> 时就会进行递归搜索。</p>
+<p><code>Path.rglob</code>：相当于在 <code>Path.glob</code> 的模式里提前加上了 <code>**/</code>。即 <code>Path.glob('**/*')</code> 等同于 <code>Path.rglob('*')</code>。</p>
+<p>可以看到 <code>pathlib</code> 提供了丰富的路径操作，再结合 <code>shutil</code> 就足以应对日常使用。另外在 Python 3.6 之后，<code>os</code> 与 <code>os.path</code> 中许多函数能够直接接受 <code>Path</code> 对象作为参数，于是这些模块完全可以互通。<code>pathlib</code> 的缺点也不是没有</p>
+<ul>
+<li>
+<p>Python 3.6 以后才算得上完善，并且 API 以后可能会发生变化。</p>
+</li>
+<li>
+<p>读取文件时多一道将 <code>Path</code> 对象转换成字符串的步骤。</p>
+</li>
+</ul>
+<h2 id="小结">小结</h2>
+<p>以上记录了最常用的功能。回到本文开头的问题，我觉得 Windows 平台下可以选择下面的方案</p>
+<ul>
+<li>
+<p><code>os</code> + <code>os.path</code>，路径分隔符全部采用反斜杠。</p>
+</li>
+<li>
+<p><code>pathlib</code>，路径分隔符全部采用正斜杠。</p>
+</li>
+</ul>
+<p>到底选哪种，以后慢慢实践就知道了。</p>
+<h2 id="参考资料">参考资料</h2>
+<p><a href="https://unix.stackexchange.com/questions/131561/what-is-the-difference-between-path-and-directory" target="_blank">What is the difference between path and directory?</a></p>
+<p><a href="https://www.zhihu.com/question/19970412/answer/15479052" target="_blank">Windows 的路径中表示文件层级为什么会用反斜杠，而 UNIX 系统都用斜杠？</a></p>
+<p><a href="https://stackoverflow.com/questions/980255/should-a-directory-path-variable-end-with-a-trailing-slash" target="_blank">Should a directory path variable end with a trailing slash?</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/150835193" target="_blank">Python os 模块详解</a></p>
+<p><a href="https://stackoverflow.com/questions/6773584/how-is-pythons-glob-glob-ordered" target="_blank">How is Pythons glob.glob ordered?</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/87940289" target="_blank">你应该使用pathlib替代os.path</a></p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#基础知识">基础知识</a></li>
+    <li><a href="#os">os</a></li>
+    <li><a href="#shutil">shutil</a></li>
+    <li><a href="#glob">glob</a></li>
+    <li><a href="#ospath">os.path</a></li>
+    <li><a href="#pathlib">pathlib</a></li>
+    <li><a href="#小结">小结</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#基础知识">基础知识</a></li>
+    <li><a href="#os">os</a></li>
+    <li><a href="#shutil">shutil</a></li>
+    <li><a href="#glob">glob</a></li>
+    <li><a href="#ospath">os.path</a></li>
+    <li><a href="#pathlib">pathlib</a></li>
+    <li><a href="#小结">小结</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2021-2021
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

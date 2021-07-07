@@ -21,7 +21,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<title>matplotlib - 炸鸡人博客</title>
+<title>python - 炸鸡人博客</title>
 
 
 <meta name="author" content="炸鸡人" />
@@ -30,14 +30,14 @@
 <meta name="description" content="A minimal Hugo theme with nice theme color." />
 
 
-<link rel="alternate" type="application/rss+xml" href="https://zhajiman.github.io/tags/matplotlib/index.xml" title="炸鸡人博客" />
+<link rel="alternate" type="application/rss+xml" href="https://zhajiman.github.io/tags/python/index.xml" title="炸鸡人博客" />
 
-<meta property="og:title" content="matplotlib" />
-<meta name="twitter:title" content="matplotlib" />
+<meta property="og:title" content="python" />
+<meta name="twitter:title" content="python" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://zhajiman.github.io/tags/matplotlib/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta property="og:url" content="https://zhajiman.github.io/tags/python/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-07-05T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-03-26T00:00:00+00:00" />
 
 
 <style>
@@ -102,36 +102,33 @@
                 
 
 <div class="page-info">
-  <span>Posts with the tag matplotlib: </span>
+  <span>Posts with the tag python: </span>
 </div>
 
 
 
 <div class="post">
   <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/matplotlib_colormap/">Matplotlib 系列：colormap 的设置</a>
+    <a href="https://zhajiman.github.io/post/python_path/">Python 中操作文件和目录的路径</a>
   </h2>
   <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-05</span>
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-26</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4735 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4400 words</span>
 
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
 
   </div>
   <div class="post-item post-summary markdown-body">
-    <h2 id="0-前言">0. 前言</h2>
-<p>所谓 colormap（颜色表），就是将一系列颜色按给定的顺序排列在一起。其用处是，我们可以通过某种映射关系，将一系列数值映射到一张 colormap 上去，使不同大小的数值对应不同的颜色。这样一来，在绘制填色图时便能直观地用颜色来反映数值的分布。</p>
-<p>在 Matplotlib 中，数值到颜色的映射关系可以用下面这张图来表示</p>
-<p><img class="img-zoomable" src="/matplotlib_colormap/value_color_mapping.png" alt="value_color_mapping.png" />
-</p>
-<p>图中分为前后两部分</p>
-<ul>
-<li>首先将数组的数值归一化（Normalization）到浮点型的 [0.0, 1.0] 范围或整型的 [0, N - 1] 范围上去。</li>
-<li>再把归一化的数据输入给 colormap，输出数组数值对应的颜色（RGBA 值）。</li>
-</ul>
-<p>第二部分的映射关系基本上是固定不变的，但第一部分的映射关系可以通过 Matplotlib 的许多类来加以改变，进而实现对数色标、对称色标、离散色标等一系列可视化效果。</p>
-<p>本文将会依次介绍 <code>Colormap</code> 类、归一化会用到的类，以及实际应用的例子。</p>
+    <h2 id="前言">前言</h2>
+<p>之前在 Linux 上用 Python 处理系统的文件和目录时，我都是简单粗暴地用 <code>os.system</code> 函数直接执行 shell 命令来实现的。例如新建一个目录并把文件移动进去，我会这么写</p>
+<pre><code class="language-Python">dirpath = './result'
+filepath = './data.txt'
+os.system(f'mkdir {dirpath}')
+os.system(f'mv {filepath} {dirpath}')
+</code></pre>
+<p>即把 shell 命令硬编码到程序中。但最近在 Windows 上运行老程序时，因为 <code>os.system</code> 默认调用 CMD，所以这种写法的老代码全部木大。</p>
+<p>其实借助 Python 标准库中用于系统交互和路径处理的模块，就能尽可能降低代码对平台的依赖，并且模块中也提供有许多方便的函数。本文会记录那些最常用的功能。</p>
   </div>
 </div>
 
