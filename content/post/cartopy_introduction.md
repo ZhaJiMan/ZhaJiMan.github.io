@@ -415,9 +415,9 @@ def set_map_ticks(ax, dx=60, dy=30, nx=0, ny=0, labelsize='medium'):
     -------
     None
     '''
-    proj = ax.projection
-    if not isinstance(proj, ccrs.PlateCarree):
+    if not isinstance(ax.projection, ccrs.PlateCarree):
         raise ValueError('Projection of ax should be PlateCarree!')
+    proj = ccrs.PlateCarree()   # 专门给ticks用的crs.
 
     # 设置x轴.
     major_xticks = np.arange(-180, 180 + 0.9 * dx, dx)
@@ -471,7 +471,7 @@ if __name__ == '__main__':
     # 画出相对湿度的填色图.
     im = ax.contourf(
         ds.longitude, ds.latitude, ds.r,
-        levels=np.linspace(0, 100, 11), cmap='rainbow',
+        levels=np.linspace(0, 100, 11), cmap='RdYlBu_r',
         extend='both', alpha=0.8
     )
     cbar = fig.colorbar(
