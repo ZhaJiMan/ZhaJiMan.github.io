@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>numpy on 炸鸡人博客</title>
+    <link>https://zhajiman.github.io/tags/numpy/</link>
+    <description>Recent content in numpy on 炸鸡人博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 13 Jul 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/numpy/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NumPy 系列：缺测值处理</title>
+      <link>https://zhajiman.github.io/post/numpy_missing_value/</link>
+      <pubDate>Mon, 13 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/numpy_missing_value/</guid>
+      <description>&lt;p&gt;现实中观测的数据或多或少会有缺失的部分，通常称为缺测值（missing value）。NumPy 因为设计上的问题，不能像 R 和 NCL 那样原生支持缺测类型，而是有两种处理缺测的实现：NaN 和 masked array。下面便来依次介绍它们。代码基于 NumPy 1.20.1。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
