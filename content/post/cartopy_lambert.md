@@ -5,6 +5,7 @@ showToc: true
 tags:
 - cartopy
 ---
+
 ## 前言
 
 Cartopy 中的 Plate Carrée 投影使用方便，但在展示中国地图时会使中国的形状显得很瘪，与之相比，Lambert 投影的效果会更加美观，下图显示了两种投影的差异

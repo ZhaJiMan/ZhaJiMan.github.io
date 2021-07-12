@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/post/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-07-05T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-07-10T00:00:00+00:00" />
 
 
 <style>
@@ -105,12 +105,30 @@
 
 <div class="post">
     <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/matplotlib_colorbar/">Matplotlib 系列：colorbar 的设置</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-10</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4204 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <h2 id="0-前言">0. 前言</h2>
+<p>承接 <a href="https://zhajiman.github.io/post/matplotlib_colormap/" target="_blank">Matplotlib 系列：colormap 的设置</a> 一文，这次介绍 colorbar。所谓 colorbar 即主图旁一个长条状的小图，能够辅助表示主图中 colormap 的颜色组成和颜色与数值的对应关系。本文将会依次介绍 colorbar 的基本用法、如何设置刻度，以及怎么为组图添加 colorbar。代码基于 Matplotlib 3.3.4。</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
         <a href="https://zhajiman.github.io/post/matplotlib_colormap/">Matplotlib 系列：colormap 的设置</a>
     </h2>
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-05</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4735 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4749 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -127,7 +145,7 @@
 <li>再把归一化的数据输入给 colormap，输出数组数值对应的颜色（RGBA 值）。</li>
 </ul>
 <p>第二部分的映射关系基本上是固定不变的，但第一部分的映射关系可以通过 Matplotlib 的许多类来加以改变，进而实现对数色标、对称色标、离散色标等一系列可视化效果。</p>
-<p>本文将会依次介绍 <code>Colormap</code> 类、归一化会用到的类，以及实际应用的例子。</p>
+<p>本文将会依次介绍 <code>Colormap</code> 类、归一化会用到的类，以及实际应用的例子。代码基于 Matplotlib 3.3.4。</p>
     </div>
 </div>
 
@@ -145,6 +163,29 @@
     </div>
     <div class="post-item post-summary markdown-body">
         <p>本博客之前是用软件 <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> 制作的，这是个静态博客写作客户端，可以作为 Markdown 编辑器，同时简单设置下就能一键生成静态页面并上传到网上，非常适合我这种电脑小白使用。不过前段时间发现怎么都没法上传本地写好的内容，于是决定重新用现在流行的 Hugo 来搭建博客。本文使用的是 0.84.4 版本的 Hugo 和 2.32.0 版本的 Git。</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/matplotlib_dpi/">Matplotlib 系列：导出高 DPI 的图片</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-04-08</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2809 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <h2 id="前言">前言</h2>
+<p>昨天一同学问我怎么把已经画好的图片的 DPI 改到 300，以满足期刊对图片清晰度的要求。上网搜索一番后才发现，虽然我经常在 Matplotlib 中用 <code>dpi</code> 参数来调节图片清晰度，但实际上我对这个概念半懂不懂。这次借这个契机调研和总结一下相关的知识。本文将会依次介绍</p>
+<ul>
+<li>分辨率和 DPI 是什么。</li>
+<li>DPI 和清晰度的关系。</li>
+<li>如何导出期刊要求的高 DPI 图片。</li>
+</ul>
     </div>
 </div>
 
@@ -213,6 +254,23 @@ os.system(f'mv {filepath} {dirpath}')
 </p>
 <p>此前 Python 最常用的地图包是 Basemap，然而它将于 2020 年被弃用，官方推荐使用 Cartopy 包作为替代。Cartopy 是英国气象局开发的地图绘图包，实现了 Basemap 的大部分功能，还可以通过 Matplotlib 的 API 实现丰富的自定义效果。</p>
 <p>本文将会从一个 NCL 转 Python 的入门者的角度，介绍如何安装 Cartopy，如何绘制地图，并实现一些常用的效果。代码基于 0.18.0 版本的 Cartopy。</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/solid_angle/">立体角简介</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2019-10-27</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1417 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/radiation">radiation</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <p>这里简单介绍一下立体角的概念。</p>
     </div>
 </div>
 
@@ -303,6 +361,10 @@ os.system(f'mv {filepath} {dirpath}')
                 <a href="/tags/python/">python</a>
             </span>
             
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
         </div>
     </div>
     
@@ -391,6 +453,10 @@ os.system(f'mv {filepath} {dirpath}')
                 <a href="/tags/python/">python</a>
             </span>
             
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
         </div>
     </div>
     
@@ -410,7 +476,7 @@ os.system(f'mv {filepath} {dirpath}')
     <div class="container-lg clearfix">
         <div class="col-12 footer">
             
-            <span>&copy; 2021-2021
+            <span>&copy; 2020-2021
                 <a href="https://zhajiman.github.io/">炸鸡人</a>
                  | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
                 | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"

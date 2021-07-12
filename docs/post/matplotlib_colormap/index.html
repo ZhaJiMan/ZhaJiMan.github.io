@@ -47,7 +47,7 @@
 再把归一化的数据输入给 colormap，输出数组数值对应的颜色（RGBA 值）。
 
 第二部分的映射关系基本上是固定不变的，但第一部分的映射关系可以通过 Matplotlib 的许多类来加以改变，进而实现对数色标、对称色标、离散色标等一系列可视化效果。
-本文将会依次介绍 Colormap 类、归一化会用到的类，以及实际应用的例子。" />
+本文将会依次介绍 Colormap 类、归一化会用到的类，以及实际应用的例子。代码基于 Matplotlib 3.3.4。" />
 <meta name="twitter:description" content="0. 前言
 所谓 colormap（颜色表），就是将一系列颜色按给定的顺序排列在一起。其用处是，我们可以通过某种映射关系，将一系列数值映射到一张 colormap 上去，使不同大小的数值对应不同的颜色。这样一来，在绘制填色图时便能直观地用颜色来反映数值的分布。
 在 Matplotlib 中，数值到颜色的映射关系可以用下面这张图来表示
@@ -59,7 +59,7 @@
 再把归一化的数据输入给 colormap，输出数组数值对应的颜色（RGBA 值）。
 
 第二部分的映射关系基本上是固定不变的，但第一部分的映射关系可以通过 Matplotlib 的许多类来加以改变，进而实现对数色标、对称色标、离散色标等一系列可视化效果。
-本文将会依次介绍 Colormap 类、归一化会用到的类，以及实际应用的例子。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+本文将会依次介绍 Colormap 类、归一化会用到的类，以及实际应用的例子。代码基于 Matplotlib 3.3.4。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-07-05T00:00:00+00:00" /><meta property="article:modified_time" content="2021-07-05T00:00:00+00:00" />
 
@@ -132,7 +132,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-05</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4735 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4749 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -150,7 +150,7 @@
 <li>再把归一化的数据输入给 colormap，输出数组数值对应的颜色（RGBA 值）。</li>
 </ul>
 <p>第二部分的映射关系基本上是固定不变的，但第一部分的映射关系可以通过 Matplotlib 的许多类来加以改变，进而实现对数色标、对称色标、离散色标等一系列可视化效果。</p>
-<p>本文将会依次介绍 <code>Colormap</code> 类、归一化会用到的类，以及实际应用的例子。</p>
+<p>本文将会依次介绍 <code>Colormap</code> 类、归一化会用到的类，以及实际应用的例子。代码基于 Matplotlib 3.3.4。</p>
 <h2 id="1-colormap">1. Colormap</h2>
 <p>很容易想到，一系列颜色可以用 N * 4 大小的 RGBA 数组表示。但是 matplotlib 中的 colormap 并非简单的数组，而是专门用一个 <code>Colormap</code> 类实现的，有着更加方便的重采样功能。内置的所有 colormap 存放在 <code>matplotlib.cm</code> 模块下，它们的名字在官网的 <a href="https://matplotlib.org/3.3.3/tutorials/colors/colormaps.html#sphx-glr-tutorials-colors-colormaps-py" target="_blank">Choosing Colormaps in Matplotlib</a> 页面中可以找到。</p>
 <p><code>Colormap</code> 有两个子类：<code>ListedColormap</code> 和 <code>LinearSegmentedColormap</code>，它们被存放在 <code>matplotlib.colors</code> 模块下。下面来分别介绍它们。</p>
@@ -245,7 +245,7 @@ nbin &amp;\text{if} \quad x \ge boundaries[-1]
 \end{cases}
 $$
 可以看到，落入框中的 x 会被映射到 [0, nbin - 1] 上，而没有落入框中的 x 会映射为 -1 或 nbin。</p>
-<p>当 ncolors &gt; nbin 时，落入框中的 x 会被映射到 [0, ncolors - 1] 上。我觉得这种情况下的映射关系不是很直观，所以公式就不列了，平时我也会尽量避开这种情况。此外 <code>BoundaryNorm</code> 还有个 <code>extend</code> 参数，也会使映射关系复杂化，建议不要去设置它。下面举个例子</p>
+<p>当 ncolors &gt; nbin 时，落入框中的 x 会被映射到 [0, ncolors - 1] 上。我觉得这种情况下的映射关系不是很直观，所以公式就不列了，平时我会先把 colormap 取样到只有 nbin 个颜色。此外 <code>BoundaryNorm</code> 还有个 <code>extend</code> 参数，也会使映射关系复杂化，建议不要去设置它。下面举个例子</p>
 <p><img class="img-zoomable" src="/matplotlib_colormap/BoundaryNorm.png" alt="BoundaryNorm" />
 </p>
 <h3 id="24-centerednorm">2.4 CenteredNorm</h3>
@@ -521,6 +521,10 @@ plt.show()
                 <a href="/tags/python/">python</a>
             </span>
             
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
         </div>
     </div>
     <div class="sidebar-item sidebar-toc">
@@ -639,6 +643,10 @@ plt.show()
                 <a href="/tags/python/">python</a>
             </span>
             
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
         </div>
     </div>
     
@@ -689,7 +697,7 @@ plt.show()
     <div class="container-lg clearfix">
         <div class="col-12 footer">
             
-            <span>&copy; 2021-2021
+            <span>&copy; 2020-2021
                 <a href="https://zhajiman.github.io/">炸鸡人</a>
                  | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
                 | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"

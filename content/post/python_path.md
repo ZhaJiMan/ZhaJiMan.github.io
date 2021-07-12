@@ -5,6 +5,7 @@ showToc: true
 tags:
 - python
 ---
+
 ## 前言
 
 之前在 Linux 上用 Python 处理系统的文件和目录时，我都是简单粗暴地用 `os.system` 函数直接执行 shell 命令来实现的。例如新建一个目录并把文件移动进去，我会这么写

@@ -8,7 +8,7 @@ tags:
 
 ## 0. 前言
 
-承接 [Matplotlib 系列：colormap 的设置](https://zhajiman.github.io/post/matplotlib_colormap/) 一文，这次介绍 colorbar。所谓 colorbar 即主图旁一个长条状的小图，能够辅助表示主图中 colormap 的颜色组成和颜色与数值的对应关系。本文将会依次介绍 colorbar 的基本用法、如何设置刻度，以及怎么为组图添加 colorbar。本文基于 Matplotlib 3.3.4。
+承接 [Matplotlib 系列：colormap 的设置](https://zhajiman.github.io/post/matplotlib_colormap/) 一文，这次介绍 colorbar。所谓 colorbar 即主图旁一个长条状的小图，能够辅助表示主图中 colormap 的颜色组成和颜色与数值的对应关系。本文将会依次介绍 colorbar 的基本用法、如何设置刻度，以及怎么为组图添加 colorbar。代码基于 Matplotlib 3.3.4。
 
 <!--more-->
 
