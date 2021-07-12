@@ -22,7 +22,7 @@ tags:
 
 第二部分的映射关系基本上是固定不变的，但第一部分的映射关系可以通过 Matplotlib 的许多类来加以改变，进而实现对数色标、对称色标、离散色标等一系列可视化效果。
 
-本文将会依次介绍 `Colormap` 类、归一化会用到的类，以及实际应用的例子。
+本文将会依次介绍 `Colormap` 类、归一化会用到的类，以及实际应用的例子。本文基于 Matplotlib 3.3.4。
 
 <!--more-->
 
@@ -169,7 +169,7 @@ nbin &\text{if} \quad x \ge boundaries[-1]
 $$
 可以看到，落入框中的 x 会被映射到 [0, nbin - 1] 上，而没有落入框中的 x 会映射为 -1 或 nbin。
 
-当 ncolors > nbin 时，落入框中的 x 会被映射到 [0, ncolors - 1] 上。我觉得这种情况下的映射关系不是很直观，所以公式就不列了，平时我也会尽量避开这种情况。此外 `BoundaryNorm` 还有个 `extend` 参数，也会使映射关系复杂化，建议不要去设置它。下面举个例子
+当 ncolors > nbin 时，落入框中的 x 会被映射到 [0, ncolors - 1] 上。我觉得这种情况下的映射关系不是很直观，所以公式就不列了，平时我会先把 colormap 取样到只有 nbin 个颜色。此外 `BoundaryNorm` 还有个 `extend` 参数，也会使映射关系复杂化，建议不要去设置它。下面举个例子
 
 ![BoundaryNorm](/matplotlib_colormap/BoundaryNorm.png)
 

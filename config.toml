@@ -63,7 +63,7 @@ paginate = 10
   showToc = true
 
   # Copyright
-  copyrightStartYear = "2021"
+  copyrightStartYear = "2020"
 
   # Open Graph & Twitter Card variables
   # You can also set description and images in post front matter individually
