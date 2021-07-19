@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>图像处理 on 炸鸡人博客</title>
+    <link>https://zhajiman.github.io/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/</link>
+    <description>Recent content in 图像处理 on 炸鸡人博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 19 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>二值图像的连通域标记</title>
+      <link>https://zhajiman.github.io/post/connected_component_labelling/</link>
+      <pubDate>Mon, 19 Jul 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/connected_component_labelling/</guid>
+      <description>&lt;h2 id=&#34;简介&#34;&gt;简介&lt;/h2&gt;
+&lt;p&gt;连通域标记（connected component labelling）即找出二值图像中互相独立的各个连通域并加以标记，如下图所示（引自 &lt;a href=&#34;https://gist.github.com/MarcWang/5f346375246e1cdb88dbe745b840cfaa&#34; target=&#34;_blank&#34;&gt;MarcWang 的 Gist&lt;/a&gt;）&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/connected_component_labelling/diagram.jpg&#34; alt=&#34;diagram&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;可以看到图中有三个独立的区域，我们希望找到并用数字标记它们，以便于计算各个区域的轮廓、外接形状、质心等参数。连通域标记最基本的两个算法是 Seed-Filling 算法和 Two-Pass 算法，下面便来分别介绍它们，并用 Python 加以实现。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
