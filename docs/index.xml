@@ -60,6 +60,15 @@
     </item>
     
     <item>
+      <title>地球上两点之间的距离（改）</title>
+      <link>https://zhajiman.github.io/post/distance_on_earth/</link>
+      <pubDate>Sat, 05 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/distance_on_earth/</guid>
+      <description>&lt;p&gt;最近又碰到了给出地球上两点的经纬度，然后计算它们之间距离的问题。之前曾经通过查维基写过简单的博文，不过现在实践时发现博文里问题较多，故重撰如下。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Matplotlib 系列：导出高 DPI 的图片</title>
       <link>https://zhajiman.github.io/post/matplotlib_dpi/</link>
       <pubDate>Thu, 08 Apr 2021 00:00:00 +0000</pubDate>
