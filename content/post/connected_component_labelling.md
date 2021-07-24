@@ -231,11 +231,11 @@ def two_pass(image, connectivity=4):
 
 以一个随机生成的 50*50 的二值数组为例，测试 `scipy.ndimage.label`、Two-Pass 实现和 Seed-Filling 实现的效果，采用 8 邻域连通，效果如下图
 
-![random](/connected_component_labelling/random.png)
+![random](/connected_component_labelling/result_random.png)
 
 可以看到三种方法都找出了 17 个连通域，并且连标签顺序都一模一样（填色相同）。不过若 Two-Pass 法中的并查集采用其它合并策略，标签顺序就很可能发生变化。下面再以一个更复杂的 800*800 大小的空露露图片为例
 
-![image](/connected_component_labelling/image.png)
+![image](/connected_component_labelling/result_image.png)
 
 将图片二值化后再进行连通域标记，可以看到おつるる的字样被区分成多个区域，猫猫和露露也都被识别了出来。代码如下
 

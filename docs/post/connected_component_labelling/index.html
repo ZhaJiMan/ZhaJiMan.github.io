@@ -330,10 +330,10 @@ def two_pass(image, connectivity=4):
 <p>实际应用中推荐使用 <code>scipy.ndimage.label</code> 或 <code>skimage.measure.label</code> 函数，因为它们底层都是用 Cython 实现的，所以速度秒杀前面的手工实现。如果懂 OpenCV 的话，还可以调用 <code>cv2.connectedComponents</code> 函数。我完全不懂 OpenCV，就不介绍了。</p>
 <h2 id="例子">例子</h2>
 <p>以一个随机生成的 50*50 的二值数组为例，测试 <code>scipy.ndimage.label</code>、Two-Pass 实现和 Seed-Filling 实现的效果，采用 8 邻域连通，效果如下图</p>
-<p><img class="img-zoomable" src="/connected_component_labelling/random.png" alt="random" />
+<p><img class="img-zoomable" src="/connected_component_labelling/result_random.png" alt="random" />
 </p>
 <p>可以看到三种方法都找出了 17 个连通域，并且连标签顺序都一模一样（填色相同）。不过若 Two-Pass 法中的并查集采用其它合并策略，标签顺序就很可能发生变化。下面再以一个更复杂的 800*800 大小的空露露图片为例</p>
-<p><img class="img-zoomable" src="/connected_component_labelling/image.png" alt="image" />
+<p><img class="img-zoomable" src="/connected_component_labelling/result_image.png" alt="image" />
 </p>
 <p>将图片二值化后再进行连通域标记，可以看到おつるる的字样被区分成多个区域，猫猫和露露也都被识别了出来。代码如下</p>
 <pre><code class="language-python">import numpy as np
