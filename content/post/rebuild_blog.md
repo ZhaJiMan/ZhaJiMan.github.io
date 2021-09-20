@@ -50,7 +50,7 @@ git init
 git submodule add https://github.com/WingLim/hugo-tania themes/hugo-tania
 ```
 
-然后主题就会下载到 `themes` 目录中。一般主题的目录里都会含有一个 `exampleSite` 目录，顾名思义这是作者做好的示例网站，直接把里面的内容复制到网站根目录下，就能完成该主题最基本的配置，并实现示例网站的效果。之后修改根目录下的 `config.tomal` 文件来自定义配置。
+然后主题就会下载到 `themes` 目录中。一般主题的目录里都会含有一个 `exampleSite` 目录，顾名思义这是作者做好的示例网站，直接把里面的内容复制到网站根目录下，就能完成该主题最基本的配置，并实现示例网站的效果。之后修改根目录下的 `config.toml` 文件来自定义配置。
 
 ### 创建文章
 
@@ -137,7 +137,7 @@ git push -u origin main
 
 ### 插入图片
 
-以名为 `capslock.jpg` 的图片为例，将该图片放入 `static` 目录下，再在 Markdown 文件中以 `/capslock.jpg` 的路径引用即可。路径这所以写成这个形式，是因为 Hugo 会自动在图片路径前追加 `static` 的路径。为了区分开不同文章的用图，还可以在 `static` 下新建子目录，例如下面的写法
+以名为 `capslock.jpg` 的图片为例，将该图片放入 `static` 目录下，再在 Markdown 文件中以 `/capslock.jpg` 的路径引用即可。路径之所以写成这个形式，是因为 Hugo 会自动在图片路径前追加 `static` 的路径。为了区分开不同文章的用图，还可以在 `static` 下新建子目录，例如下面的写法
 
 ```markdown
 ![capslock](/rebuild_blog/capslock.jpg)
