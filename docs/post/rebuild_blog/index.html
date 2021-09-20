@@ -141,7 +141,7 @@
 <pre><code class="language-bash">git init
 git submodule add https://github.com/WingLim/hugo-tania themes/hugo-tania
 </code></pre>
-<p>然后主题就会下载到 <code>themes</code> 目录中。一般主题的目录里都会含有一个 <code>exampleSite</code> 目录，顾名思义这是作者做好的示例网站，直接把里面的内容复制到网站根目录下，就能完成该主题最基本的配置，并实现示例网站的效果。之后修改根目录下的 <code>config.tomal</code> 文件来自定义配置。</p>
+<p>然后主题就会下载到 <code>themes</code> 目录中。一般主题的目录里都会含有一个 <code>exampleSite</code> 目录，顾名思义这是作者做好的示例网站，直接把里面的内容复制到网站根目录下，就能完成该主题最基本的配置，并实现示例网站的效果。之后修改根目录下的 <code>config.toml</code> 文件来自定义配置。</p>
 <h3 id="创建文章">创建文章</h3>
 <p>Hugo 中的文章都以 Markdown 格式写作。在 <code>content/post</code> 目录下新建一个 Markdown 文件</p>
 <pre><code class="language-bash">hugo new post/rebuild_blog.md
@@ -196,7 +196,7 @@ git push -u origin main
 </ul>
 <h2 id="其它功能">其它功能</h2>
 <h3 id="插入图片">插入图片</h3>
-<p>以名为 <code>capslock.jpg</code> 的图片为例，将该图片放入 <code>static</code> 目录下，再在 Markdown 文件中以 <code>/capslock.jpg</code> 的路径引用即可。路径这所以写成这个形式，是因为 Hugo 会自动在图片路径前追加 <code>static</code> 的路径。为了区分开不同文章的用图，还可以在 <code>static</code> 下新建子目录，例如下面的写法</p>
+<p>以名为 <code>capslock.jpg</code> 的图片为例，将该图片放入 <code>static</code> 目录下，再在 Markdown 文件中以 <code>/capslock.jpg</code> 的路径引用即可。路径之所以写成这个形式，是因为 Hugo 会自动在图片路径前追加 <code>static</code> 的路径。为了区分开不同文章的用图，还可以在 <code>static</code> 下新建子目录，例如下面的写法</p>
 <pre><code class="language-markdown">![capslock](/rebuild_blog/capslock.jpg)
 </code></pre>
 <p><img class="img-zoomable" src="/rebuild_blog/capslock.jpg" alt="capslock" />
@@ -355,6 +355,10 @@ $$</p>
             </span>
             
             <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
                 <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
             </span>
             
@@ -481,6 +485,10 @@ $$</p>
             
             <span>
                 <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
             </span>
             
             <span>

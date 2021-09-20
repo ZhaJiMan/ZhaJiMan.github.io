@@ -21,7 +21,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<title>炸 鸡 人 - 炸鸡人博客</title>
+<title>简单的 vim 配置 - 炸鸡人博客</title>
 
 
 <meta name="author" content="炸鸡人" />
@@ -30,18 +30,16 @@
 <meta name="description" content="A minimal Hugo theme with nice theme color." />
 
 
-<meta name="keywords" content="nonsense" />
+<meta name="keywords" content="vim" />
 
 
-<meta property="og:title" content="炸 鸡 人" />
-<meta name="twitter:title" content="炸 鸡 人" />
+<meta property="og:title" content="简单的 vim 配置" />
+<meta name="twitter:title" content="简单的 vim 配置" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://zhajiman.github.io/post/fried_chicken_man/" /><meta property="og:description" content="
-" />
-<meta name="twitter:description" content="
-" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta property="og:url" content="https://zhajiman.github.io/post/vim_config/" /><meta property="og:description" content="最近越发老年痴呆，连自己写的 vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。因为我工作在内网服务器上，所以也不涉及联网部分（例如 vim-plug 插件）。文中 vim 版本是 7.4。" />
+<meta name="twitter:description" content="最近越发老年痴呆，连自己写的 vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。因为我工作在内网服务器上，所以也不涉及联网部分（例如 vim-plug 插件）。文中 vim 版本是 7.4。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2019-08-22T00:00:00+00:00" /><meta property="article:modified_time" content="2019-08-22T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-09-20T00:00:00+00:00" /><meta property="article:modified_time" content="2021-09-20T00:00:00+00:00" />
 
 
 <style>
@@ -107,31 +105,131 @@
 <article>
     
     <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/fried_chicken_man/">炸 鸡 人</a>
+        <a href="https://zhajiman.github.io/post/vim_config/">简单的 vim 配置</a>
     </h2>
     <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2019-08-22</span>
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-09-20</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;90 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1297 words</span>
 
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/nonsense">nonsense</a>&nbsp;</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/vim">vim</a>&nbsp;</span>
 
     </div>
     
     <div class="post-content markdown-body">
-        <p><img class="img-zoomable" src="/fried_chicken_man/devil_man.png" alt="devil_man" />
-</p>
-<p>那是谁 是谁 是谁</p>
-<p>那是炸鸡 炸鸡人 炸鸡人</p>
-<p>背负着快餐的名义</p>
-<p>舍弃了一切去战斗的男人</p>
-<p>炸鸡之腿是手枪腿</p>
-<p>炸鸡之块是原味鸡</p>
-<p>炸鸡之翼是麦辣翅</p>
-<p>炸鸡的特点是外脆里嫩</p>
-<p>将炸鸡之力 集于一身</p>
-<p>美味的英雄</p>
-<p>炸鸡人 炸鸡人</p>
+        <p>最近越发老年痴呆，连自己写的 vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。因为我工作在内网服务器上，所以也不涉及联网部分（例如 <a href="https://github.com/junegunn/vim-plug" target="_blank">vim-plug</a> 插件）。文中 vim 版本是 7.4。</p>
+<h2 id="具体配置">具体配置</h2>
+<p>首先关闭对 vi 的兼容，并保证退格键能正常使用</p>
+<pre><code>&quot; 关闭对vi的兼容
+set nocompatible
+&quot; 设置backspace键功能
+set backspace=eol,start,indent
+</code></pre>
+<p>设置行的显示</p>
+<pre><code>&quot; 显示行号
+set number
+&quot; 高亮显示当前行
+set cursorline
+&quot; 让一行的内容不换行
+set nowrap
+&quot; 距窗口边缘还有多少行时滚动窗口
+set scrolloff=3
+
+&quot; 显示标尺,提示一行代码不要超过80个字符
+set ruler
+set colorcolumn=80
+</code></pre>
+<p>设置缩进。Vim 默认使用宽度为 8 的 tab，而我一般写 Python，需要用 4 个空格替代 tab。这里参考 <a href="http://www.vex.net/~x/python_and_vim.html" target="_blank">Useful VIM Settings for working with Python</a> 的设置。关于这些选项的意义可以参考 vim 的帮助文档或 <a href="https://tedlogan.com/techblog3.html" target="_blank">Secrets of tabs in vim</a></p>
+<pre><code>&quot; tab设为4个空格
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+set smarttab
+&quot; 新一行与上一行的缩进一致
+set autoindent
+</code></pre>
+<p>显示相匹配的括号，并增强搜索功能。搜索产生的高亮可以通过 <code>:nohlsearch</code> 命令消除掉。</p>
+<pre><code>&quot; 显示括号匹配
+set showmatch
+&quot; 高亮查找匹配
+set hlsearch
+&quot; 增量式搜索
+set incsearch
+&quot; 不区分大小写,除非含有大写字母
+set ignorecase
+set smartcase
+</code></pre>
+<p>开启语法高亮并设置配色。这里使用的是 <a href="https://github.com/joshdick/onedark.vim" target="_blank">onedark</a> 配色方案</p>
+<pre><code>&quot; 开启语法高亮
+syntax on
+&quot; 代码颜色主题
+set t_Co=256
+colorscheme onedark
+</code></pre>
+<p>增强命令部分的显示和补全，并开启状态栏（状态栏可以用 <a href="https://github.com/vim-airline/vim-airline" target="_blank">vim-airline</a> 插件替代）</p>
+<pre><code>&quot; 在右下角显示部分命令
+set showcmd
+&quot; 命令可以用tab补全,并设置匹配规则
+set wildmenu
+set wildmode=list:longest,full
+&quot; 总是显示状态栏
+set laststatus=2
+</code></pre>
+<p>显示 tab 和行尾多余的字符</p>
+<pre><code>&quot; 显示tab和行尾多余的空格
+set list
+set listchars=tab:&gt;·,trail:·
+</code></pre>
+<p>Vim 中通过 <code>:vsp file</code> 命令在水平方向上打开一个新文件，<code>:sp file</code> 则是垂直方向。但它们默认打开的位置分别是左边和上边，这里按我的习惯改成在右边和下边打开。另外在分屏间移动光标的命令是 <code>&lt;C-w&gt; + hjkl</code>，移动分屏的命令是 <code>&lt;C-w&gt; + HJKL</code>，<code>&lt;C-w&gt;</code> 需要我使劲扭曲左手才能按到，非常费劲，故这里用轻松好按的 <code>&lt;space&gt;</code> 代替</p>
+<pre><code>&quot; 设置分屏时的位置
+set splitright
+set splitbelow
+&quot; 设置在分屏间移动的快捷键
+map &lt;space&gt;h &lt;C-w&gt;h
+map &lt;space&gt;l &lt;C-w&gt;l
+map &lt;space&gt;j &lt;C-w&gt;j
+map &lt;space&gt;k &lt;C-w&gt;k
+&quot; 设置移动分屏的快捷键
+map &lt;space&gt;H &lt;C-w&gt;H
+map &lt;space&gt;L &lt;C-w&gt;L
+map &lt;space&gt;J &lt;C-w&gt;J
+map &lt;space&gt;K &lt;C-w&gt;K
+</code></pre>
+<p>检测文件类型、设置 vim 内部的字符编码为 utf-8，对文件的解码参考 <a href="https://www.zhihu.com/question/22363620" target="_blank">用vim打开后中文乱码怎么办？</a> 中马宏菩的回答，防止中文出现乱码</p>
+<pre><code>&quot; 检测文件类型
+filetype on
+&quot; 文件编码
+set encoding=utf-8
+set fileencodings=ucs-bom,utf-8,utf-16,gbk,big5,gb18030,latin1
+&quot; 没有保存或文件只读时弹出确认
+set confirm
+</code></pre>
+<p>设置历史记录条数，并禁用自动备份（理由我忘了……）</p>
+<pre><code>&quot; 记录历史记录的条数
+set history=1000
+set undolevels=1000
+&quot; 禁用自动备份
+set nobackup
+set nowritebackup
+set noswapfile
+</code></pre>
+<p>偶尔要用到 NCL 语言，需要相关的高亮提示，所以在 <a href="https://www.ncl.ucar.edu/Applications/editor.shtml" target="_blank">NCL: Editor enhancements for use with NCL scripts</a> 网址下载 <code>ncl3.vim</code> 文件并重命名为 <code>ncl.vim</code>，把文件放入 <code>~/.vim/syntax</code> 目录中，再修改 <code>.vimrc</code> 的配置。其中还为 <a href="https://github.com/tpope/vim-commentary" target="_blank">vim-commentary</a> 插件设置了 NCL 的注释</p>
+<pre><code>&quot; NCL高亮设置
+au BufRead,BufNewFile *.ncl set filetype=ncl
+au! Syntax newlang source $VIM/ncl.vim
+&quot; NCL注释设置
+autocmd FileType ncl setlocal commentstring=;%s
+</code></pre>
+<p>非联网状态下使用 <a href="">vim-pathogen</a> 插件管理插件目录，在配置里加上这么一句</p>
+<pre><code>&quot; pathogen设置,用于管理插件
+execute pathogen#infect()
+</code></pre>
+<p>我目前用到的配置就以上这些。可以说是很简陋了，连自动补全都没有（我用的默认的 <code>&lt;C-n&gt;</code>），同时因为版本只有 7，也不好整 REPL。不过我觉得作为基本的文本编辑器已经够用了，如果读者有心得也可以传授我一下。</p>
+<h2 id="参考链接">参考链接</h2>
+<p><a href="https://www.ruanyifeng.com/blog/2018/09/vimrc.html" target="_blank">Vim 配置入门</a></p>
+<p><a href="https://www.zhihu.com/question/19989337" target="_blank">有哪些编程必备的 Vim 配置？</a></p>
+<p><a href="https://www.bilibili.com/video/BV164411P7tw" target="_blank">上古神器Vim：从恶言相向到爱不释手 - 终极Vim教程01</a></p>
     </div>
 </article>
 
@@ -256,7 +354,13 @@
             
         </div>
     </div>
-    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#具体配置">具体配置</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav></div>
 </aside>
 
         </div>
@@ -364,6 +468,16 @@
     </div>
     
     
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#具体配置">具体配置</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav>
+    </div>
     
     
   </div>
