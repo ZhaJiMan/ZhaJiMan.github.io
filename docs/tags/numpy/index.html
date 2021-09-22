@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/numpy/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2020-07-13T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-09-21T00:00:00+00:00" />
 
 
 <style>
@@ -106,6 +106,24 @@
 </div>
 
 
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/numpy_random/">Numpy 系列：random 模块的变化</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-09-21</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2912 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/numpy">numpy</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="前言">前言</h2>
+<p>这几天要用 NumPy 生成随机数，所以去查了一下 <code>np.random</code> 模块的官方文档，却惊讶地发现里面介绍的用法跟我的记忆有很大出入：例如以前用 <code>np.random.rand</code> 便能生成 [0, 1) 之间均匀分布的随机数，现在文档里记载的却是面向对象风格的写法（创建随机数生成器再调用方法……）。调查一番后发现原来这一改动发生于 NumPy 1.17 版本（2020 年 1 月），并且网上对此的中文介绍也比较少，所以现撰文简单介绍一下该模块在改动前后的两套用法。</p>
+  </div>
+</div>
 
 <div class="post">
   <h2 class="post-item post-title">

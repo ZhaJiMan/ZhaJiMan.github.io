@@ -6,7 +6,17 @@
     <description>Recent content on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 20 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 21 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Numpy 系列：random 模块的变化</title>
+      <link>https://zhajiman.github.io/post/numpy_random/</link>
+      <pubDate>Tue, 21 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/numpy_random/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;这几天要用 NumPy 生成随机数，所以去查了一下 &lt;code&gt;np.random&lt;/code&gt; 模块的官方文档，却惊讶地发现里面介绍的用法跟我的记忆有很大出入：例如以前用 &lt;code&gt;np.random.rand&lt;/code&gt; 便能生成 [0, 1) 之间均匀分布的随机数，现在文档里记载的却是面向对象风格的写法（创建随机数生成器再调用方法……）。调查一番后发现原来这一改动发生于 NumPy 1.17 版本（2020 年 1 月），并且网上对此的中文介绍也比较少，所以现撰文简单介绍一下该模块在改动前后的两套用法。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>简单的 vim 配置</title>
       <link>https://zhajiman.github.io/post/vim_config/</link>
