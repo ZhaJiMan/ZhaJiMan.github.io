@@ -8,12 +8,12 @@
     <language>en</language>
     <lastBuildDate>Mon, 20 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/vim/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>简单的 vim 配置</title>
+      <title>简单的 Vim 配置</title>
       <link>https://zhajiman.github.io/post/vim_config/</link>
       <pubDate>Mon, 20 Sep 2021 00:00:00 +0000</pubDate>
       
       <guid>https://zhajiman.github.io/post/vim_config/</guid>
-      <description>&lt;p&gt;最近越发老年痴呆，连自己写的 vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。因为我工作在内网服务器上，所以也不涉及联网部分（例如 &lt;a href=&#34;https://github.com/junegunn/vim-plug&#34; target=&#34;_blank&#34;&gt;vim-plug&lt;/a&gt; 插件）。文中 vim 版本是 7.4。&lt;/p&gt;</description>
+      <description>&lt;p&gt;最近越发老年痴呆，连自己写的 Vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。由于我同时工作在能联网的 PC 和内网的服务器上，所以也会分开介绍如何在这两种环境下安装插件。文中 Vim 版本分别是 8.1（PC）和 7.4（服务器）。&lt;/p&gt;</description>
     </item>
     
   </channel>

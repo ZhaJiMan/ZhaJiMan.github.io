@@ -110,7 +110,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-03</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2231 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2267 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/hugo">hugo</a>&nbsp;<a href="/tags/github">github</a>&nbsp;</span>
 
@@ -185,7 +185,7 @@ git push -u origin main
 <li>添加远程仓库。</li>
 <li>把本地内容推送到远程仓库里。</li>
 </ul>
-<p>推送成功后，进入仓库的设置页面，点击侧栏的 Pages，再把 Source 选项改为 main 分支下的 docs 目录，这样 Github Pages 就会根据我们推送上去的 docs 目录里的静态页面来显示网站。这里指定 docs 的好处是还可以把网站的所有文件都备份到仓库里。最后在与仓库同名的网站 <a href="https://zhajiman.github.io/" target="_blank">https://zhajiman.github.io/</a> 上看看自己的博客吧！</p>
+<p>推送成功后，进入仓库的设置页面，点击侧栏的 Pages，再把 Source 选项改为 main 分支下的 docs 目录，这样 Github Pages 就会根据我们推送上去的 docs 目录里的静态页面来显示网站。这里指定 docs 的好处是还可以把网站的所有文件都备份到仓库里（不包含以 submodule 形式添加主题，详见参考链接）。最后在与仓库同名的网站 <a href="https://zhajiman.github.io/" target="_blank">https://zhajiman.github.io/</a> 上看看自己的博客吧！</p>
 <h3 id="工作流">工作流</h3>
 <p>总结一下上面的流程</p>
 <ul>
@@ -203,7 +203,7 @@ git push -u origin main
 </p>
 <p>其实这种隐式的路径在上一节中也频繁出现过。虽然 Hugo 可以解析这种路径，但 Markdown 编辑器不能，所以在编辑器的预览中会看不到图片。</p>
 <h3 id="渲染公式">渲染公式</h3>
-<p>Fuji 主题支持用 KaTex 渲染公式，使用方法为在文章开头或配置文件中添加 <code>math: true</code> 或 <code>katex: true</code>。使用过程中发现，KaTex 不能正常渲染行内公式，参考 KaTex 官网 <a href="https://katex.org/docs/autorender.html" target="_blank">Auto-render Extension</a> 的例子，将 <code>themes/fuji/layouts/partials.math.html</code> 中的 KaTex 调用换成</p>
+<p>Fuji 主题支持用 KaTex 渲染公式，使用方法为在文章开头或配置文件中添加 <code>math: true</code> 或 <code>katex: true</code>。使用过程中发现，KaTex 不能正常渲染行内公式，参考 KaTex 官网 <a href="https://katex.org/docs/autorender.html" target="_blank">Auto-render Extension</a> 的例子，将 <code>themes/fuji/layouts/partials/math.html</code> 中的 KaTex 调用换成</p>
 <pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css&quot; integrity=&quot;sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc&quot; crossorigin=&quot;anonymous&quot;&gt;
 &lt;script defer src=&quot;https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js&quot; integrity=&quot;sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
 &lt;script defer src=&quot;https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js&quot; integrity=&quot;sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl&quot; crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
@@ -244,6 +244,7 @@ $$</p>
 <p><a href="https://zhuanlan.zhihu.com/p/315422417" target="_blank">生物信息基础：实用Git命令，掌握这些就够了</a></p>
 <p><a href="https://blog.csdn.net/qq_38340601/article/details/108900666" target="_blank">hugo 导入图片，两种方式</a></p>
 <p><a href="https://github.com/KaTeX/KaTeX/issues/712" target="_blank">single or double dollar sign as formula delimiter</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/87053283" target="_blank">Git中submodule的使用</a></p>
     </div>
 </article>
 
@@ -581,6 +582,7 @@ $$</p>
         });
     });
 </script>
+
 
 
 

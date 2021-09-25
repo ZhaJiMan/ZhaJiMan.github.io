@@ -122,7 +122,7 @@ git push -u origin main
 - 添加远程仓库。
 - 把本地内容推送到远程仓库里。
 
-推送成功后，进入仓库的设置页面，点击侧栏的 Pages，再把 Source 选项改为 main 分支下的 docs 目录，这样 Github Pages 就会根据我们推送上去的 docs 目录里的静态页面来显示网站。这里指定 docs 的好处是还可以把网站的所有文件都备份到仓库里。最后在与仓库同名的网站 [https://zhajiman.github.io/](https://zhajiman.github.io/) 上看看自己的博客吧！
+推送成功后，进入仓库的设置页面，点击侧栏的 Pages，再把 Source 选项改为 main 分支下的 docs 目录，这样 Github Pages 就会根据我们推送上去的 docs 目录里的静态页面来显示网站。这里指定 docs 的好处是还可以把网站的所有文件都备份到仓库里（不包含以 submodule 形式添加主题，详见参考链接）。最后在与仓库同名的网站 [https://zhajiman.github.io/](https://zhajiman.github.io/) 上看看自己的博客吧！
 
 ### 工作流
 
@@ -149,7 +149,7 @@ git push -u origin main
 
 ### 渲染公式
 
-Fuji 主题支持用 KaTex 渲染公式，使用方法为在文章开头或配置文件中添加 `math: true` 或 `katex: true`。使用过程中发现，KaTex 不能正常渲染行内公式，参考 KaTex 官网 [Auto-render Extension](https://katex.org/docs/autorender.html) 的例子，将 `themes/fuji/layouts/partials.math.html` 中的 KaTex 调用换成
+Fuji 主题支持用 KaTex 渲染公式，使用方法为在文章开头或配置文件中添加 `math: true` 或 `katex: true`。使用过程中发现，KaTex 不能正常渲染行内公式，参考 KaTex 官网 [Auto-render Extension](https://katex.org/docs/autorender.html) 的例子，将 `themes/fuji/layouts/partials/math.html` 中的 KaTex 调用换成
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" integrity="sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc" crossorigin="anonymous">
@@ -211,3 +211,5 @@ Fuji 主题支持 Disqus、utterances 和 DisqusJS 三种评论系统，并且�
 [hugo 导入图片，两种方式](https://blog.csdn.net/qq_38340601/article/details/108900666)
 
 [single or double dollar sign as formula delimiter](https://github.com/KaTeX/KaTeX/issues/712)
+
+[Git中submodule的使用](https://zhuanlan.zhihu.com/p/87053283)

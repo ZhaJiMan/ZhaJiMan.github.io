@@ -21,7 +21,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<title>简单的 vim 配置 - 炸鸡人博客</title>
+<title>简单的 Vim 配置 - 炸鸡人博客</title>
 
 
 <meta name="author" content="炸鸡人" />
@@ -33,11 +33,11 @@
 <meta name="keywords" content="vim" />
 
 
-<meta property="og:title" content="简单的 vim 配置" />
-<meta name="twitter:title" content="简单的 vim 配置" />
+<meta property="og:title" content="简单的 Vim 配置" />
+<meta name="twitter:title" content="简单的 Vim 配置" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://zhajiman.github.io/post/vim_config/" /><meta property="og:description" content="最近越发老年痴呆，连自己写的 vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。因为我工作在内网服务器上，所以也不涉及联网部分（例如 vim-plug 插件）。文中 vim 版本是 7.4。" />
-<meta name="twitter:description" content="最近越发老年痴呆，连自己写的 vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。因为我工作在内网服务器上，所以也不涉及联网部分（例如 vim-plug 插件）。文中 vim 版本是 7.4。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta property="og:url" content="https://zhajiman.github.io/post/vim_config/" /><meta property="og:description" content="最近越发老年痴呆，连自己写的 Vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。由于我同时工作在能联网的 PC 和内网的服务器上，所以也会分开介绍如何在这两种环境下安装插件。文中 Vim 版本分别是 8.1（PC）和 7.4（服务器）。" />
+<meta name="twitter:description" content="最近越发老年痴呆，连自己写的 Vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。由于我同时工作在能联网的 PC 和内网的服务器上，所以也会分开介绍如何在这两种环境下安装插件。文中 Vim 版本分别是 8.1（PC）和 7.4（服务器）。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-09-20T00:00:00+00:00" /><meta property="article:modified_time" content="2021-09-20T00:00:00+00:00" />
 
@@ -105,21 +105,21 @@
 <article>
     
     <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/vim_config/">简单的 vim 配置</a>
+        <a href="https://zhajiman.github.io/post/vim_config/">简单的 Vim 配置</a>
     </h2>
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-09-20</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1297 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1832 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/vim">vim</a>&nbsp;</span>
 
     </div>
     
     <div class="post-content markdown-body">
-        <p>最近越发老年痴呆，连自己写的 vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。因为我工作在内网服务器上，所以也不涉及联网部分（例如 <a href="https://github.com/junegunn/vim-plug" target="_blank">vim-plug</a> 插件）。文中 vim 版本是 7.4。</p>
-<h2 id="具体配置">具体配置</h2>
-<p>首先关闭对 vi 的兼容，并保证退格键能正常使用</p>
+        <p>最近越发老年痴呆，连自己写的 Vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。由于我同时工作在能联网的 PC 和内网的服务器上，所以也会分开介绍如何在这两种环境下安装插件。文中 Vim 版本分别是 8.1（PC）和 7.4（服务器）。</p>
+<h2 id="基本配置">基本配置</h2>
+<p>首先介绍 Vim 自带的基本配置，配置文件的路径是 <code>~/.vim/vimrc</code>。关闭对 vi 的兼容，并保证退格键能正常使用</p>
 <pre><code>&quot; 关闭对vi的兼容
 set nocompatible
 &quot; 设置backspace键功能
@@ -133,13 +133,13 @@ set cursorline
 &quot; 让一行的内容不换行
 set nowrap
 &quot; 距窗口边缘还有多少行时滚动窗口
-set scrolloff=3
+set scrolloff=8
 
 &quot; 显示标尺,提示一行代码不要超过80个字符
 set ruler
 set colorcolumn=80
 </code></pre>
-<p>设置缩进。Vim 默认使用宽度为 8 的 tab，而我一般写 Python，需要用 4 个空格替代 tab。这里参考 <a href="http://www.vex.net/~x/python_and_vim.html" target="_blank">Useful VIM Settings for working with Python</a> 的设置。关于这些选项的意义可以参考 vim 的帮助文档或 <a href="https://tedlogan.com/techblog3.html" target="_blank">Secrets of tabs in vim</a></p>
+<p>设置缩进。Vim 默认使用宽度为 8 的 tab，而我一般写 Python，需要用 4 个空格替代 tab。这里参考 <a href="http://www.vex.net/~x/python_and_vim.html" target="_blank">Useful VIM Settings for working with Python</a> 的设置。关于这些选项的意义可以参考 Vim 的帮助文档或 <a href="https://tedlogan.com/techblog3.html" target="_blank">Secrets of tabs in vim</a></p>
 <pre><code>&quot; tab设为4个空格
 set tabstop=4
 set shiftwidth=4
@@ -160,21 +160,19 @@ set incsearch
 set ignorecase
 set smartcase
 </code></pre>
-<p>开启语法高亮并设置配色。这里使用的是 <a href="https://github.com/joshdick/onedark.vim" target="_blank">onedark</a> 配色方案</p>
+<p>开启语法高亮并设置配色。这里使用的是 <a href="https://github.com/joshdick/onedark.vim" target="_blank">onedark.vim</a> 配色方案（后面会介绍如何安装）</p>
 <pre><code>&quot; 开启语法高亮
 syntax on
 &quot; 代码颜色主题
 set t_Co=256
 colorscheme onedark
 </code></pre>
-<p>增强命令部分的显示和补全，并开启状态栏（状态栏可以用 <a href="https://github.com/vim-airline/vim-airline" target="_blank">vim-airline</a> 插件替代）</p>
+<p>增强命令部分的显示和补全</p>
 <pre><code>&quot; 在右下角显示部分命令
 set showcmd
 &quot; 命令可以用tab补全,并设置匹配规则
 set wildmenu
 set wildmode=list:longest,full
-&quot; 总是显示状态栏
-set laststatus=2
 </code></pre>
 <p>显示 tab 和行尾多余的字符</p>
 <pre><code>&quot; 显示tab和行尾多余的空格
@@ -186,17 +184,17 @@ set listchars=tab:&gt;·,trail:·
 set splitright
 set splitbelow
 &quot; 设置在分屏间移动的快捷键
-map &lt;space&gt;h &lt;C-w&gt;h
-map &lt;space&gt;l &lt;C-w&gt;l
-map &lt;space&gt;j &lt;C-w&gt;j
-map &lt;space&gt;k &lt;C-w&gt;k
+noremap &lt;space&gt;h &lt;C-w&gt;h
+noremap &lt;space&gt;l &lt;C-w&gt;l
+noremap &lt;space&gt;j &lt;C-w&gt;j
+noremap &lt;space&gt;k &lt;C-w&gt;k
 &quot; 设置移动分屏的快捷键
-map &lt;space&gt;H &lt;C-w&gt;H
-map &lt;space&gt;L &lt;C-w&gt;L
-map &lt;space&gt;J &lt;C-w&gt;J
-map &lt;space&gt;K &lt;C-w&gt;K
+noremap &lt;space&gt;H &lt;C-w&gt;H
+noremap &lt;space&gt;L &lt;C-w&gt;L
+noremap &lt;space&gt;J &lt;C-w&gt;J
+noremap &lt;space&gt;K &lt;C-w&gt;K
 </code></pre>
-<p>检测文件类型、设置 vim 内部的字符编码为 utf-8，对文件的解码参考 <a href="https://www.zhihu.com/question/22363620" target="_blank">用vim打开后中文乱码怎么办？</a> 中马宏菩的回答，防止中文出现乱码</p>
+<p>检测文件类型、设置 Vim 内部的字符编码为 utf-8，对文件的解码参考 <a href="https://www.zhihu.com/question/22363620" target="_blank">用vim打开后中文乱码怎么办？</a> 中马宏菩的回答，防止中文出现乱码</p>
 <pre><code>&quot; 检测文件类型
 filetype on
 &quot; 文件编码
@@ -214,18 +212,44 @@ set nobackup
 set nowritebackup
 set noswapfile
 </code></pre>
-<p>偶尔要用到 NCL 语言，需要相关的高亮提示，所以在 <a href="https://www.ncl.ucar.edu/Applications/editor.shtml" target="_blank">NCL: Editor enhancements for use with NCL scripts</a> 网址下载 <code>ncl3.vim</code> 文件并重命名为 <code>ncl.vim</code>，把文件放入 <code>~/.vim/syntax</code> 目录中，再修改 <code>.vimrc</code> 的配置。其中还为 <a href="https://github.com/tpope/vim-commentary" target="_blank">vim-commentary</a> 插件设置了 NCL 的注释</p>
+<p>偶尔要用到 NCL 语言，需要相关的高亮提示，所以在 <a href="https://www.ncl.ucar.edu/Applications/editor.shtml" target="_blank">NCL: Editor enhancements for use with NCL scripts</a> 网址下载 <code>ncl3.vim</code> 文件并重命名为 <code>ncl.vim</code>，把文件放入 <code>~/.vim/syntax</code> 目录中，再修改 <code>.vimrc</code> 的配置。其中还为 <a href="https://github.com/tpope/vim-commentary" target="_blank">commentary.vim</a> 插件设置了 NCL 的注释</p>
 <pre><code>&quot; NCL高亮设置
 au BufRead,BufNewFile *.ncl set filetype=ncl
 au! Syntax newlang source $VIM/ncl.vim
 &quot; NCL注释设置
 autocmd FileType ncl setlocal commentstring=;%s
 </code></pre>
-<p>非联网状态下使用 <a href="">vim-pathogen</a> 插件管理插件目录，在配置里加上这么一句</p>
-<pre><code>&quot; pathogen设置,用于管理插件
+<h2 id="插件配置">插件配置</h2>
+<h3 id="pc">PC</h3>
+<p>PC 上使用 <a href="https://github.com/junegunn/vim-plug" target="_blank">vim-plug</a> 插件来管理其它插件，利用它能非常简单地安装、更新和移除插件，关于它的安装和使用方法详见其 GitHub 页面。在 <code>vimrc</code> 文件的开头添加</p>
+<pre><code>call plug#begin('~/.vim/plugged')
+Plug 'joshdick/onedark.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'tpope/vim-commentary'
+Plug 'kshenoy/vim-signature'
+Plug 'mhinz/vim-startify'
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
+call plug#end()
+</code></pre>
+<p>保存后再执行命令 <code>PlugInstall</code> 即可将 <code>call</code> 语句块中提到的插件下载并安装到 <code>~/.vim/plugged</code> 目录下。这里用到的插件有：</p>
+<ul>
+<li><a href="https://github.com/joshdick/onedark.vim" target="_blank">onedark.vim</a>：一个暗配色方案。</li>
+<li><a href="https://github.com/vim-airline/vim-airline" target="_blank">vim-airline</a>：更好看的状态栏。</li>
+<li><a href="https://github.com/tpope/vim-commentary" target="_blank">commentary.vim</a>：引入注释命令。</li>
+<li><a href="https://github.com/kshenoy/vim-signature" target="_blank">vim-signature</a>：显示出 mark 标记。</li>
+<li><a href="https://github.com/vim-scripts/vim-startify" target="_blank">vim-startify</a>：给 vim 整个开屏页面。</li>
+<li><a href="https://github.com/junegunn/fzf" target="_blank">fzf</a> 和 <a href="https://github.com/junegunn/fzf.vim" target="_blank">fzf.vim</a>：引入模糊搜索功能。</li>
+</ul>
+<p>如果总是下载失败，可以考虑给 Git 设置代理。</p>
+<h3 id="服务器">服务器</h3>
+<p>对于不能联网的服务器，依据 vim-plug 作者的建议（<a href="https://github.com/junegunn/vim-plug/issues/808" target="_blank">issue #808</a>），用 <a href="https://github.com/tpope/vim-pathogen" target="_blank">pathogen.vim</a> 插件代替 vim-plug。不同于 vim-plug，pathogen.vim 并不能帮你下载插件，它的功能只是将其它插件的路径添加到 Vim 的 <code>runtimepath</code> 中，使 Vim 能在工作时找到其它插件罢了。首先在 GitHub 上下载 <code>pathogen.vim</code> 文件并移动到服务器的 <code>~/.vim/autoload</code> 目录下，再手动下载其它插件的仓库，解压并重命名，移动到服务器的 <code>~/.vim/bundle</code> 目录下，最后在 <code>vimrc</code> 文件的开头添加</p>
+<pre><code>&quot; 把插件加入runtimepath
 execute pathogen#infect()
 </code></pre>
-<p>我目前用到的配置就以上这些。可以说是很简陋了，连自动补全都没有（我用的默认的 <code>&lt;C-n&gt;</code>），同时因为版本只有 7，也不好整 REPL。不过我觉得作为基本的文本编辑器已经够用了，如果读者有心得也可以传授我一下。</p>
+<p>我们所需的插件即可生效。如果你服务器上的 Vim 版本是 8，那么连 pathogen.vim 也不需要，直接使用原生的 <code>pack</code> 语句块即可，我没用过所以就不解说了。另外服务器上装 fzf 也是需要花点功夫的，不过懒得继续写了（逃）。</p>
+<h2 id="结语">结语</h2>
+<p>我目前用到的配置就以上这些。可以说是很简陋了，自动补全、一键运行代码什么的统统没有。不过我觉得作为基本的文本编辑器已经够用了，如果读者有心得也可以传授我一下。</p>
 <h2 id="参考链接">参考链接</h2>
 <p><a href="https://www.ruanyifeng.com/blog/2018/09/vimrc.html" target="_blank">Vim 配置入门</a></p>
 <p><a href="https://www.zhihu.com/question/19989337" target="_blank">有哪些编程必备的 Vim 配置？</a></p>
@@ -357,7 +381,14 @@ execute pathogen#infect()
     <div class="sidebar-item sidebar-toc">
         <h3>Table of Contents</h3><nav id="TableOfContents">
   <ul>
-    <li><a href="#具体配置">具体配置</a></li>
+    <li><a href="#基本配置">基本配置</a></li>
+    <li><a href="#插件配置">插件配置</a>
+      <ul>
+        <li><a href="#pc">PC</a></li>
+        <li><a href="#服务器">服务器</a></li>
+      </ul>
+    </li>
+    <li><a href="#结语">结语</a></li>
     <li><a href="#参考链接">参考链接</a></li>
   </ul>
 </nav></div>
@@ -473,7 +504,14 @@ execute pathogen#infect()
         <h3>Table of Contents</h3>
         <nav id="TableOfContents">
   <ul>
-    <li><a href="#具体配置">具体配置</a></li>
+    <li><a href="#基本配置">基本配置</a></li>
+    <li><a href="#插件配置">插件配置</a>
+      <ul>
+        <li><a href="#pc">PC</a></li>
+        <li><a href="#服务器">服务器</a></li>
+      </ul>
+    </li>
+    <li><a href="#结语">结语</a></li>
     <li><a href="#参考链接">参考链接</a></li>
   </ul>
 </nav>
