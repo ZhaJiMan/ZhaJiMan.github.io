@@ -23,7 +23,9 @@
       <pubDate>Mon, 20 Sep 2021 00:00:00 +0000</pubDate>
       
       <guid>https://zhajiman.github.io/post/vim_config/</guid>
-      <description>&lt;p&gt;最近越发老年痴呆，连自己写的 Vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。由于我同时工作在能联网的 PC 和内网的服务器上，所以也会分开介绍如何在这两种环境下安装插件。文中 Vim 版本分别是 8.1（PC）和 7.4（服务器）。&lt;/p&gt;</description>
+      <description>&lt;p&gt;最近越发老年痴呆，连自己写的 Vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。由于我同时工作在能联网的 PC 和内网的服务器上，所以也会分开介绍如何在这两种环境下安装插件。文中 Vim 版本分别是 8.1（PC）和 7.4（服务器）。&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/vim_config/vim.png&#34; alt=&#34;vim&#34; /&gt;
+&lt;/p&gt;</description>
     </item>
     
     <item>

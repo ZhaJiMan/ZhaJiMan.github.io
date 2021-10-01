@@ -8,6 +8,8 @@ tags:
 
 最近越发老年痴呆，连自己写的 Vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。由于我同时工作在能联网的 PC 和内网的服务器上，所以也会分开介绍如何在这两种环境下安装插件。文中 Vim 版本分别是 8.1（PC）和 7.4（服务器）。
 
+![vim](/vim_config/vim.png)
+
 <!--more-->
 
 ## 基本配置
@@ -51,7 +53,7 @@ set smarttab
 set autoindent
 ```
 
-显示相匹配的括号，并增强搜索功能。搜索产生的高亮可以通过 `:nohlsearch` 命令消除掉。
+显示相匹配的括号，并增强搜索功能。
 
 ```
 " 显示括号匹配
@@ -93,22 +95,14 @@ set list
 set listchars=tab:>·,trail:·
 ```
 
-Vim 中通过 `:vsp file` 命令在水平方向上打开一个新文件，`:sp file` 则是垂直方向。但它们默认打开的位置分别是左边和上边，这里按我的习惯改成在右边和下边打开。另外在分屏间移动光标的命令是 `<C-w> + hjkl`，移动分屏的命令是 `<C-w> + HJKL`，`<C-w>` 需要我使劲扭曲左手才能按到，非常费劲，故这里用轻松好按的 `<space>` 代替
+切换 buffer 时 Vim 总会提醒你将当前 buffer 的改动写入文件。打开 `hidden` 能允许我们将未保存的 buffer 放到后台。水平分屏和垂直分屏操作分别默认在上边和左边打开一个新 window，这不太符合我的习惯，所以改为在下边和右边创建
 
 ```
+" 允许隐藏未保存的buffer
+set hidden
 " 设置分屏时的位置
 set splitright
 set splitbelow
-" 设置在分屏间移动的快捷键
-noremap <space>h <C-w>h
-noremap <space>l <C-w>l
-noremap <space>j <C-w>j
-noremap <space>k <C-w>k
-" 设置移动分屏的快捷键
-noremap <space>H <C-w>H
-noremap <space>L <C-w>L
-noremap <space>J <C-w>J
-noremap <space>K <C-w>K
 ```
 
 检测文件类型、设置 Vim 内部的字符编码为 utf-8，对文件的解码参考 [用vim打开后中文乱码怎么办？](https://www.zhihu.com/question/22363620) 中马宏菩的回答，防止中文出现乱码
@@ -174,6 +168,21 @@ call plug#end()
 
 如果总是下载失败，可以考虑给 Git 设置代理。
 
+每个插件都可以再进行单独配置，这里我只改动了 vim-startify：在 Vim 的启动界面显示最近打开过的 15 个文件，并添加 `~/.bashrc` 和 `~/.vim/vimrc` 两个文件到收藏夹
+
+```
+" vim-startify的设置
+let g:startify_files_number = 15
+let g:startify_lists = [
+    \ {'type': 'files', 'header': ['   Recent Files']},
+    \ {'type': 'bookmarks', 'header': ['   Bookmarks']}
+    \ ]
+let g:startify_bookmarks = [
+    \ {'b': '~/.bashrc'},
+    \ {'v': '~/.vim/vimrc'}
+    \ ]
+```
+
 ### 服务器
 
 对于不能联网的服务器，依据 vim-plug 作者的建议（[issue #808](https://github.com/junegunn/vim-plug/issues/808)），用 [pathogen.vim](https://github.com/tpope/vim-pathogen) 插件代替 vim-plug。不同于 vim-plug，pathogen.vim 并不能帮你下载插件，它的功能只是将其它插件的路径添加到 Vim 的 `runtimepath` 中，使 Vim 能在工作时找到其它插件罢了。首先在 GitHub 上下载 `pathogen.vim` 文件并移动到服务器的 `~/.vim/autoload` 目录下，再手动下载其它插件的仓库，解压并重命名，移动到服务器的 `~/.vim/bundle` 目录下，最后在 `vimrc` 文件的开头添加
@@ -183,7 +192,39 @@ call plug#end()
 execute pathogen#infect()
 ```
 
-我们所需的插件即可生效。如果你服务器上的 Vim 版本是 8，那么连 pathogen.vim 也不需要，直接使用原生的 `pack` 语句块即可，我没用过所以就不解说了。另外服务器上装 fzf 也是需要花点功夫的，不过懒得继续写了（逃）。
+我们所需的插件即可生效。如果你服务器上的 Vim 版本是 8，那么连 pathogen.vim 也不需要，直接使用原生的 `pack` 语句块即可，我没用过所以就不解说了。
+
+## 快捷键配置
+
+为了不与 normal 模式下已有的大量快捷键发生冲突，所以这里用 `<Leader>` 键作为自定义快捷键的起手式。关于 `<Leader>` 键的解说可见 [How to Use the Vim \<leader\> Key](https://tuckerchapman.com/2018/06/16/how-to-use-the-vim-leader-key/)，这里使用趁手的空格键作为 `<Leader>` 键。自定义快捷键可以解决以下痛点
+
+- 每次搜索产生的高亮需要通过 `:nohlsearch`（或简化的 `:noh`）命令取消，包括回车在内至少要按 5 个键。改成快捷键后就只需要按 2 下。
+- 经常要用 fzf.vim 插件的 `:Files` 和 `:Buffers` 命令打开文件，设成快捷键更方便。
+- 在分屏中移动光标的的默认快捷键是 `<c-w> + hjkl`，需要扭曲左手才能按到，非常费劲。用空格替代 `<c-w>` 后就舒服多了。
+
+```
+" leader键改为空格
+nnoremap <space> <nop>
+let mapleader = " "
+
+" 关闭高亮
+nnoremap <leader>n :nohlsearch<cr>
+" 搜索文件
+nnoremap <leader>f :Files<cr>
+nnoremap <leader>b :Buffers<cr>
+" 设置在分屏间移动的快捷键
+nnoremap <leader>h <c-w>h
+nnoremap <leader>l <c-w>l
+nnoremap <leader>j <c-w>j
+nnoremap <leader>k <c-w>k
+" 设置移动分屏的快捷键
+nnoremap <leader>H <c-w>H
+nnoremap <leader>L <c-w>L
+nnoremap <leader>J <c-w>J
+nnoremap <leader>K <c-w>K
+```
+
+其中映射新按键的语句 `nnoremap` 仅作用于 normal 模式，且不会发生递归映射。关于各种 `map` 的介绍请见 [[Vim]vim的几种模式和按键映射](http://haoxiang.org/2011/09/vim-modes-and-mappin/)。
 
 ## 结语
 
@@ -196,3 +237,5 @@ execute pathogen#infect()
 [有哪些编程必备的 Vim 配置？](https://www.zhihu.com/question/19989337)
 
 [上古神器Vim：从恶言相向到爱不释手 - 终极Vim教程01](https://www.bilibili.com/video/BV164411P7tw)
+
+[iggredible/Learn-Vim](https://github.com/iggredible/Learn-Vim)
