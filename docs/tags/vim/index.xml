@@ -6,7 +6,21 @@
     <description>Recent content in vim on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 20 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/vim/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 17 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/vim/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Vim 的语法</title>
+      <link>https://zhajiman.github.io/post/vim_grammar/</link>
+      <pubDate>Sun, 17 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/vim_grammar/</guid>
+      <description>&lt;p&gt;Vim 是一个拥有魔力的文本编辑器——这并不是比喻，而是说你在 Vim 中真的可以念咒语来操纵文本。看看我们的键盘，在 normal 模式下几乎每个键都有特定的功能，尤其是其中的数字和 26 个字母。如果把每个键都看作 Vim 这门语言中的单词，那么只要依据特定的语法，通过连续击键来遣词造句，就能施展操作文本的魔法。并且 Vim 语言的语法简单到用一句话就能描述：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;verb + noun
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;下面就来简单讲讲魔法的基本法。&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/vim_grammar/vim_keys.png&#34; alt=&#34;vim_keys&#34; /&gt;
+&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>简单的 Vim 配置</title>
       <link>https://zhajiman.github.io/post/vim_config/</link>

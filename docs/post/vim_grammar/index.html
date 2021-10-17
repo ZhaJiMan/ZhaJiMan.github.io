@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Vim 的语法 - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="vim" />
+
+
+<meta property="og:title" content="Vim 的语法" />
+<meta name="twitter:title" content="Vim 的语法" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/vim_grammar/" /><meta property="og:description" content="Vim 是一个拥有魔力的文本编辑器——这并不是比喻，而是说你在 Vim 中真的可以念咒语来操纵文本。看看我们的键盘，在 normal 模式下几乎每个键都有特定的功能，尤其是其中的数字和 26 个字母。如果把每个键都看作 Vim 这门语言中的单词，那么只要依据特定的语法，通过连续击键来遣词造句，就能施展操作文本的魔法。并且 Vim 语言的语法简单到用一句话就能描述：
+verb &#43; noun
+
+下面就来简单讲讲魔法的基本法。
+
+" />
+<meta name="twitter:description" content="Vim 是一个拥有魔力的文本编辑器——这并不是比喻，而是说你在 Vim 中真的可以念咒语来操纵文本。看看我们的键盘，在 normal 模式下几乎每个键都有特定的功能，尤其是其中的数字和 26 个字母。如果把每个键都看作 Vim 这门语言中的单词，那么只要依据特定的语法，通过连续击键来遣词造句，就能施展操作文本的魔法。并且 Vim 语言的语法简单到用一句话就能描述：
+verb &#43; noun
+
+下面就来简单讲讲魔法的基本法。
+
+" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-10-17T00:00:00+00:00" /><meta property="article:modified_time" content="2021-10-17T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/vim_grammar/">Vim 的语法</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-17</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3811 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/vim">vim</a>&nbsp;</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <p>Vim 是一个拥有魔力的文本编辑器——这并不是比喻，而是说你在 Vim 中真的可以念咒语来操纵文本。看看我们的键盘，在 normal 模式下几乎每个键都有特定的功能，尤其是其中的数字和 26 个字母。如果把每个键都看作 Vim 这门语言中的单词，那么只要依据特定的语法，通过连续击键来遣词造句，就能施展操作文本的魔法。并且 Vim 语言的语法简单到用一句话就能描述：</p>
+<pre><code>verb + noun
+</code></pre>
+<p>下面就来简单讲讲魔法的基本法。</p>
+<p><img class="img-zoomable" src="/vim_grammar/vim_keys.png" alt="vim_keys" />
+</p>
+<h2 id="语法规则">语法规则</h2>
+<p>Vim 的语法翻译过来就是，对什么文本（名词 noun）做什么操作（动词 verb）。其中动词指的是 Vim 中被称为 operator 的命令，例如小写的 <code>d</code> 键就是表示删除的 operator。但是单独按下 <code>d</code> 并不会起效，我们还需要指定动词的作用对象。Vim 中关于光标移动的命令被称为 motion，例如我们熟知的 <code>hjkl</code> 就是表示上下左右的 motion，<code>w</code> 是表示跳到下一个单词开头的 motion。Motion 作为名词使用时指代光标移动范围内的文本，所以句子</p>
+<pre><code>operator + motion
+</code></pre>
+<p>就表示对 motion 移动范围内的文本执行 operator 的操作。例如组合 <code>dw</code> 就表示删除当前光标到下一个单词开头前的文本。不同于英语，Vim 语法中动词和名词前都可以加上数字，以表示重复动词或名词。例如 <code>2w</code> 表示跳跃到下下个单词开头，那么 <code>d2w</code> 就表示一次性删除两个接下来的单词；同时 <code>2dw</code> 表示删除下一个单词的操作执行两次；同理，<code>2d2w</code> 就表示删除 2 * 2 = 4 个单词。于是句子可以补充成</p>
+<pre><code>[count] operator + [count] motion
+</code></pre>
+<p>其中 <code>count</code> 是大于 0 的整数，方括号表示可有可无。</p>
+<p>除了 motion，还有一类被称作 text object 的命令能作为名词。顾名思义，text object 表示具有某种结构的一段文本对象，具体形式为</p>
+<pre><code>text-object = modifier + object
+</code></pre>
+<p>其中 <code>object</code> 是具体的文本对象，<code>modifier</code> 是对其范围的一点补充修饰。例如 <code>ap</code> 就是一个 text object，其中对象 <code>p</code> 表示段落，修饰词 <code>a</code> 表示在整个段落范围的基础上，再包含段落前或段落后的空行。不同于 motion，text object 并不能单独使用，而是必须放在 operator 之后才能发挥作用。于是组合 <code>dap</code> 就表示删除一整个段落及与之相邻的空行。同样可以总结为句子</p>
+<pre><code>[count] operator + [count] text-object
+</code></pre>
+<p>相比于 motion 的句子，这个句子不用关心光标的具体位置，只要我们的光标落入了文本对象的范围内，Vim 会自动找出文本对象的起始范围进行操作。</p>
+<p>至此 Vim 的语法基本上就讲完了，没错就这么点内容，但其中蕴含的思想是很值得玩味的。一般的文本编辑器只能提供非常原子化的操作：光标只能上下左右移动，字符只能单个单个增删。但 Vim 将具体的操作、光标的移动模式和结构化的文本分别抽象为 operator、motion 和 text object，再将它们映射到单个按键上，并按语法赋予其相互组合的能力，使编辑文本的逻辑能用简单的命令序列具象化地表达出来。这种操作哲学是一般的文本编辑器所欠缺的。</p>
+<p>正如学英语不能只学语法不背单词，Vim 里我们也需要掌握动词和名词才能正常造句，更别说实践过程中的许多迷惑点都是源于对词汇性质的不了解。所以下面继续来介绍常用的词汇。</p>
+<h2 id="常用的-operator">常用的 operator</h2>
+<p>Vim 共有 16 个 operator，但最常用的无非以下几个：</p>
+<ul>
+<li><code>d</code>：取自 delete，表示删除。例如 <code>dw</code> 表示删除当前光标到下一个词之前的内容。</li>
+<li><code>c</code>：取自 change，表示替换，相当于 <code>d</code> 之后自动进入 insert 模式。例如 <code>cw</code> 效果同 <code>dw</code>，但删除完毕后会进入 insert 模式以便马上输入新的替换文本。</li>
+<li><code>y</code>：取自 yank，表示复制到寄存器中。例如 <code>yw</code> 表示复制当前光标到下一个词之前的内容。因为词与词之前可能有空格或标点，所以 <code>yw</code> 会把这些多余的间隔也复制进去。</li>
+<li><code>gu</code>：把文本变成小写（lowercase）。这是一个两个键组成的 operator，例如 <code>guiw</code> 能把一个词变成全小写（其中文本对象 <code>iw</code> 会在后面讲解）。</li>
+<li><code>gU</code>：把文本变成大写（uppercase）。例如 <code>gUiw</code> 能把一个词变成全大写。</li>
+<li><code>&gt;</code>：向右缩进一个 tab 的距离。默认作用于行，所以即便是 <code>&gt;w</code> 也会使整行向右缩进。一个比较有用的例子是 <code>&gt;ip</code> 或 <code>&gt;ap</code>，表示使整个段落向右缩进。</li>
+<li><code>&lt;</code>：向左缩进一个 tab 的距离。用法同 <code>&gt;</code>。</li>
+</ul>
+<p>单个 operator 后面必须接一个名词才能起作用。但当 operator 的按键被重复两次时，就可以省去名词，此时表示作用于光标所处的这一行。例如 <code>dd</code> 表示删除当前行，<code>yy</code> 表示复制当前行，<code>&gt;&gt;</code> 表示当前行向右缩进。此外也可以加上重复次数，例如 <code>3dd</code> 表示删除从当前行开始往下共 3 行。</p>
+<p>作为对 <code>y</code> 的补充，提一下并非 operator 的粘贴命令 <code>p</code>：小写的 <code>p</code> 表示在当前光标左边（当前行上面）粘贴字符（行），而大写的 <code>P</code> 表示在当前光标右边（当前行下面）粘贴内容（行）。</p>
+<h2 id="常用的-motion">常用的 motion</h2>
+<p>Motion 有两个非常重要的属性需要预先说明一下。</p>
+<p>首先，若 motion 的移动发生在行与行之间，就称其是 linewise 的；若移动发生在字符间，就称其是 characterwise 的。例如 <code>j</code> 和 <code>k</code> 就是 linewise 的，而 <code>w</code> 显然是 characterwise 的。</p>
+<p>其次，motion 还拥有一个能影响到其作用范围的开闭性。以一个 characterwise motion 为例，若 <code>operator + motion</code> 组合的作用范围不包含 motion 移动范围的右边界，则称这个 motion 是 exclusive 的，反之则称为 inclusive 的。对 linewise motion 同理，根据句子的作用范围是否包含 motion 移动范围的下边界（即最后一行）来决定开闭性，不过一般 linewise motion 都是 inclusive 的。例如常用的 <code>w</code> 就是一个 exclusive motion，单独使用它会将光标跳到下个词的第一个字符处，但 <code>dw</code> 却会点到为止，刚刚好删除到那个字符之前。再比如 <code>j</code> 和 <code>k</code> 都是 linewise motion，<code>dj</code> 会删除当前行和下一行，<code>dk</code> 会删除当前行和上一行。</p>
+<p>这里恐怕有点绕，所以用图展示一下</p>
+<p><img class="img-zoomable" src="/vim_grammar/exclusive_inclusive.png" alt="exclusive_inclusive" />
+</p>
+<p>其中绿色方块是 block 形式的光标，单向箭头是 motion 的起止点，花括号指示句子的作用范围。可见对于 exclusive 的 motion 来说，移动的起止点围成的范围和句子的作用范围总是相差一个右边界字符；而对 inclusive 的 motion 来说，两种范围是相同的。</p>
+<p>Vim 中 motion 相当多，不信可以看看本文头图中的绿色按键有多少。这里仅介绍常用的几个：</p>
+<ul>
+<li><code>hjkl</code>：上下左右移动，其中 <code>j</code> 和 <code>k</code> 是 linewise 和 inclusive 的，而 <code>h</code> 和 <code>l</code> 是 characterwise 和 exclusive 的。所以 <code>dl</code> 只会删除当前光标处的字符，等价于 <code>x</code>；而 <code>dh</code> 会删除当前光标左边的一个字符。</li>
+<li><code>w</code> 和 <code>W</code>：跳到下一个词的第一个字符处，是 exclusive 的。大小写的区别在于，小写形式作用于 word，大写形式作用于 WORD（其中文本对象 word 和 WORD 会在后面讲解）。</li>
+<li><code>b</code> 和 <code>B</code>：跳到上一个词的第一个字符处，是 exclusive 的。</li>
+<li><code>e</code> 和 <code>E</code>：跳到下一个词的最后一个字符处，是 inclusive 的。</li>
+<li><code>ge</code> 和 <code>gE</code>：跳到上一个词的最后一个字符处，是 inclusive 的。</li>
+<li><code>0</code>、<code>^</code> 和 <code>$</code>：<code>0</code> 表示移动到本行的第一列，<code>^</code> 表示移动到本行第一个非空白字符处，而 <code>$</code> 表示移动到本行的最后一列。其中 <code>0</code> 和 <code>^</code> 是 exclusive 的，而 <code>$</code> 是 inclusive 的。且只有 <code>$</code> 前可以加数字，表示移动到从当前行开始下面第 n 行的末尾。</li>
+<li><code>f</code> 和 <code>F</code>：取自 find，在本行搜索指定的字符并将光标移动过去。以当前光标为起点，小写的 <code>f</code> 表示向后搜索，大写的 <code>F</code> 表示向前搜索，二者都是 inclusive 的。<code>f</code> 后必须接目标字符，例如 <code>fa</code> 会跳到当前光标后第一次出现字符 a 的位置，而 <code>2fa</code> 则会跳到第二次出现的位置。若没有找到，则光标不会发生移动。</li>
+<li><code>t</code> 和 <code>T</code>：取自 till，基本同 <code>f</code> 和 <code>F</code>，但会恰好停在搜索结果前。例如 <code>ta</code> 会跳到 <code>fa</code> 终点的前面一格，所以何时使用 <code>f</code> 或 <code>t</code> 取决于我们对边界的处理。</li>
+<li><code>;</code>：重复上一个 <code>f</code>、<code>F</code>、<code>t</code> 或 <code>T</code> 的移动。例如当本行有三个 a 字母时，<code>fa</code> 会使光标跳到第一个 a 上，此时按下 <code>;</code> 便相当于重复了 <code>fa</code> 的操作，跳到第二个 a 上，再按又会跳到最后一个 a 上。</li>
+<li><code>,</code>：类似于 <code>;</code>，不过是按反方向移动。还是三个 a 的例子，按 <code>,</code> 会跳回上一个 a 的位置。</li>
+<li><code>{</code> 和 <code>}</code>：跳到上一个/下一个段落边界（即空行），是 exclusive 的。</li>
+<li><code>G</code>：若前面加数字，表示跳到指定行；若不加数字则表示跳到最后一行，且是 linewise 和 inclusive 的。例如 <code>dG</code> 表示删除当前行到最后一行的全部内容，<code>d2G</code> 表示删除当前行到第二行的全部内容。</li>
+<li><code>gg</code>：加数字时的行为同 <code>G</code>，但不加数字时则表示跳到第一行。例如 <code>dgg</code> 表示删除当前行到第一行的全部内容，等价于 <code>d1G</code> 和 <code>d1gg</code>。</li>
+</ul>
+<h2 id="常用的-text-object">常用的 text object</h2>
+<p>第一节提过</p>
+<pre><code>text-object = modifier + object
+</code></pre>
+<p>其中修饰词实际上只有两个：<code>i</code> 和 <code>a</code>，字面义分别是单词 inner 和冠词 a，但具体效果需要结合 object 来看。所以现在来介绍常用的 object：</p>
+<ul>
+<li>word：Vim 中把由字母、数字或下划线等非空白字符构成的字符序列称为 word，word 之间由空白字符（空格、制表和换行）或标点符号分隔。在命令中用 <code>w</code> 表示。<code>iw</code> 仅表示一个 word 含有的所有字符，而 <code>aw</code> 还会额外包含前后的空白字符，并且当前后都有空白时则只包含后面的空白。若光标的起始位置就是在 word 前后的空白上，<code>aw</code> 的范围又会发生变化——这里就不细讲了，烦请读者自己尝试一下。</li>
+<li>WORD：条件更宽松的 word，只要是非空白字符的序列都能算是一个词。例如 <code>apple,banana</code> 算是两个 word，但只能算一个 WORD。在命令中用大写的 <code>W</code> 表示。</li>
+<li>paragraph：即视觉上行与行相连的整段文本，段落之间一般通过空行（可含空白字符）分隔。在命令中用 <code>p</code> 表示。<code>ip</code> 表示仅作用于段落的所有行，而 <code>ap</code> 类似于 <code>aw</code>，会额外包含前后的空行。</li>
+<li>括号：表示括号圈起来的文本块（可以分行），圆括号、方括号和花括号等皆可。这里以圆括号为例，在命令中用 <code>(</code> 或 <code>)</code> 表示。<code>i(</code> 仅表示括号内的文本，而 <code>a(</code> 则会包含括号本身。例如 <code>di(</code> 和 <code>ci(</code> 就是非常实用的两个组合命令。</li>
+<li>引号：表示引号圈起来的文本，单引号和双引号皆可，可惜只限于本行。以双引号为例，<code>i&quot;</code> 仅表示引号内的文本，而 <code>a&quot;</code> 则会包含引号本身以及引号前后的空白。同样 <code>di&quot;</code> 和 <code>ci&quot;</code> 非常便于修改程序中字符串的内容。</li>
+</ul>
+<h2 id="结语">结语</h2>
+<p>看到这里，你应该能一窥 Vim 的魔力了吧——赋予模糊不清的操作以名字，再按韵律吟唱这些名字，魔法就会出现。如果再加上 <code>.</code> 命令和宏的配方，更是能让魔法自动生出更多魔法，可惜我也只是刚入门的学徒，以后有机会再来介绍更多。文中存在的不妥之处还请读者多多指出。</p>
+<h2 id="参考链接">参考链接</h2>
+<p><a href="https://yianwillis.github.io/vimcdoc/doc/motion.html" target="_blank">VIM 中文帮助：有关移动的命令</a></p>
+<p><a href="http://takac.github.io/2013/01/30/vim-grammar/" target="_blank">Vim Grammar</a></p>
+<p><a href="https://github.com/iggredible/Learn-Vim/blob/master/ch04_vim_grammar.md" target="_blank">Learn-Vim Ch04. Vim Grammar</a></p>
+<p><a href="https://blog.csdn.net/dc_726/article/details/78981756" target="_blank">Vim终极指南：所思即所得</a></p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#语法规则">语法规则</a></li>
+    <li><a href="#常用的-operator">常用的 operator</a></li>
+    <li><a href="#常用的-motion">常用的 motion</a></li>
+    <li><a href="#常用的-text-object">常用的 text object</a></li>
+    <li><a href="#结语">结语</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#语法规则">语法规则</a></li>
+    <li><a href="#常用的-operator">常用的 operator</a></li>
+    <li><a href="#常用的-motion">常用的 motion</a></li>
+    <li><a href="#常用的-text-object">常用的 text object</a></li>
+    <li><a href="#结语">结语</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2021
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

@@ -114,7 +114,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-09-20</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2207 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2228 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/vim">vim</a>&nbsp;</span>
 
@@ -284,6 +284,9 @@ nnoremap &lt;leader&gt;H &lt;c-w&gt;H
 nnoremap &lt;leader&gt;L &lt;c-w&gt;L
 nnoremap &lt;leader&gt;J &lt;c-w&gt;J
 nnoremap &lt;leader&gt;K &lt;c-w&gt;K
+&quot; 设置移动buffer的快捷键
+nnoremap &lt;leader&gt;, :bprevious&lt;cr&gt;
+nnoremap &lt;leader&gt;. :bnext&lt;cr&gt;
 </code></pre>
 <p>其中映射新按键的语句 <code>nnoremap</code> 仅作用于 normal 模式，且不会发生递归映射。关于各种 <code>map</code> 的介绍请见 <a href="http://haoxiang.org/2011/09/vim-modes-and-mappin/" target="_blank">[Vim]vim的几种模式和按键映射</a>。</p>
 <h2 id="结语">结语</h2>

@@ -222,6 +222,9 @@ nnoremap <leader>H <c-w>H
 nnoremap <leader>L <c-w>L
 nnoremap <leader>J <c-w>J
 nnoremap <leader>K <c-w>K
+" 设置移动buffer的快捷键
+nnoremap <leader>, :bprevious<cr>
+nnoremap <leader>. :bnext<cr>
 ```
 
 其中映射新按键的语句 `nnoremap` 仅作用于 normal 模式，且不会发生递归映射。关于各种 `map` 的介绍请见 [[Vim]vim的几种模式和按键映射](http://haoxiang.org/2011/09/vim-modes-and-mappin/)。
