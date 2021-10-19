@@ -6,7 +6,21 @@
     <description>Recent content in python on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 26 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 19 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python 中的除法运算符</title>
+      <link>https://zhajiman.github.io/post/python_divide/</link>
+      <pubDate>Tue, 19 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/python_divide/</guid>
+      <description>&lt;p&gt;在 Python 3 中关于除法的运算符有三种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/&lt;/code&gt;：表示精确的真除法。魔法方法为 &lt;code&gt;__truediv__&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;//&lt;/code&gt;：表示地板除。魔法方法为 &lt;code&gt;__floordiv__&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;%&lt;/code&gt;：表示求模。魔法方法为 &lt;code&gt;__mod__&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
     <item>
       <title>Python 中操作文件和目录的路径</title>
       <link>https://zhajiman.github.io/post/python_path/</link>

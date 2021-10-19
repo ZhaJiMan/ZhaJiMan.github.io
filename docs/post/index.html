@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/post/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-10-17T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-10-19T00:00:00+00:00" />
 
 
 <style>
@@ -105,6 +105,28 @@
 
 <div class="post">
     <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/python_divide/">Python 中的除法运算符</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-19</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;400 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <p>在 Python 3 中关于除法的运算符有三种：</p>
+<ul>
+<li><code>/</code>：表示精确的真除法。魔法方法为 <code>__truediv__</code>。</li>
+<li><code>//</code>：表示地板除。魔法方法为 <code>__floordiv__</code>。</li>
+<li><code>%</code>：表示求模。魔法方法为 <code>__mod__</code>。</li>
+</ul>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
         <a href="https://zhajiman.github.io/post/vim_grammar/">Vim 的语法</a>
     </h2>
     <div class="post-item post-meta">
@@ -150,7 +172,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-09-20</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2228 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2266 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/vim">vim</a>&nbsp;</span>
 
@@ -283,31 +305,6 @@
 <li>DPI 和清晰度的关系。</li>
 <li>如何导出期刊要求的高 DPI 图片。</li>
 </ul>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/python_path/">Python 中操作文件和目录的路径</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-26</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4400 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="前言">前言</h2>
-<p>之前在 Linux 上用 Python 处理系统的文件和目录时，我都是简单粗暴地用 <code>os.system</code> 函数直接执行 shell 命令来实现的。例如新建一个目录并把文件移动进去，我会这么写</p>
-<pre><code class="language-Python">dirpath = './result'
-filepath = './data.txt'
-os.system(f'mkdir {dirpath}')
-os.system(f'mv {filepath} {dirpath}')
-</code></pre>
-<p>即把 shell 命令硬编码到程序中。但最近在 Windows 上运行老程序时，因为 <code>os.system</code> 默认调用 CMD，所以这种写法的老代码全部木大。</p>
-<p>其实借助 Python 标准库中用于系统交互和路径处理的模块，就能尽可能降低代码对平台的依赖，并且模块中也提供有许多方便的函数。本文会记录那些最常用的功能。</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-item pag-current">
