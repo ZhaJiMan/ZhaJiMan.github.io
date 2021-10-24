@@ -6,7 +6,20 @@
     <description>Recent content in python on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 19 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 23 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python 中的命名空间和作用域</title>
+      <link>https://zhajiman.github.io/post/python_namespace_scope/</link>
+      <pubDate>Sat, 23 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/python_namespace_scope/</guid>
+      <description>&lt;h2 id=&#34;定义&#34;&gt;定义&lt;/h2&gt;
+&lt;h3 id=&#34;命名空间&#34;&gt;命名空间&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;命名空间（namespace）&lt;/strong&gt;：官方说法是从名称到对象的映射，实际上就是保存变量名与变量值绑定关系的一个空间。赋值语句会将绑定关系写入命名空间，而引用变量时则会根据变量名在命名空间中查询出对应的值。并且大部分的命名空间都是利用 Python 的字典来实现的（例外如类的 &lt;code&gt;__slots__&lt;/code&gt; 属性）。程序中出现在全局的变量构成一个命名空间，Python 内置的函数和异常类也有它们自己的命名空间，每次定义函数或类时也会创建专属于它们的命名空间。命名空间之间相互独立，同名的变量可以存在于不同的命名空间中，例如两个函数内部可以使用同名的局部变量，这有助于我们在不引发冲突的同时合理复用变量名。&lt;/p&gt;
+&lt;h3 id=&#34;作用域&#34;&gt;作用域&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;作用域（scope）&lt;/strong&gt;：官方说法是 Python 程序中能直接访问一个命名空间的文本区域。听起来有点抽象，实际上就是指出程序中哪些区域的文本归哪个命名空间管理，例如函数的作用域显然就是函数体（定义函数的所有语句），全局作用域就是从头到尾整个程序。但并不是说出现在一个作用域中的变量就一定属于该作用域（的命名空间）：若在该区域内通过赋值语句等操作创建（或修改）了该变量的绑定关系后，那它就属于该作用域；否则它就属于其它作用域，在当前区域引用它需要根据特定的规则向其它作用域进行查询。例如常见的在函数中引用全局变量。本文的一个重点就是要来仔细说说这一规则。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Python 中的除法运算符</title>
       <link>https://zhajiman.github.io/post/python_divide/</link>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Python 中的命名空间和作用域 - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="python" />
+
+
+<meta property="og:title" content="Python 中的命名空间和作用域" />
+<meta name="twitter:title" content="Python 中的命名空间和作用域" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/python_namespace_scope/" /><meta property="og:description" content="定义
+命名空间
+命名空间（namespace）：官方说法是从名称到对象的映射，实际上就是保存变量名与变量值绑定关系的一个空间。赋值语句会将绑定关系写入命名空间，而引用变量时则会根据变量名在命名空间中查询出对应的值。并且大部分的命名空间都是利用 Python 的字典来实现的（例外如类的 __slots__ 属性）。程序中出现在全局的变量构成一个命名空间，Python 内置的函数和异常类也有它们自己的命名空间，每次定义函数或类时也会创建专属于它们的命名空间。命名空间之间相互独立，同名的变量可以存在于不同的命名空间中，例如两个函数内部可以使用同名的局部变量，这有助于我们在不引发冲突的同时合理复用变量名。
+作用域
+作用域（scope）：官方说法是 Python 程序中能直接访问一个命名空间的文本区域。听起来有点抽象，实际上就是指出程序中哪些区域的文本归哪个命名空间管理，例如函数的作用域显然就是函数体（定义函数的所有语句），全局作用域就是从头到尾整个程序。但并不是说出现在一个作用域中的变量就一定属于该作用域（的命名空间）：若在该区域内通过赋值语句等操作创建（或修改）了该变量的绑定关系后，那它就属于该作用域；否则它就属于其它作用域，在当前区域引用它需要根据特定的规则向其它作用域进行查询。例如常见的在函数中引用全局变量。本文的一个重点就是要来仔细说说这一规则。" />
+<meta name="twitter:description" content="定义
+命名空间
+命名空间（namespace）：官方说法是从名称到对象的映射，实际上就是保存变量名与变量值绑定关系的一个空间。赋值语句会将绑定关系写入命名空间，而引用变量时则会根据变量名在命名空间中查询出对应的值。并且大部分的命名空间都是利用 Python 的字典来实现的（例外如类的 __slots__ 属性）。程序中出现在全局的变量构成一个命名空间，Python 内置的函数和异常类也有它们自己的命名空间，每次定义函数或类时也会创建专属于它们的命名空间。命名空间之间相互独立，同名的变量可以存在于不同的命名空间中，例如两个函数内部可以使用同名的局部变量，这有助于我们在不引发冲突的同时合理复用变量名。
+作用域
+作用域（scope）：官方说法是 Python 程序中能直接访问一个命名空间的文本区域。听起来有点抽象，实际上就是指出程序中哪些区域的文本归哪个命名空间管理，例如函数的作用域显然就是函数体（定义函数的所有语句），全局作用域就是从头到尾整个程序。但并不是说出现在一个作用域中的变量就一定属于该作用域（的命名空间）：若在该区域内通过赋值语句等操作创建（或修改）了该变量的绑定关系后，那它就属于该作用域；否则它就属于其它作用域，在当前区域引用它需要根据特定的规则向其它作用域进行查询。例如常见的在函数中引用全局变量。本文的一个重点就是要来仔细说说这一规则。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-10-23T00:00:00+00:00" /><meta property="article:modified_time" content="2021-10-23T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/python_namespace_scope/">Python 中的命名空间和作用域</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-23</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4063 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="定义">定义</h2>
+<h3 id="命名空间">命名空间</h3>
+<p><strong>命名空间（namespace）</strong>：官方说法是从名称到对象的映射，实际上就是保存变量名与变量值绑定关系的一个空间。赋值语句会将绑定关系写入命名空间，而引用变量时则会根据变量名在命名空间中查询出对应的值。并且大部分的命名空间都是利用 Python 的字典来实现的（例外如类的 <code>__slots__</code> 属性）。程序中出现在全局的变量构成一个命名空间，Python 内置的函数和异常类也有它们自己的命名空间，每次定义函数或类时也会创建专属于它们的命名空间。命名空间之间相互独立，同名的变量可以存在于不同的命名空间中，例如两个函数内部可以使用同名的局部变量，这有助于我们在不引发冲突的同时合理复用变量名。</p>
+<h3 id="作用域">作用域</h3>
+<p><strong>作用域（scope）</strong>：官方说法是 Python 程序中能直接访问一个命名空间的文本区域。听起来有点抽象，实际上就是指出程序中哪些区域的文本归哪个命名空间管理，例如函数的作用域显然就是函数体（定义函数的所有语句），全局作用域就是从头到尾整个程序。但并不是说出现在一个作用域中的变量就一定属于该作用域（的命名空间）：若在该区域内通过赋值语句等操作创建（或修改）了该变量的绑定关系后，那它就属于该作用域；否则它就属于其它作用域，在当前区域引用它需要根据特定的规则向其它作用域进行查询。例如常见的在函数中引用全局变量。本文的一个重点就是要来仔细说说这一规则。</p>
+<h2 id="legb-规则">LEGB 规则</h2>
+<p>引用变量时，按 L -&gt; E -&gt; G -&gt; B 的顺序在不同作用域中查询：</p>
+<ul>
+<li>L（Local）：局部作用域，比如函数或方法内部。</li>
+<li>E（Enclosing）：外层作用域，比如一个闭包函数的外层函数部分。</li>
+<li>G（Global）：全局作用域，比如当前运行的文件或导入的模块的内部。</li>
+<li>B（Built-in）：Python 的内置函数等存在的作用域。</li>
+</ul>
+<p>举个例子，若在函数中引用某变量，首先会在函数的局部作用域中查询该变量是否存在，查不到就到外层函数（如果存在的话）的作用域里去查，再查不到就接着去全局和内置作用域，如果都查不到就会抛出 <code>NameError</code> 异常了。下面再以一张图为例一步步进行解说。</p>
+<p><img class="img-zoomable" src="/python_namespace_scope/namespace_scope.png" alt="namespace_scope" />
+</p>
+<p>这段程序的运行结果是</p>
+<pre><code>func_arg in global: 1
+func_arg in func: 2
+inner_var in inner_func: 2
+outer_var in inner_func: 1
+</code></pre>
+<p>首先，程序在启动时就已经全部处于内置作用域中（图中肉色部分）。然后程序的每一句被解释器执行：函数名 <code>func</code> 和 <code>outer_func</code> 通过 <code>def</code> 语句分别绑定给了两个函数对象，其绑定关系写入了全局作用域的命名空间中（图中绿色部分）。<code>__main__</code> 是全局作用域中预定义的变量，在本例中值为 <code>'main'</code>，变量名 <code>func_arg</code> 通过赋值语句绑定给了整数 1。因为全局作用域中并不存在名为 <code>print</code> 的函数，所以会到内置作用域中查询，因为 <code>print</code> 正好是内置函数所以顺利地找到了——即 G -&gt; B 的查询顺序。<code>print</code> 函数的参数中出现了 <code>func_arg</code>，全局作用域中就有，所以打印出了整数 1。</p>
+<p>接着到了调用函数的部分。我们都知道，函数被调用时会把形式参数（<code>func_arg</code>）绑定给传入的实际参数（即整数 2），所以 <code>func</code> 的命名空间中出现了 <code>func_arg</code>（图中第一个蓝色部分），并且这个 <code>func_arg</code> 与全局作用域中的 <code>func_arg</code> 毫无干系。然后又是按 L -&gt; G -&gt; B 的顺序在内置作用域中找到 <code>print</code> 函数，打印出整数 2。</p>
+<p>主程序的最后一句是调用存在嵌套的函数 <code>outer_func</code>。<code>outer_func</code> 的函数体被执行，其中变量名 <code>outer_var</code> 被绑定给整数 1，函数名 <code>inner_func</code> 被绑定给嵌套定义的函数对象，之后它们出现在 <code>outer_func</code> 的命名空间中（图中第二个蓝色部分）。<code>outer_func</code> 函数体的最后一句是调用刚刚定义好的 <code>inner_func</code> 函数，<code>inner_func</code> 的函数体同样也是一个局部作用域（图中黄色部分），但因为被定义在 <code>outer_func</code> 内，所以 <code>outer_func</code> 的局部作用域同时也是 <code>inner_func</code> 的外部作用域。因此 <code>inner_func</code> 中调用 <code>print</code> 时发生了 L -&gt; E -&gt; G -&gt; B 的搜索过程。在 <code>inner_func</code> 中调用 <code>outer_var</code> 也发生了 L -&gt; E 的查询过程。</p>
+<p>简单总结一下：作用域就好比花花绿绿的便利贴，最底下两张大的便利贴分别是内置作用域和全局作用域。定义新函数时会在这两张纸的基础上一层一层往上盖小便利贴，因而不同函数栈会摞成一个个纸堆。引用变量时则会从当前便利贴出发，一层一层往下查询，最远查到底层的内置作用域；不过往上查询是不允许的，所以外层函数无法引用内层函数的变量。根据这一规则，不同函数栈之间也是互不相通的。下图是对这一比喻的立体化展示</p>
+<p><img class="img-zoomable" src="/python_namespace_scope/query.png" alt="query" />
+</p>
+<h2 id="nonlocal-和-global-语句">nonlocal 和 global 语句</h2>
+<p>考虑下面这个函数</p>
+<pre><code class="language-python">def outer_func():
+    outer_var = 1
+    def inner_func():
+        outer_var = 2
+    print('outer_var before inner_func:', outer_var)
+    inner_func()
+    print('outer_var after inner_func:', outer_var)
+</code></pre>
+<p>运行结果为</p>
+<pre><code>outer_var before inner_func: 1
+outer_var after inner_func: 1
+</code></pre>
+<p>明明函数 <code>inner_func</code> 对变量 <code>outer_var</code> 进行了修改，但修改效果似乎没有体现在外层。这是因为 <code>outer_var = 2</code> 这个赋值语句只是在 <code>inner_func</code> 的作用域中新定义了一个绑定关系，这里的 <code>outer_var</code> 和外层的 <code>outer_var</code> 实际上分别属于不同的两个命名空间，除了变量名恰好相同以外并没有任何联系。这一行为还可以解读成，作用域外层的变量总是“只读”的——你可以根据 LEGB 规则引用外层变量的值，但若想通过赋值语句等操作改变其绑定关系，则只会在当前作用域里创建同名变量而已。</p>
+<p>若把 <code>inner_func</code> 中的赋值语句改为自增</p>
+<pre><code class="language-python">def inner_func():
+    outer_var += 1
+</code></pre>
+<p>运行却发现会抛出 <code>UnboundLocalError</code> 异常。这里自增语句 <code>outer_var += 1</code> 等价于赋值语句 <code>outer_var = outer_var + 1</code>，我们可能会认为，等号右边会通过引用外层 <code>outer_var</code> 的值计算出整数 2，然后再在当前作用域中创建同名的绑定关系，程序应该能正常运行才对。但实际情况是，函数在被定义时，若函数体内存在关于某变量的绑定语句，那么这个变量就一定会被解析到函数自己的作用域中，不会再向外查询——哪怕函数还没被调用、该语句还没被执行。所以当 <code>inner_func</code> 看到自己的语句块中出现了自增语句时，就认定 <code>outer_var</code> 肯定是自己的局部变量（local），但真当运行到 <code>outer_var + 1</code> 的表达式时，却发现局部作用域中查不到它，所以自然产生了 <code>UnboundLocalError</code> 异常：该局部变量还没有绑定关系就被引用了，命名空间里查不到它啊。</p>
+<p>如果真想修改外部作用域里的绑定关系，就需要用 <code>nonlocal</code> 和 <code>global</code> 语句显式声明某变量所处的作用域，同时获得修改其绑定关系的权限。<code>nonlocal</code> 会把变量名解析到离当前局部作用域最近的非全局的外层作用域中，例如上面的 <code>inner_func</code> 可以修改为</p>
+<pre><code class="language-python">def inner_func():
+    nonlocal outer_var
+    outer_var = 'abc'
+</code></pre>
+<p>运行结果为</p>
+<pre><code>outer_var before inner_func: 1
+outer_var after inner_func: abc
+</code></pre>
+<p>可以看到通过 <code>nonlocal</code> 声明 <code>inner_func</code> 里的 <code>outer_var</code> 就是外层那个 <code>outer_var</code>，便可以在 <code>inner_var</code> 里修改 <code>outer_var</code> 的绑定关系。<code>global</code> 同理，不过顾名思义会把变量名解析到全局作用域，例如</p>
+<pre><code class="language-python">N = 10
+def func():
+    global N
+    N += 10
+
+if __name__ == '__main__':
+    print('N before func:', N)
+    func()
+    print('N after func:', N)
+</code></pre>
+<p>运行结果为</p>
+<pre><code>N before func: 10
+N after func: 20
+</code></pre>
+<p>如果去掉 <code>global</code> 的语句的话，同样会抛出 <code>UnboundLocalError</code> 异常。</p>
+<p>需要注意，这一节针对的都是不可变（immutable）对象，若外层作用域的变量是可变（mutable）对象，例如列表、字典等，那么即便不用 <code>nonlocal</code> 和 <code>global</code> 语句，我们也能用赋值语句直接修改其元素，利用自增语句进行原地的连接操作。</p>
+<h2 id="模块的作用域">模块的作用域</h2>
+<p>每个模块都有其专属的命名空间和全局作用域，模块内变量的引用同样服从 LEGB 规则。事实上，主程序也不过是特殊的 <code>__main__</code> 模块的一部分而已。通过 <code>import</code> 语句可以把主程序里的变量名绑定给其它模块里的对象，以实现跨模块的引用。例如</p>
+<pre><code class="language-python">import math
+from math import sqrt
+</code></pre>
+<p>第一句会将 <code>math</code> 模块作为一个对象绑定到主程序里的 <code>math</code> 变量名上，接着以 <code>math.func</code> 的形式调用模块里的函数即可。而第二句等价于</p>
+<pre><code class="language-python">import math as _
+sqrt = _.sqrt
+del(_)
+</code></pre>
+<p>相当于把 <code>math.sqrt</code> 函数直接绑定到主程序里的 <code>sqrt</code> 变量名上。因此可以想到，直接修改 <code>sqrt</code> 的绑定关系并不会影响到 <code>math.sqrt</code>。下面还是再以图片为例</p>
+<p><img class="img-zoomable" src="/python_namespace_scope/module.png" alt="module" />
+</p>
+<p>内置作用域上有两个全局作用域（图中绿色部分），左边是主程序的，而右边是自定义的 <code>mod</code> 模块的。本来这两个作用域互相独立，但通过 <code>from mod import exp</code> 语句将右边的 <code>exp</code> 函数导入到了左边，所以现在左边也能调用 <code>exp</code>。注意，虽然现在 <code>exp</code> 属于主程序的全局作用域，但 <code>exp</code> 指向的函数对象直接定义在 <code>mod.py</code> 文件中，其内部的变量依然工作在 <code>mod</code> 模块的全局作用域里（例如函数中用到了定义在 <code>mod</code> 里的全局变量 <code>e</code>，不会说导入到主程序中就找不到 <code>e</code> 了）。</p>
+<h2 id="类的作用域">类的作用域</h2>
+<p>类的说明要稍微麻烦些，所以这里直接通过例子来展示</p>
+<p><img class="img-zoomable" src="/python_namespace_scope/class.png" alt="class" />
+</p>
+<p>运行结果为</p>
+<pre><code>Kate : meow
+</code></pre>
+<p>首先，类只有当其定义里的语句被全部执行后才能生效（显然函数不是这样）。当程序刚进入类定义时会创建类专属的命名空间，之后定义里的绑定关系将会被记录到这个命名空间中。如图中蓝色部分所示，绑定了一个类变量 <code>sound</code> 和两个类函数 <code>__init__</code> 和 <code>call</code>，同时这两个函数因为第一个参数是 <code>self</code>，所以之后还能作为实例的方法被调用。定义执行完毕后会创建一个类对象，并将其绑定到与类名同名的名称上去（此处是 <code>Cat</code>）。</p>
+<p>直接调用类对象可以创建一个空的实例对象 <code>c</code>，它也有自己独立的命名空间。我们可以通过 <code>c.attr</code> 的形式引用类相关的变量。若引用的是实例变量，那么会直接查询实例自己的命名空间；若引用的是类变量，那么会跳到实例所属的类的命名空间中去查找；若引用的是方法，则会跳到实例所属的类的命名空间中查找同名的函数，并将实例对象自身作为 <code>self</code> 参数传入。</p>
+<p>再回过头来看具体的程序，<code>Cat</code> 类在被直接调用时会自动调用 <code>__init__</code> 方法（如果存在的话），同时将 <code>c</code> 和接收的其它参数一并传给 <code>__init__</code>。<code>__init__</code> 的作用是给实例一个初始状态，可以看到函数定义里以 <code>self.name = name</code> 等赋值语句向 <code>c</code> 的命名空间中写入了实例变量的绑定关系。之后主程序中调用 <code>c.call()</code>，等价于 <code>Cat.call(c)</code>，<code>call</code> 的函数定义中 <code>self.sound</code> 又等价于 <code>Cat.sound</code>。</p>
+<p>类与函数的一个重要差别是，函数里嵌套定义的函数可以按 L -&gt; E 的顺序引用外层函数的变量，但类里定义的函数并不能引用类变量，例如本例中 <code>call</code> 函数里直接引用 <code>sound</code> 会抛出 <code>NameError</code> 异常。虽然类也有命名空间和作用域，但内层函数在向外层查询时会跳过类的作用域，用图上的内容来说，就是蓝色层对于黄色层是“透明”的。不过，因为绿色层里有类对象的绑定关系，所以可以用 <code>Cat.attr</code> 的形式迂回引用类属性。</p>
+<p>总结一下：类的作用域不同于一般函数的作用域，类里的函数不能直接访问类属性，但可以委托实例对象（<code>self</code>）去访问类变量和类方法，或直接用类名访问所有类属性。如果存在继承，那么上面提到的委托操作会递归地向父类进行查询，这里篇幅有限就不再详谈了。</p>
+<p>PS：如果你尝试以下代码</p>
+<pre><code class="language-python">N = 10
+print('N before class:', N)
+class A:
+    N += 10
+    print('N in class:', N)
+print('N after class:', N)
+</code></pre>
+<p>运行结果为</p>
+<pre><code>N before class: 10
+N in class: 20
+N after class: 10
+</code></pre>
+<p>Emmm……对于函数会报 <code>UnboundLocalError</code> 错误，但对类就成功运行了。所以也有人说其实类只有命名空间而没有作用域，感兴趣的读者可以参考最后一个参考链接。</p>
+<h2 id="参考链接">参考链接</h2>
+<p><a href="https://docs.python.org/3/tutorial/classes.html" target="_blank">The Python Tutorial: 9. Classes</a></p>
+<p><a href="https://www.runoob.com/python3/python3-namespace-scope.html" target="_blank">Python3 命名空间和作用域</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/23926957" target="_blank">Python是一种纯粹的语言</a></p>
+<p><a href="https://www.zhihu.com/question/50688142" target="_blank">Python的类定义有没有建立新的作用域？</a></p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#定义">定义</a>
+      <ul>
+        <li><a href="#命名空间">命名空间</a></li>
+        <li><a href="#作用域">作用域</a></li>
+      </ul>
+    </li>
+    <li><a href="#legb-规则">LEGB 规则</a></li>
+    <li><a href="#nonlocal-和-global-语句">nonlocal 和 global 语句</a></li>
+    <li><a href="#模块的作用域">模块的作用域</a></li>
+    <li><a href="#类的作用域">类的作用域</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#定义">定义</a>
+      <ul>
+        <li><a href="#命名空间">命名空间</a></li>
+        <li><a href="#作用域">作用域</a></li>
+      </ul>
+    </li>
+    <li><a href="#legb-规则">LEGB 规则</a></li>
+    <li><a href="#nonlocal-和-global-语句">nonlocal 和 global 语句</a></li>
+    <li><a href="#模块的作用域">模块的作用域</a></li>
+    <li><a href="#类的作用域">类的作用域</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2021
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

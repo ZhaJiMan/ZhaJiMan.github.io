@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/python/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-10-19T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-10-23T00:00:00+00:00" />
 
 
 <style>
@@ -106,6 +106,27 @@
 </div>
 
 
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/python_namespace_scope/">Python 中的命名空间和作用域</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-23</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4063 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="定义">定义</h2>
+<h3 id="命名空间">命名空间</h3>
+<p><strong>命名空间（namespace）</strong>：官方说法是从名称到对象的映射，实际上就是保存变量名与变量值绑定关系的一个空间。赋值语句会将绑定关系写入命名空间，而引用变量时则会根据变量名在命名空间中查询出对应的值。并且大部分的命名空间都是利用 Python 的字典来实现的（例外如类的 <code>__slots__</code> 属性）。程序中出现在全局的变量构成一个命名空间，Python 内置的函数和异常类也有它们自己的命名空间，每次定义函数或类时也会创建专属于它们的命名空间。命名空间之间相互独立，同名的变量可以存在于不同的命名空间中，例如两个函数内部可以使用同名的局部变量，这有助于我们在不引发冲突的同时合理复用变量名。</p>
+<h3 id="作用域">作用域</h3>
+<p><strong>作用域（scope）</strong>：官方说法是 Python 程序中能直接访问一个命名空间的文本区域。听起来有点抽象，实际上就是指出程序中哪些区域的文本归哪个命名空间管理，例如函数的作用域显然就是函数体（定义函数的所有语句），全局作用域就是从头到尾整个程序。但并不是说出现在一个作用域中的变量就一定属于该作用域（的命名空间）：若在该区域内通过赋值语句等操作创建（或修改）了该变量的绑定关系后，那它就属于该作用域；否则它就属于其它作用域，在当前区域引用它需要根据特定的规则向其它作用域进行查询。例如常见的在函数中引用全局变量。本文的一个重点就是要来仔细说说这一规则。</p>
+  </div>
+</div>
 
 <div class="post">
   <h2 class="post-item post-title">
