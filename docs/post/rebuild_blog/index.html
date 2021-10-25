@@ -66,6 +66,8 @@
 
 
 
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </head>
 
 <body
@@ -110,10 +112,11 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-03</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2267 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2696 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/hugo">hugo</a>&nbsp;<a href="/tags/github">github</a>&nbsp;</span>
-
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
     </div>
     
     <div class="post-content markdown-body">
@@ -233,6 +236,26 @@ $$</p>
 <p>文章最下面就会出现评论区了，用 Github 账号登录即可发送评论。</p>
 <h3 id="设置网站图标">设置网站图标</h3>
 <p>依据 Fuji 主页的说明，把自己喜欢的图片上传到 <a href="https://realfavicongenerator.net/" target="_blank">https://realfavicongenerator.net/</a> 上，再把打包好的图标压缩包下载下来，解压到 <code>static</code> 目录中，接着把该网站提供的 HTML 代码粘贴到 <code>layouts/partials/favicon.html</code> 文件中，并修改一下 <code>href</code> 属性指向的路径即可。</p>
+<h3 id="显示文章点击量">显示文章点击量</h3>
+<p>这里使用 <a href="http://ibruce.info/2015/04/04/busuanzi/" target="_blank">不蒜子</a> 实现统计。按官网和网上的介绍，首先需要在主题的 <code>head.html</code> 文件里加入脚本</p>
+<pre><code class="language-html">&lt;script async src=&quot;//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>再在主题的 <code>single.html</code> 文件中加入标签</p>
+<pre><code class="language-html">&lt;span id=&quot;busuanzi_container_page_pv&quot;&gt;
+  本文总阅读量&lt;span id=&quot;busuanzi_value_page_pv&quot;&gt;&lt;/span&gt;次
+&lt;/span&gt;
+</code></pre>
+<p>不过官网也提供另一种极简的标签</p>
+<pre><code class="language-html">本文总阅读量&lt;span id=&quot;busuanzi_value_page_pv&quot;&gt;&lt;/span&gt;次
+</code></pre>
+<p>具体到我使用的 Fuji 主题上，先在 <code>themes/fuji/layouts/partials/head.html</code> 文件中加入脚本，再修改 <code>themes/fuji/layouts/_default/single.html</code> 文件，将标签加到文件第八行，post-meta（文章元数据）的块中</p>
+<pre><code class="language-html">&lt;div class=&quot;post-item post-meta&quot;&gt;
+    {{ partial &quot;post-meta.html&quot; . }}
+    &lt;!-- 显示文章点击量 --&gt;
+    &lt;span&gt;&lt;i class=&quot;iconfont icon-time-sharp&quot;&gt;&lt;/i&gt;&amp;nbsp;&lt;span id=&quot;busuanzi_value_page_pv&quot;&gt;&lt;/span&gt;&amp;nbsp;views&lt;/span&gt;
+&lt;/div&gt;
+</code></pre>
+<p>其中 <code>&lt;i class=&quot;iconfont icon-time-sharp&quot;&gt;</code> 的部分是我从 <code>themes/fuji/layouts/partials/post-meta.html</code> 文件中抄来的，效果似乎是确定元数据的图标和字体。而标签则是用的前面提到的极简版。我试过直接将标签加到 <code>post-meta.html</code> 文件中，但会引起首页计数错乱；同时在 <code>footer.html</code> 中加入站点总点击量的尝试也失败了。我不懂 HTML，还请读者指导。</p>
 <h3 id="修改样式">修改样式</h3>
 <p>依据 Fuji 主页的说明，利用 <code>assets/scss/_custom_var.scss</code> 文件修改 SCSS 变量（例如换颜色、换字体），利用 <code>assets/scss/_custom_rule.scss</code> 文件改写 SCSS 规则。</p>
 <h2 id="别人的博客">别人的博客</h2>
@@ -245,6 +268,7 @@ $$</p>
 <p><a href="https://blog.csdn.net/qq_38340601/article/details/108900666" target="_blank">hugo 导入图片，两种方式</a></p>
 <p><a href="https://github.com/KaTeX/KaTeX/issues/712" target="_blank">single or double dollar sign as formula delimiter</a></p>
 <p><a href="https://zhuanlan.zhihu.com/p/87053283" target="_blank">Git中submodule的使用</a></p>
+<p><a href="https://www.cnblogs.com/billie52707/p/13486133.html" target="_blank">hugo建站 | 我的第一个博客网站</a></p>
     </div>
 </article>
 
@@ -390,6 +414,7 @@ $$</p>
         <li><a href="#渲染公式">渲染公式</a></li>
         <li><a href="#评论系统">评论系统</a></li>
         <li><a href="#设置网站图标">设置网站图标</a></li>
+        <li><a href="#显示文章点击量">显示文章点击量</a></li>
         <li><a href="#修改样式">修改样式</a></li>
       </ul>
     </li>
@@ -527,6 +552,7 @@ $$</p>
         <li><a href="#渲染公式">渲染公式</a></li>
         <li><a href="#评论系统">评论系统</a></li>
         <li><a href="#设置网站图标">设置网站图标</a></li>
+        <li><a href="#显示文章点击量">显示文章点击量</a></li>
         <li><a href="#修改样式">修改样式</a></li>
       </ul>
     </li>

@@ -190,6 +190,40 @@ Fuji 主题支持 Disqus、utterances 和 DisqusJS 三种评论系统，并且�
 
 依据 Fuji 主页的说明，把自己喜欢的图片上传到 [https://realfavicongenerator.net/](https://realfavicongenerator.net/) 上，再把打包好的图标压缩包下载下来，解压到 `static` 目录中，接着把该网站提供的 HTML 代码粘贴到 `layouts/partials/favicon.html` 文件中，并修改一下 `href` 属性指向的路径即可。
 
+### 显示文章点击量
+
+这里使用 [不蒜子](http://ibruce.info/2015/04/04/busuanzi/) 实现统计。按官网和网上的介绍，首先需要在主题的 `head.html` 文件里加入脚本
+
+```html
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+```
+
+再在主题的 `single.html` 文件中加入标签
+
+```html
+<span id="busuanzi_container_page_pv">
+  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+</span>
+```
+
+不过官网也提供另一种极简的标签
+
+```html
+本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+```
+
+具体到我使用的 Fuji 主题上，先在 `themes/fuji/layouts/partials/head.html` 文件中加入脚本，再修改 `themes/fuji/layouts/_default/single.html` 文件，将标签加到文件第八行，post-meta（文章元数据）的块中
+
+```html
+<div class="post-item post-meta">
+    {{ partial "post-meta.html" . }}
+    <!-- 显示文章点击量 -->
+    <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+</div>
+```
+
+其中 `<i class="iconfont icon-time-sharp">` 的部分是我从 `themes/fuji/layouts/partials/post-meta.html` 文件中抄来的，效果似乎是确定元数据的图标和字体。而标签则是用的前面提到的极简版。我试过直接将标签加到 `post-meta.html` 文件中，但会引起首页计数错乱；同时在 `footer.html` 中加入站点总点击量的尝试也失败了。我不懂 HTML，还请读者指导。
+
 ### 修改样式
 
 依据 Fuji 主页的说明，利用 `assets/scss/_custom_var.scss` 文件修改 SCSS 变量（例如换颜色、换字体），利用 `assets/scss/_custom_rule.scss` 文件改写 SCSS 规则。
@@ -213,3 +247,5 @@ Fuji 主题支持 Disqus、utterances 和 DisqusJS 三种评论系统，并且�
 [single or double dollar sign as formula delimiter](https://github.com/KaTeX/KaTeX/issues/712)
 
 [Git中submodule的使用](https://zhuanlan.zhihu.com/p/87053283)
+
+[hugo建站 | 我的第一个博客网站](https://www.cnblogs.com/billie52707/p/13486133.html)
