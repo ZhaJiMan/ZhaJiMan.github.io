@@ -190,39 +190,30 @@ Fuji 主题支持 Disqus、utterances 和 DisqusJS 三种评论系统，并且�
 
 依据 Fuji 主页的说明，把自己喜欢的图片上传到 [https://realfavicongenerator.net/](https://realfavicongenerator.net/) 上，再把打包好的图标压缩包下载下来，解压到 `static` 目录中，接着把该网站提供的 HTML 代码粘贴到 `layouts/partials/favicon.html` 文件中，并修改一下 `href` 属性指向的路径即可。
 
-### 显示文章点击量
+### 显示点击量
 
-这里使用 [不蒜子](http://ibruce.info/2015/04/04/busuanzi/) 实现统计。按官网和网上的介绍，首先需要在主题的 `head.html` 文件里加入脚本
+这里使用 [不蒜子](http://ibruce.info/2015/04/04/busuanzi/) 实现统计，需要在主题的 HTML 文件中添加脚本，再用标签显示计数，用法请见其官网。具体到 Fuji 主题，首先在 `themes/fuji/layouts/partials/head.html` 文件中添加不蒜子的脚本
 
 ```html
+<!-- 不蒜子脚本 -->
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 ```
 
-再在主题的 `single.html` 文件中加入标签
+接着在 `themes/fuji/layouts/_default/single.html` 文件的第八行、post-meta（文章元数据）的块中加入标签
 
 ```html
-<span id="busuanzi_container_page_pv">
-  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
-</span>
+<!-- 显示文章点击量 -->
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
 ```
 
-不过官网也提供另一种极简的标签
+`single.html` 控制文章页面的显示，把标签加到 post-meta 块中能让计数显示在文章标题下面一行处。其中 `<i class="iconfont icon-time-sharp">`  是我在主题的 `post_meta.html` 中抄来的，能指定元数据的图标和字体。不蒜子的标签采用了官网提到的极简模式。
+
+最后考虑在博客的页脚加上总访问量的计数。在 `themes/fuji/layouts/partials/footer.html` 文件的 footer 块中加入
 
 ```html
-本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+<!-- 显示网站访问量 -->
+Visits: <span id="busuanzi_value_site_pv"></span>
 ```
-
-具体到我使用的 Fuji 主题上，先在 `themes/fuji/layouts/partials/head.html` 文件中加入脚本，再修改 `themes/fuji/layouts/_default/single.html` 文件，将标签加到文件第八行，post-meta（文章元数据）的块中
-
-```html
-<div class="post-item post-meta">
-    {{ partial "post-meta.html" . }}
-    <!-- 显示文章点击量 -->
-    <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
-</div>
-```
-
-其中 `<i class="iconfont icon-time-sharp">` 的部分是我从 `themes/fuji/layouts/partials/post-meta.html` 文件中抄来的，效果似乎是确定元数据的图标和字体。而标签则是用的前面提到的极简版。我试过直接将标签加到 `post-meta.html` 文件中，但会引起首页计数错乱；同时在 `footer.html` 中加入站点总点击量的尝试也失败了。我不懂 HTML，还请读者指导。
 
 ### 修改样式
 

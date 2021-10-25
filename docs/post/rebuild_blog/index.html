@@ -112,7 +112,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-03</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2696 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2538 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/hugo">hugo</a>&nbsp;<a href="/tags/github">github</a>&nbsp;</span>
         
@@ -236,26 +236,20 @@ $$</p>
 <p>文章最下面就会出现评论区了，用 Github 账号登录即可发送评论。</p>
 <h3 id="设置网站图标">设置网站图标</h3>
 <p>依据 Fuji 主页的说明，把自己喜欢的图片上传到 <a href="https://realfavicongenerator.net/" target="_blank">https://realfavicongenerator.net/</a> 上，再把打包好的图标压缩包下载下来，解压到 <code>static</code> 目录中，接着把该网站提供的 HTML 代码粘贴到 <code>layouts/partials/favicon.html</code> 文件中，并修改一下 <code>href</code> 属性指向的路径即可。</p>
-<h3 id="显示文章点击量">显示文章点击量</h3>
-<p>这里使用 <a href="http://ibruce.info/2015/04/04/busuanzi/" target="_blank">不蒜子</a> 实现统计。按官网和网上的介绍，首先需要在主题的 <code>head.html</code> 文件里加入脚本</p>
-<pre><code class="language-html">&lt;script async src=&quot;//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js&quot;&gt;&lt;/script&gt;
+<h3 id="显示点击量">显示点击量</h3>
+<p>这里使用 <a href="http://ibruce.info/2015/04/04/busuanzi/" target="_blank">不蒜子</a> 实现统计，需要在主题的 HTML 文件中添加脚本，再用标签显示计数，用法请见其官网。具体到 Fuji 主题，首先在 <code>themes/fuji/layouts/partials/head.html</code> 文件中添加不蒜子的脚本</p>
+<pre><code class="language-html">&lt;!-- 不蒜子脚本 --&gt;
+&lt;script async src=&quot;//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js&quot;&gt;&lt;/script&gt;
 </code></pre>
-<p>再在主题的 <code>single.html</code> 文件中加入标签</p>
-<pre><code class="language-html">&lt;span id=&quot;busuanzi_container_page_pv&quot;&gt;
-  本文总阅读量&lt;span id=&quot;busuanzi_value_page_pv&quot;&gt;&lt;/span&gt;次
-&lt;/span&gt;
+<p>接着在 <code>themes/fuji/layouts/_default/single.html</code> 文件的第八行、post-meta（文章元数据）的块中加入标签</p>
+<pre><code class="language-html">&lt;!-- 显示文章点击量 --&gt;
+&lt;span&gt;&lt;i class=&quot;iconfont icon-time-sharp&quot;&gt;&lt;/i&gt;&amp;nbsp;&lt;span id=&quot;busuanzi_value_page_pv&quot;&gt;&lt;/span&gt;&amp;nbsp;views&lt;/span&gt;
 </code></pre>
-<p>不过官网也提供另一种极简的标签</p>
-<pre><code class="language-html">本文总阅读量&lt;span id=&quot;busuanzi_value_page_pv&quot;&gt;&lt;/span&gt;次
+<p><code>single.html</code> 控制文章页面的显示，把标签加到 post-meta 块中能让计数显示在文章标题下面一行处。其中 <code>&lt;i class=&quot;iconfont icon-time-sharp&quot;&gt;</code>  是我在主题的 <code>post_meta.html</code> 中抄来的，能指定元数据的图标和字体。不蒜子的标签采用了官网提到的极简模式。</p>
+<p>最后考虑在博客的页脚加上总访问量的计数。在 <code>themes/fuji/layouts/partials/footer.html</code> 文件的 footer 块中加入</p>
+<pre><code class="language-html">&lt;!-- 显示网站访问量 --&gt;
+Visits: &lt;span id=&quot;busuanzi_value_site_pv&quot;&gt;&lt;/span&gt;
 </code></pre>
-<p>具体到我使用的 Fuji 主题上，先在 <code>themes/fuji/layouts/partials/head.html</code> 文件中加入脚本，再修改 <code>themes/fuji/layouts/_default/single.html</code> 文件，将标签加到文件第八行，post-meta（文章元数据）的块中</p>
-<pre><code class="language-html">&lt;div class=&quot;post-item post-meta&quot;&gt;
-    {{ partial &quot;post-meta.html&quot; . }}
-    &lt;!-- 显示文章点击量 --&gt;
-    &lt;span&gt;&lt;i class=&quot;iconfont icon-time-sharp&quot;&gt;&lt;/i&gt;&amp;nbsp;&lt;span id=&quot;busuanzi_value_page_pv&quot;&gt;&lt;/span&gt;&amp;nbsp;views&lt;/span&gt;
-&lt;/div&gt;
-</code></pre>
-<p>其中 <code>&lt;i class=&quot;iconfont icon-time-sharp&quot;&gt;</code> 的部分是我从 <code>themes/fuji/layouts/partials/post-meta.html</code> 文件中抄来的，效果似乎是确定元数据的图标和字体。而标签则是用的前面提到的极简版。我试过直接将标签加到 <code>post-meta.html</code> 文件中，但会引起首页计数错乱；同时在 <code>footer.html</code> 中加入站点总点击量的尝试也失败了。我不懂 HTML，还请读者指导。</p>
 <h3 id="修改样式">修改样式</h3>
 <p>依据 Fuji 主页的说明，利用 <code>assets/scss/_custom_var.scss</code> 文件修改 SCSS 变量（例如换颜色、换字体），利用 <code>assets/scss/_custom_rule.scss</code> 文件改写 SCSS 规则。</p>
 <h2 id="别人的博客">别人的博客</h2>
@@ -414,7 +408,7 @@ $$</p>
         <li><a href="#渲染公式">渲染公式</a></li>
         <li><a href="#评论系统">评论系统</a></li>
         <li><a href="#设置网站图标">设置网站图标</a></li>
-        <li><a href="#显示文章点击量">显示文章点击量</a></li>
+        <li><a href="#显示点击量">显示点击量</a></li>
         <li><a href="#修改样式">修改样式</a></li>
       </ul>
     </li>
@@ -552,7 +546,7 @@ $$</p>
         <li><a href="#渲染公式">渲染公式</a></li>
         <li><a href="#评论系统">评论系统</a></li>
         <li><a href="#设置网站图标">设置网站图标</a></li>
-        <li><a href="#显示文章点击量">显示文章点击量</a></li>
+        <li><a href="#显示点击量">显示点击量</a></li>
         <li><a href="#修改样式">修改样式</a></li>
       </ul>
     </li>
@@ -577,6 +571,8 @@ $$</p>
                 | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
                    target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
                                                     target="_blank">Hugo</a> 
+                
+                | Visits: <span id="busuanzi_value_site_pv"></span>
             </span>
         </div>
     </div>
