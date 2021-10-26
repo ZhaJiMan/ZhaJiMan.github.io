@@ -347,7 +347,118 @@ plt.show()
 
 ## 画图的例子
 
-下面举一个读取 NETCDF 格式的 ERA5 文件并画图的例子
+下面举一个读取 NETCDF 格式的 ERA5 文件并画图的例子。首先在 `map_funcs.py` 文件里定义一些常用的自定义函数
+
+```python
+#----------------------------------------------------------------------------
+# 2019-09-10
+# 绘制地图用的函数.
+#----------------------------------------------------------------------------
+import matplotlib as mpl
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+from cartopy.io.shapereader import Reader
+from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+
+def add_Chinese_provinces(ax, **feature_kw):
+    '''
+    给一个GeoAxes添加上中国省界的shapefile.
+
+    Parameters
+    ----------
+    ax : GeoAxes
+        要添加shapefile的地图.
+
+    **feature_kw
+        绘制feature时的Matplotlib关键词参数,例如linewidth,facecolor,alpha等.
+    '''
+    shp_filepath = 'D:/maps/shps/bou2_4p.shp'
+    proj = ccrs.PlateCarree()
+    reader = Reader(shp_filepath)
+    geometries = reader.geometries()
+    provinces = cfeature.ShapelyFeature(geometries, proj)
+    ax.add_feature(provinces, **feature_kw)
+
+def set_map_extent_and_ticks(
+    ax, extent, xticks, yticks, nx=0, ny=0,
+    xformatter=LongitudeFormatter(),
+    yformatter=LatitudeFormatter()
+):
+    '''
+    为矩形投影的地图设置extent和ticks.
+
+    Parameters
+    ----------
+    ax : GeoAxes
+        需要被设置的地图.支持_RectangularProjection和Mercator投影.
+
+    extent : 4-tuple of float
+        地图的经纬度范围[lonmin, lonmax, latmin, latmax].
+        若值为None,则给出全球范围.
+
+    xticks : list of float
+        经度major ticks的位置.
+
+    yticks : list of float
+        纬度major ticks的位置.
+
+    nx : int
+        经度的两个major ticks之间minor ticks的个数.默认没有minor ticks.
+        当经度不是等距分布时,请不要进行设置.
+
+    ny : int
+        纬度的两个major ticks之间minor ticks的个数.默认没有minor ticks.
+        当纬度不是等距分布时,请不要进行设置.
+
+    xformatter : LongitudeFormatter
+        经度的major ticks的formatter.默认使用无参数的LongitudeFormatter.
+
+    yformatter : LatitudeFormatter
+        纬度的major ticks的formatter.默认使用无参数的LatitudeFormatter.
+    '''
+    # 设置ticks.
+    proj = ccrs.PlateCarree()
+    ax.set_xticks(xticks, crs=proj)
+    ax.set_yticks(yticks, crs=proj)
+    if nx > 0:
+        xlocator = mpl.ticker.AutoMinorLocator(nx + 1)
+        ax.xaxis.set_minor_locator(xlocator)
+    if ny > 0:
+        ylocator = mpl.ticker.AutoMinorLocator(ny + 1)
+        ax.yaxis.set_minor_locator(ylocator)
+
+    # 添加经纬度标识.
+    ax.xaxis.set_major_formatter(xformatter)
+    ax.yaxis.set_major_formatter(yformatter)
+
+    # 最后设置extent,防止ticks超出extent的范围.
+    if extent is None:
+        ax.set_global()
+    else:
+        ax.set_extent(extent, crs=proj)
+
+def add_box_on_map(ax, extent, **plot_kw):
+    '''
+    在矩形投影的GeoAxes上画出一个空心的方框.
+
+    Parameters
+    ----------
+    ax : GeoAxes
+        被绘制的GeoAxes.
+
+    extent : 4-tuple of float
+        方框的经纬度范围[lonmin, lonmax, latmin, latmax].
+
+    **plot_kw
+        利用plot方法画方框时的参数,例如linewidth,color等.
+    '''
+    lonmin, lonmax, latmin, latmax = extent
+    x = [lonmin, lonmax, lonmax, lonmin, lonmin]
+    y = [latmin, latmin, latmax, latmax, latmin]
+    ax.plot(x, y, transform=ccrs.PlateCarree(), **plot_kw)
+```
+
+其中 `add_Chinese_provinces` 函数用于在地图上添加中国省界的 shapefile；`set_map_extent_and_ticks` 用于设置矩形投影（例如 `PlateCarree`）地图的显示范围和刻度，代码参考了 Cartopy 和 [GeoCAT-viz](https://github.com/NCAR/geocat-viz) 的源码。接着是主程序
 
 ```Python
 #-------------------------------------------------------------------------
@@ -356,90 +467,11 @@ plt.show()
 #-------------------------------------------------------------------------
 import numpy as np
 import xarray as xr
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-
 import cartopy.crs as ccrs
-import cartopy.feature as cfeature
-from cartopy.io.shapereader import Reader
-from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-def add_Chinese_provinces(ax, **kwargs):
-    '''
-    给一个GeoAxes添加中国省界.
-
-    Parameters
-    ----------
-    ax : GeoAxes
-        被绘制的GeoAxes,投影不限.
-
-    **kwargs
-        绘制feature时的Matplotlib关键词参数,例如linewidth,facecolor,alpha等.
-
-    Returns
-    -------
-    None
-    '''
-    proj = ccrs.PlateCarree()
-    shp_filepath = 'D:/maps/shps/bou2_4p.shp'
-    reader = Reader(shp_filepath)
-    provinces = cfeature.ShapelyFeature(reader.geometries(), proj)
-    ax.add_feature(provinces, **kwargs)
-
-def set_map_ticks(ax, dx=60, dy=30, nx=0, ny=0, labelsize='medium'):
-    '''
-    为PlateCarree投影的GeoAxes设置tick和tick label.
-    需要注意,set_extent应该在该函数之后使用.
-
-    Parameters
-    ----------
-    ax : GeoAxes
-        需要被设置的GeoAxes,要求投影必须为PlateCarree.
-
-    dx : float, default: 60
-        经度的major ticks的间距,从-180度开始算起.默认值为10.
-
-    dy : float, default: 30
-        纬度的major ticks,从-90度开始算起,间距由dy指定.默认值为10.
-
-    nx : float, default: 0
-        经度的minor ticks的个数.默认值为0.
-
-    ny : float, default: 0
-        纬度的minor ticks的个数.默认值为0.
-
-    labelsize : str or float, default: 'medium'
-        tick label的大小.默认为'medium'.
-
-    Returns
-    -------
-    None
-    '''
-    if not isinstance(ax.projection, ccrs.PlateCarree):
-        raise ValueError('Projection of ax should be PlateCarree!')
-    proj = ccrs.PlateCarree()   # 专门给ticks用的crs.
-
-    # 设置x轴.
-    major_xticks = np.arange(-180, 180 + 0.9 * dx, dx)
-    ax.set_xticks(major_xticks, crs=proj)
-    if nx > 0:
-        ddx = dx / (nx + 1)
-        minor_xticks = np.arange(-180, 180 + 0.9 * ddx, ddx)
-        ax.set_xticks(minor_xticks, minor=True, crs=proj)
-
-    # 设置y轴.
-    major_yticks = np.arange(-90, 90 + 0.9 * dy, dy)
-    ax.set_yticks(major_yticks, crs=proj)
-    if ny > 0:
-        ddy = dy / (ny + 1)
-        minor_yticks = np.arange(-90, 90 + 0.9 * ddy, ddy)
-        ax.set_yticks(minor_yticks, minor=True, crs=proj)
-
-    # 为tick label增添度数标识.
-    ax.xaxis.set_major_formatter(LongitudeFormatter())
-    ax.yaxis.set_major_formatter(LatitudeFormatter())
-    ax.tick_params(labelsize=labelsize)
+from map_funcs import add_Chinese_provinces, set_map_extent_and_ticks
 
 if __name__ == '__main__':
     # 设置绘图区域.
@@ -466,8 +498,13 @@ if __name__ == '__main__':
     ax.coastlines(resolution='10m', lw=0.3)
     add_Chinese_provinces(ax, lw=0.3, ec='k', fc='none')
     # 设置经纬度刻度.
-    set_map_ticks(ax, dx=15, dy=15, nx=1, ny=1, labelsize='small')
-    ax.set_extent(extent, crs=proj)
+    set_map_extent_and_ticks(
+        ax, extent,
+        xticks=np.arange(-180, 190, 15),
+        yticks=np.arange(-90, 100, 15),
+        nx=1, ny=1
+    )
+    ax.tick_params(labelsize='small')
 
     # 画出相对湿度的填色图.
     im = ax.contourf(
@@ -516,7 +553,8 @@ if __name__ == '__main__':
     title = 'Relative Humidity and Wind at 500 hPa'
     ax.set_title(title, fontsize='medium')
 
-    plt.show()
+    fig.savefig('rh_wnd.png', dpi=200, bbox_inches='tight')
+    plt.close(fig)
 ```
 
 ![example](/cartopy_introduction/example.png)
@@ -530,3 +568,5 @@ if __name__ == '__main__':
 - Unidata 给出的例子：[Unidata Example Gallery](https://unidata.github.io/python-training/gallery/gallery-home/)
 - GeoCAT 给出的仿 NCL 的例子：[GeoCAT-examples](https://geocat-examples.readthedocs.io/en/latest/index.html)
 - Cartopy 开发成员对于数据跨越边界时的解说：[preventing spurious horizontal lines for ungridded pcolor(mesh) data](https://stackoverflow.com/questions/46527456/preventing-spurious-horizontal-lines-for-ungridded-pcolormesh-data)
+
+- 谈到了如何重复利用底图的方法：[(筆記) python的cartopy使用、清除已畫的資料方法](https://home.gamer.com.tw/creationDetail.php?sn=4318912)
