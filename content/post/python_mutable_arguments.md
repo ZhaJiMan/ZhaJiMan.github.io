@@ -16,6 +16,8 @@ def set_map_extent_and_ticks(
     ...
 ```
 
+<!--more-->
+
 其功能是限制 GeoAxes 的经纬度范围，并画出经纬度刻度。其中 `LongitudeFormatter` 和 `LatitudeFormatter` 是 Cartopy 定义的两个 Formatter 类，用于格式化经纬度刻度标签。Formatter 对象因为其属性可以任意修改，所以也可以算作可变对象（[are user defined classes mutable](https://stackoverflow.com/questions/12076445/are-user-defined-classes-mutable)）。[What the f*ck Python!](https://github.com/leisurelicht/wtfpython-cn) 中提到过
 
 > Python中函数的默认可变参数并不是每次调用该函数时都会被初始化。相反，它们会使用最近分配的值作为默认值，除非明确地将可变对象传递给函数。

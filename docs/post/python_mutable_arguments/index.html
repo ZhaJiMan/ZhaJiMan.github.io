@@ -36,8 +36,22 @@
 <meta property="og:title" content="Python 系列：小心默认的可变参数" />
 <meta name="twitter:title" content="Python 系列：小心默认的可变参数" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://zhajiman.github.io/post/python_mutable_arguments/" /><meta property="og:description" content="之前我在 Cartopy 系列：从入门到放弃 一文中定义了这样一个函数 def set_map_extent_and_ticks( ax, extent, xticks, yticks, nx=0, ny=0, xformatter=LongitudeFormatter(), yformatter=LatitudeFormatter() ): ... 其功能是限制 GeoAxes 的经纬度范围，并画出经纬度刻度。其中 LongitudeFormatter 和 LatitudeFormatter 是 Cartopy 定义的两个 Formatter 类，用于格式化经纬度刻度标签。Formatter 对象" />
-<meta name="twitter:description" content="之前我在 Cartopy 系列：从入门到放弃 一文中定义了这样一个函数 def set_map_extent_and_ticks( ax, extent, xticks, yticks, nx=0, ny=0, xformatter=LongitudeFormatter(), yformatter=LatitudeFormatter() ): ... 其功能是限制 GeoAxes 的经纬度范围，并画出经纬度刻度。其中 LongitudeFormatter 和 LatitudeFormatter 是 Cartopy 定义的两个 Formatter 类，用于格式化经纬度刻度标签。Formatter 对象" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta property="og:url" content="https://zhajiman.github.io/post/python_mutable_arguments/" /><meta property="og:description" content="之前我在 Cartopy 系列：从入门到放弃 一文中定义了这样一个函数
+def set_map_extent_and_ticks(
+    ax, extent, xticks, yticks, nx=0, ny=0,
+    xformatter=LongitudeFormatter(),
+    yformatter=LatitudeFormatter()
+):
+    ...
+" />
+<meta name="twitter:description" content="之前我在 Cartopy 系列：从入门到放弃 一文中定义了这样一个函数
+def set_map_extent_and_ticks(
+    ax, extent, xticks, yticks, nx=0, ny=0,
+    xformatter=LongitudeFormatter(),
+    yformatter=LatitudeFormatter()
+):
+    ...
+" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-11-14T00:00:00+00:00" /><meta property="article:modified_time" content="2021-11-14T00:00:00+00:00" />
 
@@ -140,7 +154,6 @@
 ):
     ...
 </code></pre>
-
     </div>
 </article>
 

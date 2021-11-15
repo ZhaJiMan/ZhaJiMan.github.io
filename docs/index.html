@@ -117,7 +117,14 @@
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
     </div>
     <div class="post-item post-summary markdown-body">
-        之前我在 Cartopy 系列：从入门到放弃 一文中定义了这样一个函数 def set_map_extent_and_ticks( ax, extent, xticks, yticks, nx=0, ny=0, xformatter=LongitudeFormatter(), yformatter=LatitudeFormatter() ): ... 其功能是限制 GeoAxes 的经纬度范围，并画出经纬度刻度。其中 LongitudeFormatter 和 LatitudeFormatter 是 Cartopy 定义的两个 Formatter 类，用于格式化经纬度刻度标签。Formatter 对象
+        <p>之前我在 <a href="https://zhajiman.github.io/post/cartopy_introduction/" target="_blank">Cartopy 系列：从入门到放弃</a> 一文中定义了这样一个函数</p>
+<pre><code class="language-python">def set_map_extent_and_ticks(
+    ax, extent, xticks, yticks, nx=0, ny=0,
+    xformatter=LongitudeFormatter(),
+    yformatter=LatitudeFormatter()
+):
+    ...
+</code></pre>
     </div>
 </div>
 
