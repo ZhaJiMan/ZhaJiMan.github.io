@@ -215,6 +215,8 @@ Fuji 主题支持 Disqus、utterances 和 DisqusJS 三种评论系统，并且�
 Visits: <span id="busuanzi_value_site_pv"></span>
 ```
 
+摆放标签的位置都是我胡乱试出来的，在不同主题下的做法各不相同。
+
 ### 修改样式
 
 依据 Fuji 主页的说明，利用 `assets/scss/_custom_var.scss` 文件修改 SCSS 变量（例如换颜色、换字体），利用 `assets/scss/_custom_rule.scss` 文件改写 SCSS 规则。

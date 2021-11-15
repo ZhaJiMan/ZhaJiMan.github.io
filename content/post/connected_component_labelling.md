@@ -322,7 +322,7 @@ def get_neighbor_indices(labelled, row, col, r):
                     yield x, y
 ```
 
-在某些情况下也许能排上用场。
+在某些情况下也许能派上用场。
 
 ## 参考链接
 

@@ -1,5 +1,5 @@
 ---
-title: "Python 中操作文件和目录的路径"
+title: "Python 系列：操作文件和目录的路径"
 date: 2021-03-26
 showToc: true
 tags:

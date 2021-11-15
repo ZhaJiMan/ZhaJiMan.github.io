@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/matplotlib/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-07-10T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-11-06T00:00:00+00:00" />
 
 
 <style>
@@ -111,6 +111,29 @@
 
 <div class="post">
   <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/cartopy_appendix/">Cartopy 系列：对入门教程的补充</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-11-06</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6319 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="前言">前言</h2>
+<p>几年前曾写过 <a href="https://zhajiman.github.io/post/cartopy_introduction/" target="_blank">Cartopy 系列：从入门到放弃</a>，但现在来看还是遗漏了不少细节，比如初学者可能会遇到以下问题</p>
+<ul>
+<li>经度是用 [-180°, 180°] 还是 [0°, 360°] 范围？</li>
+<li>为什么有时候设置的刻度显示不全？</li>
+<li>怎么截取跨越地图边界的区域，画图又怎么跨越边界？</li>
+</ul>
+<p>本文将会用坐标变换的思想来解答以上问题，希望能给读者一些实用的启示。本来应该把这些内容写到入门教程里的，但可能会太长，所以现在单独成篇。文中的讨论主要针对最常用的 Plate Carrée 投影，其它投影需要读者自己测试。代码基于 Cartopy 0.18.0，虽然现在已经更新到 0.20.0 了，但基本思想是一致的。</p>
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
     <a href="https://zhajiman.github.io/post/matplotlib_colorbar/">Matplotlib 系列：colorbar 的设置</a>
   </h2>
   <div class="post-item post-meta">
@@ -172,6 +195,47 @@
 <li>DPI 和清晰度的关系。</li>
 <li>如何导出期刊要求的高 DPI 图片。</li>
 </ul>
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/cartopy_lambert/">Cartopy 系列：为 Lambert 投影地图添加刻度</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-24</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2210 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="前言">前言</h2>
+<p>Cartopy 中的 Plate Carrée 投影使用方便，但在展示中国地图时会使中国的形状显得很瘪，与之相比，Lambert 投影的效果会更加美观，下图显示了两种投影的差异</p>
+<p><img class="img-zoomable" src="/cartopy_lambert/comparison.png" alt="comparison" />
+</p>
+<p>所以本文将会介绍如何在 Cartopy 中实现 Lambert 投影，并为地图添上合适的刻度。文中 Cartopy 的版本是 0.18.0。</p>
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/cartopy_introduction/">Cartopy 系列：从入门到放弃</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-23</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6292 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="简介">简介</h2>
+<p>常用的地图可视化的编程工具有 MATLAB、IDL、GrADS、GMT、NCL 等。我之前一直使用的是脚本语言 NCL，易用性不错，画地图的效果也很好。然而 2019 年初，NCAR 宣布 NCL 将停止更新，并会在日后转为 Python 的绘图包。于是我开始考虑转投 Python，同时觉得在 Python 环境下如果还是用 PyNGL 那一套语法的话，未免有些换汤不换药。因此我选择用 Python 环境下专有的 Cartopy 包来画地图。</p>
+<p><img class="img-zoomable" src="/cartopy_introduction/cartopy_log.png" alt="cartopy_log" />
+</p>
+<p>此前 Python 最常用的地图包是 Basemap，然而它将于 2020 年被弃用，官方推荐使用 Cartopy 包作为替代。Cartopy 是英国气象局开发的地图绘图包，实现了 Basemap 的大部分功能，还可以通过 Matplotlib 的 API 实现丰富的自定义效果。</p>
+<p>本文将会从一个 NCL 转 Python 的入门者的角度，介绍如何安装 Cartopy，如何绘制地图，并实现一些常用的效果。代码基于 0.18.0 版本的 Cartopy。</p>
   </div>
 </div>
 

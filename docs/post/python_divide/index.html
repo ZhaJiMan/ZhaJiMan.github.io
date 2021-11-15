@@ -21,7 +21,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<title>Python 中的除法运算符 - 炸鸡人博客</title>
+<title>Python 系列：除法运算符 - 炸鸡人博客</title>
 
 
 <meta name="author" content="炸鸡人" />
@@ -33,8 +33,8 @@
 <meta name="keywords" content="python" />
 
 
-<meta property="og:title" content="Python 中的除法运算符" />
-<meta name="twitter:title" content="Python 中的除法运算符" />
+<meta property="og:title" content="Python 系列：除法运算符" />
+<meta name="twitter:title" content="Python 系列：除法运算符" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://zhajiman.github.io/post/python_divide/" /><meta property="og:description" content="在 Python 3 中关于除法的运算符有三种：
 
@@ -117,12 +117,12 @@
 <article>
     
     <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/python_divide/">Python 中的除法运算符</a>
+        <a href="https://zhajiman.github.io/post/python_divide/">Python 系列：除法运算符</a>
     </h2>
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-19</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;400 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;434 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
         
@@ -157,12 +157,15 @@ Out: 2
 r = m % n
 q * n + r = m
 </code></pre>
-<p>所以 <code>%</code> 的结果可以通过 <code>r = m - q * n</code> 计算得到。例如 <code>-5 % 2</code> 就等于 1。</p>
+<p>所以 <code>%</code> 的结果可以通过 <code>r = m - q * n</code> 计算得到。例如 <code>-5 % 2</code> 就等于 1。Python 中的 <code>divmod</code> 函数能够同时返回 <code>//</code> 和 <code>%</code> 的结果，方便我们观察结果。例如</p>
+<pre><code>In : divmod(-5, 2)
+OUt: (-3, 1)
+</code></pre>
 <p>再扩展一下，即便 <code>m</code> 或 <code>n</code> 是浮点数，结果依然遵循上面的计算流程，不过此时 <code>//</code> 和 <code>%</code> 的结果都会变成浮点型。例如</p>
-<pre><code>In : 5.5 // 2, 5.5 % 2
+<pre><code>In : divmod(5.5, 2)
 Out: (2.0, 1.5)
 
-In: -5.5 // 2, -5.5 % 2
+In: divmod(-5.5, 2)
 Out: (-3.0, 0.5)
 </code></pre>
 <p>此外可以观察到，在地板除的定义下，除数 <code>n</code> 和模 <code>r</code> 总是同号的。</p>

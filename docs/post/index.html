@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/post/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-10-23T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-11-14T00:00:00+00:00" />
 
 
 <style>
@@ -107,7 +107,46 @@
 
 <div class="post">
     <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/python_namespace_scope/">Python 中的命名空间和作用域</a>
+        <a href="https://zhajiman.github.io/post/python_mutable_arguments/">Python 系列：小心默认的可变参数</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-11-14</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;488 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+    </div>
+    <div class="post-item post-summary markdown-body">
+        之前我在 Cartopy 系列：从入门到放弃 一文中定义了这样一个函数 def set_map_extent_and_ticks( ax, extent, xticks, yticks, nx=0, ny=0, xformatter=LongitudeFormatter(), yformatter=LatitudeFormatter() ): ... 其功能是限制 GeoAxes 的经纬度范围，并画出经纬度刻度。其中 LongitudeFormatter 和 LatitudeFormatter 是 Cartopy 定义的两个 Formatter 类，用于格式化经纬度刻度标签。Formatter 对象
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/cartopy_appendix/">Cartopy 系列：对入门教程的补充</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-11-06</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6319 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <h2 id="前言">前言</h2>
+<p>几年前曾写过 <a href="https://zhajiman.github.io/post/cartopy_introduction/" target="_blank">Cartopy 系列：从入门到放弃</a>，但现在来看还是遗漏了不少细节，比如初学者可能会遇到以下问题</p>
+<ul>
+<li>经度是用 [-180°, 180°] 还是 [0°, 360°] 范围？</li>
+<li>为什么有时候设置的刻度显示不全？</li>
+<li>怎么截取跨越地图边界的区域，画图又怎么跨越边界？</li>
+</ul>
+<p>本文将会用坐标变换的思想来解答以上问题，希望能给读者一些实用的启示。本来应该把这些内容写到入门教程里的，但可能会太长，所以现在单独成篇。文中的讨论主要针对最常用的 Plate Carrée 投影，其它投影需要读者自己测试。代码基于 Cartopy 0.18.0，虽然现在已经更新到 0.20.0 了，但基本思想是一致的。</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/python_namespace_scope/">Python 系列：命名空间和作用域</a>
     </h2>
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-23</span>
@@ -127,12 +166,12 @@
 
 <div class="post">
     <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/python_divide/">Python 中的除法运算符</a>
+        <a href="https://zhajiman.github.io/post/python_divide/">Python 系列：除法运算符</a>
     </h2>
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-19</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;400 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;434 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
     </div>
@@ -153,7 +192,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-17</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3811 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3818 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/vim">vim</a>&nbsp;</span>
     </div>
@@ -263,38 +302,6 @@
 </ul>
 <p>第二部分的映射关系基本上是固定不变的，但第一部分的映射关系可以通过 Matplotlib 的许多类来加以改变，进而实现对数色标、对称色标、离散色标等一系列可视化效果。</p>
 <p>本文将会依次介绍 <code>Colormap</code> 类、归一化会用到的类，以及实际应用的例子。代码基于 Matplotlib 3.3.4。</p>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/rebuild_blog/">用 Hugo 重新搭建博客</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-03</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2538 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/hugo">hugo</a>&nbsp;<a href="/tags/github">github</a>&nbsp;</span>
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <p>本博客之前是用软件 <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> 制作的，这是个静态博客写作客户端，可以作为 Markdown 编辑器，同时简单设置下就能一键生成静态页面并上传到网上，非常适合我这种电脑小白使用。不过前段时间发现怎么都没法上传本地写好的内容，于是决定重新用现在流行的 Hugo 来搭建博客。本文使用的是 0.84.4 版本的 Hugo 和 2.32.0 版本的 Git。</p>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/distance_on_earth/">地球上两点之间的距离（改）</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-06-05</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3193 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6">测地学</a>&nbsp;</span>
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <p>最近又碰到了给出地球上两点的经纬度，然后计算它们之间距离的问题。之前曾经通过查维基写过简单的博文，不过现在实践时发现博文里问题较多，故重撰如下。</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-item pag-current">

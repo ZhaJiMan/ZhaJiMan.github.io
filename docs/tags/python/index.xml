@@ -6,9 +6,18 @@
     <description>Recent content in python on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 23 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 14 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Python 中的命名空间和作用域</title>
+      <title>Python 系列：小心默认的可变参数</title>
+      <link>https://zhajiman.github.io/post/python_mutable_arguments/</link>
+      <pubDate>Sun, 14 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/python_mutable_arguments/</guid>
+      <description>之前我在 Cartopy 系列：从入门到放弃 一文中定义了这样一个函数 def set_map_extent_and_ticks( ax, extent, xticks, yticks, nx=0, ny=0, xformatter=LongitudeFormatter(), yformatter=LatitudeFormatter() ): ... 其功能是限制 GeoAxes 的经纬度范围，并画出经纬度刻度。其中 LongitudeFormatter 和 LatitudeFormatter 是 Cartopy 定义的两个 Formatter 类，用于格式化经纬度刻度标签。Formatter 对象</description>
+    </item>
+    
+    <item>
+      <title>Python 系列：命名空间和作用域</title>
       <link>https://zhajiman.github.io/post/python_namespace_scope/</link>
       <pubDate>Sat, 23 Oct 2021 00:00:00 +0000</pubDate>
       
@@ -21,7 +30,7 @@
     </item>
     
     <item>
-      <title>Python 中的除法运算符</title>
+      <title>Python 系列：除法运算符</title>
       <link>https://zhajiman.github.io/post/python_divide/</link>
       <pubDate>Tue, 19 Oct 2021 00:00:00 +0000</pubDate>
       
@@ -35,7 +44,7 @@
     </item>
     
     <item>
-      <title>Python 中操作文件和目录的路径</title>
+      <title>Python 系列：操作文件和目录的路径</title>
       <link>https://zhajiman.github.io/post/python_path/</link>
       <pubDate>Fri, 26 Mar 2021 00:00:00 +0000</pubDate>
       

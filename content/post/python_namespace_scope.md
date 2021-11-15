@@ -1,5 +1,5 @@
 ---
-title: "Python 中的命名空间和作用域"
+title: "Python 系列：命名空间和作用域"
 date: 2021-10-23
 showToc: true
 tags:

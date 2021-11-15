@@ -6,7 +6,23 @@
     <description>Recent content in cartopy on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 24 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/cartopy/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 06 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/cartopy/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cartopy 系列：对入门教程的补充</title>
+      <link>https://zhajiman.github.io/post/cartopy_appendix/</link>
+      <pubDate>Sat, 06 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/cartopy_appendix/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;几年前曾写过 &lt;a href=&#34;https://zhajiman.github.io/post/cartopy_introduction/&#34; target=&#34;_blank&#34;&gt;Cartopy 系列：从入门到放弃&lt;/a&gt;，但现在来看还是遗漏了不少细节，比如初学者可能会遇到以下问题&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;经度是用 [-180°, 180°] 还是 [0°, 360°] 范围？&lt;/li&gt;
+&lt;li&gt;为什么有时候设置的刻度显示不全？&lt;/li&gt;
+&lt;li&gt;怎么截取跨越地图边界的区域，画图又怎么跨越边界？&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;本文将会用坐标变换的思想来解答以上问题，希望能给读者一些实用的启示。本来应该把这些内容写到入门教程里的，但可能会太长，所以现在单独成篇。文中的讨论主要针对最常用的 Plate Carrée 投影，其它投影需要读者自己测试。代码基于 Cartopy 0.18.0，虽然现在已经更新到 0.20.0 了，但基本思想是一致的。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Cartopy 系列：为 Lambert 投影地图添加刻度</title>
       <link>https://zhajiman.github.io/post/cartopy_lambert/</link>

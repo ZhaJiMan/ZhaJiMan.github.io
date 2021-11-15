@@ -4,6 +4,7 @@ date: 2021-03-23
 showToc: true
 tags:
 - cartopy
+- matplotlib
 ---
 
 ## 简介
@@ -17,6 +18,10 @@ tags:
 本文将会从一个 NCL 转 Python 的入门者的角度，介绍如何安装 Cartopy，如何绘制地图，并实现一些常用的效果。代码基于 0.18.0 版本的 Cartopy。
 
 <!--more-->
+
+## 提示
+
+本文其实更新过数次，每次都修正了一些表述或 bug，如果还存在问题的话请读者在评论区指出。另外强烈建议读完本文后继续阅读 [Cartopy 系列：对入门教程的补充](https://zhajiman.github.io/post/cartopy_appendix/)，解答了更多常见的问题。
 
 ## 安装 Cartopy 和相关的库
 
@@ -381,8 +386,7 @@ def add_Chinese_provinces(ax, **feature_kw):
 
 def set_map_extent_and_ticks(
     ax, extent, xticks, yticks, nx=0, ny=0,
-    xformatter=LongitudeFormatter(),
-    yformatter=LatitudeFormatter()
+    xformatter=None, yformatter=None
 ):
     '''
     为矩形投影的地图设置extent和ticks.
@@ -428,6 +432,10 @@ def set_map_extent_and_ticks(
         ax.yaxis.set_minor_locator(ylocator)
 
     # 添加经纬度标识.
+    if xformatter is None:
+        xformatter = LongitudeFormatter()
+    if yformatter is None:
+        yformatter = LatitudeFormatter()
     ax.xaxis.set_major_formatter(xformatter)
     ax.yaxis.set_major_formatter(yformatter)
 

@@ -30,7 +30,7 @@
 <meta name="description" content="A minimal Hugo theme with nice theme color." />
 
 
-<meta name="keywords" content="cartopy" />
+<meta name="keywords" content="cartopy, matplotlib" />
 
 
 <meta property="og:title" content="Cartopy 系列：从入门到放弃" />
@@ -122,9 +122,9 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-23</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6193 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6292 words</span>
 
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
         
         <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
     </div>
@@ -136,6 +136,8 @@
 </p>
 <p>此前 Python 最常用的地图包是 Basemap，然而它将于 2020 年被弃用，官方推荐使用 Cartopy 包作为替代。Cartopy 是英国气象局开发的地图绘图包，实现了 Basemap 的大部分功能，还可以通过 Matplotlib 的 API 实现丰富的自定义效果。</p>
 <p>本文将会从一个 NCL 转 Python 的入门者的角度，介绍如何安装 Cartopy，如何绘制地图，并实现一些常用的效果。代码基于 0.18.0 版本的 Cartopy。</p>
+<h2 id="提示">提示</h2>
+<p>本文其实更新过数次，每次都修正了一些表述或 bug，如果还存在问题的话请读者在评论区指出。另外强烈建议读完本文后继续阅读 <a href="https://zhajiman.github.io/post/cartopy_appendix/" target="_blank">Cartopy 系列：对入门教程的补充</a>，解答了更多常见的问题。</p>
 <h2 id="安装-cartopy-和相关的库">安装 Cartopy 和相关的库</h2>
 <p>通过 Conda 来安装 Cartopy 是最为简单方便的。首先我们需要下载最新的 Python 3 的 Conda 环境（Anaconda 或 Miniconda 皆可），设置国内镜像源，建立好虚拟环境，然后参照 Cartopy 官网的 <a href="https://scitools.org.uk/cartopy/docs/latest/installing.html" target="_blank">installation guide</a>，执行操作：</p>
 <pre><code>conda install -c conda-forge cartopy
@@ -432,8 +434,7 @@ def add_Chinese_provinces(ax, **feature_kw):
 
 def set_map_extent_and_ticks(
     ax, extent, xticks, yticks, nx=0, ny=0,
-    xformatter=LongitudeFormatter(),
-    yformatter=LatitudeFormatter()
+    xformatter=None, yformatter=None
 ):
     '''
     为矩形投影的地图设置extent和ticks.
@@ -479,6 +480,10 @@ def set_map_extent_and_ticks(
         ax.yaxis.set_minor_locator(ylocator)
 
     # 添加经纬度标识.
+    if xformatter is None:
+        xformatter = LongitudeFormatter()
+    if yformatter is None:
+        yformatter = LatitudeFormatter()
     ax.xaxis.set_major_formatter(xformatter)
     ax.yaxis.set_major_formatter(yformatter)
 
@@ -756,6 +761,7 @@ if __name__ == '__main__':
         <h3>Table of Contents</h3><nav id="TableOfContents">
   <ul>
     <li><a href="#简介">简介</a></li>
+    <li><a href="#提示">提示</a></li>
     <li><a href="#安装-cartopy-和相关的库">安装 Cartopy 和相关的库</a></li>
     <li><a href="#画地图的基本流程">画地图的基本流程</a></li>
     <li><a href="#geoaxes-的一些有用的方法">GeoAxes 的一些有用的方法</a></li>
@@ -884,6 +890,7 @@ if __name__ == '__main__':
         <nav id="TableOfContents">
   <ul>
     <li><a href="#简介">简介</a></li>
+    <li><a href="#提示">提示</a></li>
     <li><a href="#安装-cartopy-和相关的库">安装 Cartopy 和相关的库</a></li>
     <li><a href="#画地图的基本流程">画地图的基本流程</a></li>
     <li><a href="#geoaxes-的一些有用的方法">GeoAxes 的一些有用的方法</a></li>

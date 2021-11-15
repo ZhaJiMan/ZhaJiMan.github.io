@@ -122,7 +122,7 @@ verb &#43; noun
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-17</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3811 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3818 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/vim">vim</a>&nbsp;</span>
         
@@ -182,7 +182,7 @@ verb &#43; noun
 <li><code>e</code> 和 <code>E</code>：跳到下一个词的最后一个字符处，是 inclusive 的。</li>
 <li><code>ge</code> 和 <code>gE</code>：跳到上一个词的最后一个字符处，是 inclusive 的。</li>
 <li><code>0</code>、<code>^</code> 和 <code>$</code>：<code>0</code> 表示移动到本行的第一列，<code>^</code> 表示移动到本行第一个非空白字符处，而 <code>$</code> 表示移动到本行的最后一列。其中 <code>0</code> 和 <code>^</code> 是 exclusive 的，而 <code>$</code> 是 inclusive 的。且只有 <code>$</code> 前可以加数字，表示移动到从当前行开始下面第 n 行的末尾。</li>
-<li><code>f</code> 和 <code>F</code>：取自 find，在本行搜索指定的字符并将光标移动过去。以当前光标为起点，小写的 <code>f</code> 表示向后搜索，大写的 <code>F</code> 表示向前搜索，二者都是 inclusive 的。<code>f</code> 后必须接目标字符，例如 <code>fa</code> 会跳到当前光标后第一次出现字符 a 的位置，而 <code>2fa</code> 则会跳到第二次出现的位置。若没有找到，则光标不会发生移动。</li>
+<li><code>f</code> 和 <code>F</code>：取自 find，在本行搜索指定的字符并将光标移动过去。以当前光标为起点，小写的 <code>f</code> 表示向后搜索，大写的 <code>F</code> 表示向前搜索，前者是 inclusive 的，但后者却是 exclusive 的。<code>f</code> 后必须接目标字符，例如 <code>fa</code> 会跳到当前光标后第一次出现字符 a 的位置，而 <code>2fa</code> 则会跳到第二次出现的位置。若没有找到，则光标不会发生移动。</li>
 <li><code>t</code> 和 <code>T</code>：取自 till，基本同 <code>f</code> 和 <code>F</code>，但会恰好停在搜索结果前。例如 <code>ta</code> 会跳到 <code>fa</code> 终点的前面一格，所以何时使用 <code>f</code> 或 <code>t</code> 取决于我们对边界的处理。</li>
 <li><code>;</code>：重复上一个 <code>f</code>、<code>F</code>、<code>t</code> 或 <code>T</code> 的移动。例如当本行有三个 a 字母时，<code>fa</code> 会使光标跳到第一个 a 上，此时按下 <code>;</code> 便相当于重复了 <code>fa</code> 的操作，跳到第二个 a 上，再按又会跳到最后一个 a 上。</li>
 <li><code>,</code>：类似于 <code>;</code>，不过是按反方向移动。还是三个 a 的例子，按 <code>,</code> 会跳回上一个 a 的位置。</li>
