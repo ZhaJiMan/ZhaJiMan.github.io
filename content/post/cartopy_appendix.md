@@ -326,6 +326,8 @@ plt.show()
 上一节提到 `set_extent` 方法会根据 `x0` 和 `x1` 的大小关系决定绕圈方向，但实际上想要成功截取还需要范围不能跨过边界。例如
 
 ```python
+from matplotlib.patches import Rectangle
+
 clon1 = 0
 clon2 = 180
 map_proj1 = ccrs.PlateCarree(central_longitude=clon1)
@@ -347,7 +349,7 @@ for ax in [ax1, ax3]:
     ax.set_xticks(np.linspace(-180, 180, 7), crs=data_proj)
     ax.set_yticks(np.linspace(-90, 90, 5), crs=data_proj)
     # 用patch标出extent范围.
-    patch = mpatch.Rectangle(
+    patch = Rectangle(
         (lonmin, latmin), lonmax - lonmin, latmax - latmin,
         fc='C3', alpha=0.4, transform=data_proj
     )
