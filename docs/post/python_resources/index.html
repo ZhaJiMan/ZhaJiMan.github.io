@@ -21,7 +21,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<title>立体角简介 - 炸鸡人博客</title>
+<title>Python 相关资源汇总（持续更新中） - 炸鸡人博客</title>
 
 
 <meta name="author" content="炸鸡人" />
@@ -30,16 +30,16 @@
 <meta name="description" content="A minimal Hugo theme with nice theme color." />
 
 
-<meta name="keywords" content="radiation" />
+<meta name="keywords" content="python, 资源" />
 
 
-<meta property="og:title" content="立体角简介" />
-<meta name="twitter:title" content="立体角简介" />
+<meta property="og:title" content="Python 相关资源汇总（持续更新中）" />
+<meta name="twitter:title" content="Python 相关资源汇总（持续更新中）" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://zhajiman.github.io/post/solid_angle/" /><meta property="og:description" content="这里简单介绍一下立体角的概念。" />
-<meta name="twitter:description" content="这里简单介绍一下立体角的概念。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta property="og:url" content="https://zhajiman.github.io/post/python_resources/" /><meta property="og:description" content="简单汇总罗列一下我在网上找到的还不错的 Python 相关资源，包括语言本身以及各种常用库的教程，当然触手可及的官方文档就不收纳了。通通都是免费资源（付费的咱也看不到），分享给有需要的读者。不过互联网资源并非恒久不灭，说不定哪天域名就失效了，或是原作者突然隐藏文章，且看且珍惜吧。" />
+<meta name="twitter:description" content="简单汇总罗列一下我在网上找到的还不错的 Python 相关资源，包括语言本身以及各种常用库的教程，当然触手可及的官方文档就不收纳了。通通都是免费资源（付费的咱也看不到），分享给有需要的读者。不过互联网资源并非恒久不灭，说不定哪天域名就失效了，或是原作者突然隐藏文章，且看且珍惜吧。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2019-10-27T00:00:00+00:00" /><meta property="article:modified_time" content="2019-10-27T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-11-29T00:00:00+00:00" /><meta property="article:modified_time" content="2021-11-29T00:00:00+00:00" />
 
 
 <style>
@@ -107,79 +107,55 @@
 <article>
     
     <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/solid_angle/">立体角简介</a>
+        <a href="https://zhajiman.github.io/post/python_resources/">Python 相关资源汇总（持续更新中）</a>
     </h2>
     <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2019-10-27</span>
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-11-29</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1417 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1295 words</span>
 
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/radiation">radiation</a>&nbsp;</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/%E8%B5%84%E6%BA%90">资源</a>&nbsp;</span>
         
         <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
     </div>
     
     <div class="post-content markdown-body">
-        <p>这里简单介绍一下立体角的概念。</p>
-<h2 id="定义">定义</h2>
-<p>在考虑辐射传输问题时，为了度量源点对某一范围的视场角大小，我们引入立体角的概念。通常教材上的定义如下图所示，一个半径为 $r$ 的球体，用顶点与球心重合的圆锥去截球面，截取的球面积 $A$ 的大小除以半径的平方，即是立体角。</p>
-<p><img class="img-zoomable" src="/solid_angle/defination.png" alt="defination" />
-</p>
-<p>公式为
-$$
-\Omega = \frac{A}{r^2}
-$$
-立体角的单位是无量纲的球面度（steradian），简写为 sr。实际上，除了用圆锥，你用任何几何体去截都行，只要能在球面上划分一块连续的区域，其面积为 $A$，那么便可以通过上面的定义式计算出其立体角。</p>
-<p>关键在于，立体角的本质是一段封闭曲线对于观察点所张开的角度，只有这个角度是重要的，毕竟我们引入立体角就是为了获得这个视场角。而封闭曲线围成的曲面具体是什么形状，其实并不重要。就如同下图所示。</p>
-<p><img class="img-zoomable" src="/solid_angle/curve.png" alt="curve" />
-</p>
-<p>于是，为了从球面立体角的定义式出发计算任意曲面的立体角，把曲面的面微元都投影到以矢径为半径的球面上，投影面积除以矢径长度的平方后，再做面积分，式子为
-$$
-\Omega = \iint_S \frac{\vec{e_r} \cdot d\vec{S}}{r^2}
-$$
-其中 $r$ 为观察点到曲面上一点的距离，$\vec{e_r}$ 为矢径 $\vec{r}$ 的单位矢量，$d\vec{S}$ 为曲面 $S$ 上法向的微元面积，$\vec{e_r} \cdot d\vec{S}$ 即意味着把面积微元投影到球面上，于是根据球面的面积微元表达式，得到立体角的微元表达式
-$$
-d\Omega = \frac{\vec{e_r} \cdot d\vec{S}}{r^2} = \frac{dS_0}{r^2} = \frac{r^2 sin\theta d\theta d\varphi}{r^2} = sin\theta d\theta d\varphi
-$$
-其中 $\theta$ 为天顶角，$\varphi$ 为方位角。从这个表达式可以看出，立体角的大小与 $r$ 无关，而只与曲面张成的角度（即 $\theta$ 和 $\varphi$ 的范围）有关，也就是说，给定一个角度张成的锥体，其中截取的任意形状、任意距离的曲面的空间角都相等。若观察点被封闭曲面包围，对全空间积分，很容易得到
-$$
-\Omega = \iint d\Omega = \int_{0}^{2\pi} \int_{0}^{\pi} sin\theta d\theta  d\varphi = 4\pi
-$$
-即封闭曲面内任一点所张成的立体角的大小为 $4\pi$。这一结果还可以从球面的例子来验证，球面面积为 $4\pi r^2$，除以 $r^2$ 后得球心处的立体角为 $4\pi$。</p>
-<p>有这样的可能，曲面对于 $\vec{r}$ 来说不是单值的，即曲面在空间中绕来绕去发生了重叠。此时立体角的公式依然成立，因为一旦曲面发生重叠，立体角锥一定会穿过曲面三次，其中两次计算的立体角由于投影面积的方向性会抵消，只剩下穿过一次的结果。这种情况的证明可见于电磁学教材上（虽然这种情况我们也完全不用管就是了）。</p>
-<h2 id="一个例子两个相隔较远物体互相张成的立体角">一个例子：两个相隔较远物体互相张成的立体角</h2>
-<p>两个任意形状的几何体 $A$ 和 $B$，相距为 $R$。图示如下</p>
-<p><img class="img-zoomable" src="/solid_angle/example_1.png" alt="example_1" />
-</p>
-<p>设物体 $B$ 对 物体 $A$ 中心张成的立体角为 $\Omega_B$，物体 $A$ 对 物体 $B$ 中心张成的立体角为 $\Omega_A$。这个张角的范围是从一个物体中心向另一个物体表面做切线得到的。根据定义式，有
-$$
-\Omega = \iint_S \frac{\vec{e_r} \cdot d\vec{S}}{r^2}
-$$
-$\vec{r}$ 为物体中心到另一个物体表面的矢径。当两个物体相隔很远，$R$ 远大于它们自身的长度尺度时，$\vec{r}$ 的长度变动很小，长度近似等于 $R$ ，其方向变动也很小，方向近似不变，与两物体中心连线平行。这一近似可以用照射到地球的太阳光近乎平行的事实来说明。如下图所示</p>
-<p><img class="img-zoomable" src="/solid_angle/example_2.png" alt="example_2" />
-</p>
-<p>太阳光从太阳出发时是从中心往外辐射的，但由于日地距离远大于太阳和地球的尺度，到达地球的太阳光近乎是平行光。我们把这里的太阳光换成矢径 $\vec{r}$，便能理解这一近似。于是有
-$$
-\vec{r} \approx \vec{R}
-$$
-$$
-\Omega \approx \iint_S \frac{\vec{e_R} \cdot d\vec{S}}{R^2} = \frac{1}{R^2} \iint_S \vec{e_R} \cdot d\vec{S} = \frac{S_0}{R^2}
-$$</p>
-<p>其中 $S_0$ 为物体表面在以 $\vec{\rm{e}_R}$ 为法向的平面上的投影面积。设物体 $A$ 和 物体 $B$ 的投影面积分别为 $S_A$ 和 $S_B$，最后可以得出它们互相张成的立体角
-$$
-\Omega_A = \frac{S_A}{R^2}
-$$
-同时易得等式
-$$
-S_A\Omega_B = S_B\Omega_A
-$$
-$$
-\Omega_B = \frac{S_B}{R^2}
-$$</p>
-<p>这个等式可以应用于辐射测量或雷达探测中，这里就不再赘述了。</p>
-<h2 id="参考资料">参考资料</h2>
-<p><a href="https://en.wikipedia.org/wiki/Solid_angle" target="_blank">Solid Angle Wikipedia</a></p>
-<p><a href="https://math.stackexchange.com/questions/386612/solid-angle-and-projections" target="_blank">Solid angle and projections</a></p>
+        <p>简单汇总罗列一下我在网上找到的还不错的 Python 相关资源，包括语言本身以及各种常用库的教程，当然触手可及的官方文档就不收纳了。通通都是免费资源（付费的咱也看不到），分享给有需要的读者。不过互联网资源并非恒久不灭，说不定哪天域名就失效了，或是原作者突然隐藏文章，且看且珍惜吧。</p>
+<h2 id="python-语言">Python 语言</h2>
+<p><a href="https://www.runoob.com/python3/python3-tutorial.html" target="_blank">菜鸟教程：Python 3 教程</a>：零起步的中文教程。</p>
+<p><a href="https://www.liaoxuefeng.com/wiki/1016959663602400" target="_blank">廖雪峰的 Python 教程</a>：同上，覆盖话题更广。</p>
+<p><a href="https://python.swaroopch.com/" target="_blank">A Byte of Python</a>：快速上手 Python 的英文教程，适合有一定编程基础的读者。同时存在名为《简明 Python 教程》的中文版。</p>
+<p><a href="http://www.composingprograms.com/" target="_blank">Composing Programs</a>：UC Berkeley 大学 CS 61A 课程的讲义，以 Python 语言讲解计算机程序的结构和阐释，其中对数据、抽象和函数的讲解鞭辟入里，非常推荐。</p>
+<p><a href="https://pythonguidecn.readthedocs.io/zh/latest/" target="_blank">Python 最佳实践指南</a>：提供了关于 Python 安装、配置和日常使用的很多实用建议。</p>
+<p><a href="https://python3-cookbook.readthedocs.io/zh_CN/latest/" target="_blank">Python Cookbook 第三版</a>：非常经典的一本编程技巧合集，中文版可在线阅读。</p>
+<p><a href="https://github.com/leisurelicht/wtfpython-cn" target="_blank">What the f*ck Python</a>：列举了一些有趣且鲜为人知的 Python 特性，当遇到 bug 时可以来看看是不是中招了。</p>
+<p><a href="https://github.com/piglei/one-python-craftsman" target="_blank">Python 工匠</a>：作者 piglei 关于 Python 编程技巧和实践的文章合集。</p>
+<h2 id="numpyscipy-和-pandas">NumPy、SciPy 和 Pandas</h2>
+<p><a href="https://betterprogramming.pub/numpy-illustrated-the-visual-guide-to-numpy-3b1d4976de1d" target="_blank">NumPy Illustrated: The Visual Guide to NumPy</a>：以图解的方式形象展现了 NumPy 数组的结构和常用用法，特别是强调了行向量、列向量和矩阵的关系，非常值得一读。<a href="https://zhuanlan.zhihu.com/p/342356377" target="_blank">知乎</a> 上有中文翻译版。</p>
+<p><a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank">Python Data Science Handbook</a>：虽然叫手册，但内容编排有条理，带你入门数据科学必备的几个包。</p>
+<p><a href="https://www.labri.fr/perso/nrougier/from-python-to-numpy/" target="_blank">From Python to Numpy</a>：介绍了很多高级用法和在物理学中的应用。</p>
+<p><a href="https://scipy-lectures.org/" target="_blank">Scipy Lecture Notes</a>：关于 NumPy 和 SciPy 的讲义，对于 NumPy 的讲解比常见的教程更深入一些。</p>
+<p><a href="https://scipy-cookbook.readthedocs.io" target="_blank">SciPy Cookbook</a>：介绍了很多 SciPy 的应用场景，附带一些 NumPy 和 Matplotlib 的技巧。</p>
+<p><a href="http://joyfulpandas.datawhale.club/" target="_blank">Joyful-Pandas</a>：中文教程，因为内容过于详尽以至于读起来反而有点 painful……</p>
+<p><a href="https://qiita.com/fujiisoup/items/0d71995e54055e9708fc" target="_blank">xarray を用いたデータ解析</a>：xarray 的开发者之一写的日文入门教程。</p>
+<h2 id="matplotlib">Matplotlib</h2>
+<p><a href="https://github.com/matplotlib/AnatomyOfMatplotlib" target="_blank">Anatomy of Matplotlib</a>：很经典的入门教程，比官方 User Guide 更详细一点。</p>
+<p><a href="https://github.com/apachecn/apachecn-ds-zh/tree/master/docs/matplotlib-30-cookbook" target="_blank">Matplotlib 3.0 Cookbook</a>：覆盖了方方面面的技巧，有需要可以查阅。</p>
+<p><a href="https://github.com/rougier/scientific-visualization-book" target="_blank">Scientific Visualization: Python + Matplotlib</a>：站在科学可视化的高视点指导作图，虽然缺乏操作细节，但书中的示例非常炫酷，代码很值得学习。</p>
+<p><a href="https://github.com/jbmouret/matplotlib_for_papers" target="_blank">Creating publication-quality figures with Matplotlib</a>：教你如何将出图提升到可出版的质量。</p>
+<p><a href="https://towardsdatascience.com/the-art-of-effective-visualization-of-multi-dimensional-data-6c7202990c57" target="_blank">The Art of Effective Visualization of Multi-dimensional Data</a>：带你巡游多维数据可视化的种种方法，貌似一些公众号里有中文翻译版。</p>
+<p><a href="http://aosabook.org/en/matplotlib.html" target="_blank">The Architecture of Matplotlib</a>：创始人关于 Matplotlib 架构的解说，不错的补充材料。</p>
+<h2 id="气象相关">气象相关</h2>
+<p><a href="https://carpentries-lab.github.io/python-aos-lesson/" target="_blank">Python for Atmosphere and Ocean Scientists</a>：超入门教程，带你过一遍 xarray、Cartopy、Git 工具链。</p>
+<p><a href="https://earth-env-data-science.github.io/intro.html" target="_blank">An Introduction to Earth and Environmental Data Science</a>：比上一个更详细一些，推荐。</p>
+<p><a href="https://unidata.github.io/python-training/" target="_blank">Unidata Python Training</a>：unidata 整的教程，包含 Python 基础和很多气象例子，推荐。</p>
+<p><a href="http://www.atmos.albany.edu/facstaff/brose/classes/ATM623_Spring2015/Notes/index.html" target="_blank">ATM 623: Climate Modeling</a>：动手学习气候模式相关的知识。</p>
+<p><a href="https://clouds.eos.ubc.ca/~phil/courses/atsc301/" target="_blank">ATSC 301: Atmospheric radiation and remote sensing</a>: 大气辐射和遥感相关的课程讲义，附带需要使用 Python 的练习。</p>
+<p><a href="https://hdfeos.org/zoo/index.php" target="_blank">HDF-EOS: COMPREHENSIVE EXAMPLES</a>：处理 NASA HDF/HDF-EOS 卫星文件的例子集。</p>
+<p><a href="https://projectpythia.org/" target="_blank">Project Pyhtia</a>：貌似是 NCAR 搞的在线 training 项目，目前很多教程内容都不全，但其提供的其它网站的 <a href="https://projectpythia.org/gallery.html" target="_blank">资源列表</a> 非常齐全。</p>
+<p><a href="https://mp.weixin.qq.com/s/zX9IsuJ_QiH31Hq7P-2Mow" target="_blank">气象绘图教程合集</a>：云台书使在公众号上发布的系统性的气象绘图教程。</p>
+<p><a href="https://space.bilibili.com/9517712" target="_blank">摸鱼的气象</a>：摸鱼咯在 B 站发布的手把手教学视频。</p>
+<p><a href="https://space.bilibili.com/676991774" target="_blank">气 Py</a>：老李的系列教学视频，同时他还搬运了很多 MetPy Mondays 的视频。</p>
     </div>
 </article>
 
@@ -311,9 +287,10 @@ $$</p>
     <div class="sidebar-item sidebar-toc">
         <h3>Table of Contents</h3><nav id="TableOfContents">
   <ul>
-    <li><a href="#定义">定义</a></li>
-    <li><a href="#一个例子两个相隔较远物体互相张成的立体角">一个例子：两个相隔较远物体互相张成的立体角</a></li>
-    <li><a href="#参考资料">参考资料</a></li>
+    <li><a href="#python-语言">Python 语言</a></li>
+    <li><a href="#numpyscipy-和-pandas">NumPy、SciPy 和 Pandas</a></li>
+    <li><a href="#matplotlib">Matplotlib</a></li>
+    <li><a href="#气象相关">气象相关</a></li>
   </ul>
 </nav></div>
 </aside>
@@ -432,9 +409,10 @@ $$</p>
         <h3>Table of Contents</h3>
         <nav id="TableOfContents">
   <ul>
-    <li><a href="#定义">定义</a></li>
-    <li><a href="#一个例子两个相隔较远物体互相张成的立体角">一个例子：两个相隔较远物体互相张成的立体角</a></li>
-    <li><a href="#参考资料">参考资料</a></li>
+    <li><a href="#python-语言">Python 语言</a></li>
+    <li><a href="#numpyscipy-和-pandas">NumPy、SciPy 和 Pandas</a></li>
+    <li><a href="#matplotlib">Matplotlib</a></li>
+    <li><a href="#气象相关">气象相关</a></li>
   </ul>
 </nav>
     </div>
@@ -470,24 +448,6 @@ $$</p>
 
 
 <script defer src="/assets/js/fuji.min.js"></script>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" integrity="sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js" integrity="sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, {
-          delimiters: [
-              {left: '$$', right: '$$', display: true},
-              {left: '$', right: '$', display: false},
-              {left: '\\(', right: '\\)', display: false},
-              {left: '\\[', right: '\\]', display: true}
-          ],
-          throwOnError : false
-        });
-    });
-</script>
-
 
 
 

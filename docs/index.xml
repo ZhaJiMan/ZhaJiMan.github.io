@@ -6,7 +6,16 @@
     <description>Recent content on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 23 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 29 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python 相关资源汇总（持续更新中）</title>
+      <link>https://zhajiman.github.io/post/python_resources/</link>
+      <pubDate>Mon, 29 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/python_resources/</guid>
+      <description>&lt;p&gt;简单汇总罗列一下我在网上找到的还不错的 Python 相关资源，包括语言本身以及各种常用库的教程，当然触手可及的官方文档就不收纳了。通通都是免费资源（付费的咱也看不到），分享给有需要的读者。不过互联网资源并非恒久不灭，说不定哪天域名就失效了，或是原作者突然隐藏文章，且看且珍惜吧。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Matplotlib 中的 Artist——你在浪费时间瞎百度之前应该知道的东西</title>
       <link>https://zhajiman.github.io/post/matplotlib_artist/</link>
