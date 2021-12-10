@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-11-29T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-12-04T00:00:00+00:00" />
 
 
 <style>
@@ -104,6 +104,24 @@
                 
 
 
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/guide_to_modis_aerosol_product/">MODIS 二级气溶胶产品指北（with Python）</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-12-04</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;9479 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/satellite">satellite</a>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <h2 id="前言">前言</h2>
+<p>笔者初次使用 MODIS 二级气溶胶产品时，一下就被密密麻麻一堆变量搞懵了：很多变量名字里带个 <code>Optical_Depth</code>，这我能猜到，就是气溶胶光学厚度，但各种 <code>Corrected</code>、<code>Effective</code>、<code>Best</code>、<code>Average</code>、<code>Small</code>、<code>Large</code> 的前后缀鬼知道是什么。看过的论文基本不说具体用的哪个变量，各种教程也不会告诉你这些亲戚间的差异，似乎这件事一点也不重要。本着 know your data 的心态，我在翻阅了 MODIS 的几个官网后总算从反演的原理中稍微体会到了这些前后缀的意义。现将学习经验总结归纳如下，希望能帮到和我一样疑惑的小伙伴。同时本文还会提供简单的 Python 示例代码。</p>
+<p>如果嫌正文太啰嗦，可以直接跳到文末的总结部分，那里直接给出了各个变量的使用建议。</p>
+    </div>
+</div>
 
 <div class="post">
     <h2 class="post-item post-title">
@@ -284,26 +302,6 @@
 </p>
     </div>
 </div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/connected_component_labelling/">二值图像的连通域标记</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-19</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3457 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86">图像处理</a>&nbsp;</span>
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="简介">简介</h2>
-<p>连通域标记（connected component labelling）即找出二值图像中互相独立的各个连通域并加以标记，如下图所示（引自 <a href="https://gist.github.com/MarcWang/5f346375246e1cdb88dbe745b840cfaa" target="_blank">MarcWang 的 Gist</a>）</p>
-<p><img class="img-zoomable" src="/connected_component_labelling/diagram.jpg" alt="diagram" />
-</p>
-<p>可以看到图中有三个独立的区域，我们希望找到并用数字标记它们，以便于计算各个区域的轮廓、外接形状、质心等参数。连通域标记最基本的两个算法是 Seed-Filling 算法和 Two-Pass 算法，下面便来分别介绍它们，并用 Python 加以实现。</p>
-    </div>
-</div>
 <div class="pagination"><div class="pag-item pag-current">
     <a href="/">1</a>
   </div><div class="pag-item">
@@ -390,6 +388,10 @@
             
             <span>
                 <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
             </span>
             
             <span>
@@ -502,6 +504,10 @@
             
             <span>
                 <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
             </span>
             
             <span>

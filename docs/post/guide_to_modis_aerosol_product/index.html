@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>MODIS 二级气溶胶产品指北（with Python） - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="satellite, python" />
+
+
+<meta property="og:title" content="MODIS 二级气溶胶产品指北（with Python）" />
+<meta name="twitter:title" content="MODIS 二级气溶胶产品指北（with Python）" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/guide_to_modis_aerosol_product/" /><meta property="og:description" content="前言
+笔者初次使用 MODIS 二级气溶胶产品时，一下就被密密麻麻一堆变量搞懵了：很多变量名字里带个 Optical_Depth，这我能猜到，就是气溶胶光学厚度，但各种 Corrected、Effective、Best、Average、Small、Large 的前后缀鬼知道是什么。看过的论文基本不说具体用的哪个变量，各种教程也不会告诉你这些亲戚间的差异，似乎这件事一点也不重要。本着 know your data 的心态，我在翻阅了 MODIS 的几个官网后总算从反演的原理中稍微体会到了这些前后缀的意义。现将学习经验总结归纳如下，希望能帮到和我一样疑惑的小伙伴。同时本文还会提供简单的 Python 示例代码。
+如果嫌正文太啰嗦，可以直接跳到文末的总结部分，那里直接给出了各个变量的使用建议。" />
+<meta name="twitter:description" content="前言
+笔者初次使用 MODIS 二级气溶胶产品时，一下就被密密麻麻一堆变量搞懵了：很多变量名字里带个 Optical_Depth，这我能猜到，就是气溶胶光学厚度，但各种 Corrected、Effective、Best、Average、Small、Large 的前后缀鬼知道是什么。看过的论文基本不说具体用的哪个变量，各种教程也不会告诉你这些亲戚间的差异，似乎这件事一点也不重要。本着 know your data 的心态，我在翻阅了 MODIS 的几个官网后总算从反演的原理中稍微体会到了这些前后缀的意义。现将学习经验总结归纳如下，希望能帮到和我一样疑惑的小伙伴。同时本文还会提供简单的 Python 示例代码。
+如果嫌正文太啰嗦，可以直接跳到文末的总结部分，那里直接给出了各个变量的使用建议。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-12-04T00:00:00+00:00" /><meta property="article:modified_time" content="2021-12-04T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/guide_to_modis_aerosol_product/">MODIS 二级气溶胶产品指北（with Python）</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-12-04</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;9479 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/satellite">satellite</a>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="前言">前言</h2>
+<p>笔者初次使用 MODIS 二级气溶胶产品时，一下就被密密麻麻一堆变量搞懵了：很多变量名字里带个 <code>Optical_Depth</code>，这我能猜到，就是气溶胶光学厚度，但各种 <code>Corrected</code>、<code>Effective</code>、<code>Best</code>、<code>Average</code>、<code>Small</code>、<code>Large</code> 的前后缀鬼知道是什么。看过的论文基本不说具体用的哪个变量，各种教程也不会告诉你这些亲戚间的差异，似乎这件事一点也不重要。本着 know your data 的心态，我在翻阅了 MODIS 的几个官网后总算从反演的原理中稍微体会到了这些前后缀的意义。现将学习经验总结归纳如下，希望能帮到和我一样疑惑的小伙伴。同时本文还会提供简单的 Python 示例代码。</p>
+<p>如果嫌正文太啰嗦，可以直接跳到文末的总结部分，那里直接给出了各个变量的使用建议。</p>
+<h2 id="基本介绍">基本介绍</h2>
+<p>MODIS 全称 MODerate resolution Imaging Spectroradiometers（中分辨率成像光谱仪），基本信息为：</p>
+<ul>
+<li>
+<p>搭载平台：Terra（2000 年至今）和 Aqua（2002 年至今）。</p>
+</li>
+<li>
+<p>轨道：太阳同步，上午 10:30 降轨通过赤道（Terra）或下午 1:30 升轨通过赤道（Aqua）。</p>
+</li>
+<li>
+<p>波段：0.41 ~ 14.5 μm的 36 个波段（即可见光到远红外）。</p>
+</li>
+<li>
+<p>刈幅：2330 km。</p>
+</li>
+<li>
+<p>空间分辨率：250 m（bands 1 - 2）、500 m（bands 3 - 7）、1000 m（bands 8 - 36）。</p>
+</li>
+</ul>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/MODIS_ATM_solar_irradiance.png" alt="MODIS_ATM_solar_irradiance" />
+</p>
+<p>上图为大气层顶（绿线）和海平面（红线）处的太阳入射光谱，以及 MODIS 的各个波段（橙线）。</p>
+<p>MODIS 的优势可以概括为两点：</p>
+<ul>
+<li>多波段的辐射测量能揭示关于陆面、海洋和大气的丰富信息。</li>
+<li>高空间分辨率、太阳同步轨道和宽广的刈幅能覆盖宽广的时空范围</li>
+</ul>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/Angles.png" alt="Angles" />
+</p>
+<p>气溶胶光学厚度（Aerosol Optical Depth，AOD）反映到达地表的太阳辐射受气溶胶的衰减程度，在无云的晴空下，太阳光度计可以通过直接测量太阳方向的辐射来计算 AOD。星载的 MODIS 与之不同，如上图所示，其镜头朝向地表，测量的是经地表反射和气溶胶散射后的太阳辐射。利用地表和气溶胶在不同波段的辐射性质差异，有机会从测量结果中分离出气溶胶的信号，进而推测气溶胶的物理性质，这便是 MODIS 反演气溶胶的思路。当然现实是全球的地表类型和气溶胶组成不尽相同，为了简化问题，需要根据观测资料提前对地表性质和气溶胶组成做出一些假设。目前 MODIS 反演气溶胶的业务算法有两种：</p>
+<ul>
+<li>暗目标算法（Dark Target，DT）：洋面和植被覆盖的陆面在可见光波段因为反射率较低显得偏暗，被称作“暗目标”，而气溶胶在这一背景上显得偏亮，由此可以忽略或估算地表的信号，进而分离出气溶胶的信号。因为陆面的地表类型更为复杂，所以 DT 算法在实现上又细分为针对洋面的 DT-ocean 和针对陆面的 DT-land。</li>
+<li>深蓝算法（Deep Blue，DB）：干旱和沙漠类型的地表即便在可见光波段也显得很亮，DT 算法成立的假设失效。而在近紫外的“深蓝”波段这些地表又变得偏暗，所以借助这一波段可以扩展反演的覆盖范围。目前深蓝算法仅应用于陆面。</li>
+</ul>
+<p>MODIS 的二级气溶胶产品名为 MOD04_L2 和 MYD04_L2，其中 MOD 和 MYD 分别代表 Terra 和 Aqua 卫星。每个文件对应一段 5 分钟长度的 MODIS 轨道片段（称作 granule），星下点的空间分辨率为 10 x 10 km，共含 203 x 135 个像元。主要提供的变量为 0.55 μm 的 AOD 和细粒子比（Fine Mode Fraction，FMF），这些变量还会按算法分为 DT-ocean、DT-land 和 DB 等多个版本。MODIS 每次改进和更新算法后重新生产的产品集被称作一个 collection，目前的最新版是 2016 年发布的 C6.1，这一版本还引入了 3 x 3 km 高空间分辨率的 MOD04_3K 和 MYD04_3K 产品。</p>
+<p>后面将会以 C6.1 版本的 MYD04_L2 产品为例，介绍每种算法提供的主要变量，以及用 Python 进行读取的方法。选择 MYD 是因为 Terra 发射时间更早仪器衰减更大，Aqua 的产品可能更为可靠（参考 <a href="https://darktarget.gsfc.nasa.gov/faq-page" target="_blank">Dark Target FAQ</a>）。同时因为 DT 算法是气溶胶产品的主要算法，并且其文档更为详尽，所以 DB 算法的部分会比较简略。</p>
+<h2 id="读取准备">读取准备</h2>
+<p>MYD04_L2 文件名的意义如下图所示</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/filename.png" alt="filename" />
+</p>
+<p>文件格式是基于 HDF4 的 HDF-EOS2，因为自带经纬度坐标，所以不需要像陆面产品那样需要用 MRT 或 HEG 进行重投影，直接读了用就行。Python 中可以用 GDAL 或 pyhdf 包进行读取，这里使用后者。反演得到的参数以科学数据集（Scientific Data Set，SDS）的形式存储在 HDF 文件中，所谓 SDS 不过是带有元数据的数组罢了，而 pyhdf 的 <code>SD</code> 模块能提供关于 SDS 的 API。其使用方法详见 <a href="http://fhs.github.io/pyhdf/modules/SD.html" target="_blank">官方文档</a> 和参考资料里的链接，不过写代码之前，可以先用 NASA 开发的 <a href="https://www.giss.nasa.gov/tools/panoply/" target="_blank">Panoply</a> 软件直接打开 MYD04_L2 文件，查看 SDS 的元数据，并进行简单的可视化，如下面两张图所示</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/panoply_1.png" alt="panoply_1" />
+</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/panoply_2.png" alt="panoply_2" />
+</p>
+<p>以 <code>Optical_Depth_Land_And_Ocean</code> 变量为例，可以看到其维度是沿卫星轨道的 203 个像元和横向的 135 个像元，这样一个数组画在等经纬度地图上呈边缘带弧度的矩形区域，同时有很多像元因为缺测而没有标出颜色。值得注意的是，AOD 本应是 double 类型（对应于 <code>np.float64</code>）的数据，但在 Panoply 中显示为 short 类型（对应于 <code>np.int16</code>），这是因为卫星产品常常会利用偏移和缩放操作将浮点类型的数据转换为整数类型，牺牲一点精度以压缩存储空间。Panoply 在画图时会自动换算回去，但使用 pyhdf 时我们需要根据 <code>add_offset</code> 和 <code>scale_factor</code> 属性手动进行换算。HDF 文件的元数据中记录有换算公式</p>
+<pre><code>float value = scale_factor * (stored integer - add_offset)
+</code></pre>
+<p>不过换算前需要小心 <code>_FillValue</code> 属性标记的缺测部分。用 Panoply 探索一番后，就可以动手实现一个读取 MYD04_L2文件的类</p>
+<pre><code class="language-python">from pyhdf.SD import SD, SDC
+import numpy as np
+import pandas as pd
+
+class ReaderMYD:
+    '''读取MYD04_L2文件的类.'''
+    def __init__(self, filepath):
+        '''读取文件.'''
+        self.sd = SD(filepath, SDC.READ)
+
+    def __enter__(self):
+        return self
+
+    def search_sds(self, keyword):
+        '''搜索SDS名,无视大小写.'''
+        sdsnames = sorted(self.sd.datasets().keys())
+        for sdsname in sdsnames:
+            if keyword.lower() in sdsname.lower():
+                print(sdsname)
+
+    def read_lonlat(self):
+        '''读取经纬度.'''
+        lon = self.sd.select('Longitude')[:]
+        lat = self.sd.select('Latitude')[:]
+
+        return lon, lat
+
+    def read_sds(self, sdsname, scale=True):
+        '''读取SDS.'''
+        sds = self.sd.select(sdsname)
+        data = sds[:]
+
+        # 按需进行缩放.
+        if scale:
+            attrs = sds.attributes()
+            fill_value = attrs['_FillValue']
+            scale_factor = attrs['scale_factor']
+            add_offset = attrs['add_offset']
+            data = np.where(
+                data == fill_value,
+                np.nan,
+                (data - add_offset) * scale_factor
+            )
+
+        return data
+
+    def read_time(self):
+        '''读取沿swath的TAI时间,返回DatetimeIndex.'''
+        second = self.sd.select('Scan_Start_Time')[:, 0]
+        time = pd.to_datetime(second, unit='s', origin='1993-01-01')
+
+        return time
+
+    def close(self):
+        '''关闭文件'''
+        self.sd.end()
+
+    def __exit__(self, *args):
+        self.close()
+</code></pre>
+<p>这里使用 NaN 标记缺测值（参考 <a href="https://zhajiman.github.io/post/numpy_missing_value/" target="_blank">NumPy 系列：缺测值处理</a>），用 <code>__enter__</code> 和 <code>__exit__</code> 实现上下文管理器（即可以使用 <code>with</code> 语句），读取的 TAI 时间与 UTC 时间仅相差数十秒，偷懒直接当作 UTC 时间用。</p>
+<h2 id="dt-ocean-算法及其变量">DT-ocean 算法及其变量</h2>
+<p>DT-ocean 的基本思路是，忽略可见光波段洋面贡献的反射率，那么大气顶的反射率可以表示为细模态（fine mode）和粗模态（coarse mode）气溶胶产生的反射率之和。所谓细模态指有效半径在 0.1 ~ 0.25 μm 范围内的细粒子，粗模态指有效半径在 1.0 ~ 2.5 μm 范围内的粗粒子。利用辐射传输模式模拟各种细模态气溶胶和粗模态气溶胶组合产生的反射率，用模拟值去逼近 MODIS 的实测值，最后求解出总 AOD、气溶胶的组合，以及细模态气溶胶的贡献比例。</p>
+<p>具体反演过程基于查找表（Look-Up Table，LUT）法。首先根据以往的观测资料预定义四种典型的细模态气溶胶和五种典型的粗模态气溶胶，如下表所示</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/aerosol_table_ocean.png" alt="aerosol_table_ocean" />
+</p>
+<p>表中给出了每种气溶胶的折射系数和谱分布参数，利用 Mie 散射模型可以计算气溶胶在多个波段的 AOD 性质，利用辐射传输模式又可以计算出气溶胶存在时的大气顶反射率、大气透过率、大气后向散射比等参数，这些预先计算好的信息便构成了 LUT。接下来从四种细模态气溶胶和五种粗模态气溶胶中各选一种构成二十对组合，任意一对组合的总反射率表示为
+$$
+\rho_{\lambda}^{LUT}(\tau_{0.55}) = \eta_{0.55}\rho_{\lambda}^{f}(\tau_{0.55}) + (1 - \eta_{0.55})\rho_{\lambda}^{c}(\tau_{0.55})
+$$
+其中 $\rho_{\lambda}^{f}$ 和 $\rho_{\lambda}^{c}$ 分别表示细模态和粗模态气溶胶的反射率，二者的值可以用 0.55 μm AOD $\tau_{0.55}$ 在 LUT 中查询到。细粒子比 $\eta_{0.55}$ 用于衡量细模态和粗模态气溶胶的贡献，值为 0 时表示全为细粒子，值为 1 时表示全为粗粒子。$\rho_{\lambda}^{LUT}$ 即模拟出的气溶胶的总反射率，已知 MODIS 在 0.55、0.65、0.86、1.24、1.63 和 2.11 μm 六个波段测得大气层顶反射率 $\rho_{\lambda}^{m}$，通过最小化  $\rho_{\lambda}^{LUT}$ 和 $\rho_{\lambda}^{m}$ 之间的拟合误差即可得到一对 $\tau_{0.55}$ 和 $\eta_{0.55}$ 的值——这便是反演的主要产品：0.55 μm 的气溶胶光学厚度和细粒子比。之后在 LUT 中很容易查询到其它波段 $\tau$ 和 $\eta$ 的值，这些值又可以用来得出其它变量，例如用 0.55 和 0.86 μm 的 $\tau$ 计算 Ångström 指数（AE）。</p>
+<p>二十对气溶胶组合能反演出二十组结果，我们肯定要进行挑选，其中拟合误差最小的结果称作 best solution，而误差较小的所有组合平均之后的结果称作 average solution。于是最后的产品里含有 best 和 average 两种类型的反演结果，官方推荐使用后者。</p>
+<p>为了表示反演结果的可信度，每个像元被赋予了 QA（Quality Assuracne）标记，其中包含像元状态、云的影响、反演中遇到的问题等多种信息，不过我们一般只需要用到最基本的 QA Confidence（QAC）值：</p>
+<ul>
+<li>QAC = 3 表示结果非常好（very good）。</li>
+<li>QAC = 2 表示结果很好（good）。</li>
+<li>QAC = 1 表示结果有些勉强（marginal）。</li>
+<li>QAC = 0 表示结果很差（bad）。</li>
+</ul>
+<p>画图时为了数据的完整性可以不考虑 QA，但进行定量统计时官方建议仅采用 QAC &gt; 0 的像元。</p>
+<p>简叙完必要的概念，下面介绍 DT-Ocean 的变量，并用颜色标出了比较重要的几个</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/variable_table_ocean.png" alt="variable_table_ocean" />
+</p>
+<p><code>Effective_Optical_Depth_Average_Ocean</code>：Average solution 得到的 0.47、0.55、0.65、0.86、1.24、1.63 和 2.11 μm 七个波段的 AOD。被云遮挡的部分、陆面部分等都默认缺测。虽然表中没提，但文件中存在已经提取好的 0.55 μm AOD <code>Effective_Optical_Depth_0p55um_Ocean</code>。你可能会问为什么有个 <code>Effective</code> 的前缀？我也不清楚，可能是自老版本产品传承下来的约定。</p>
+<p><code>Optical_Depth_Ratio_Small_Ocean_0.55micron</code>：Average solution 得到的 0.55 μm 的细粒子比 FMF，表示细模态 AOD 与总 AOD 的比值，可以用来计算细模态 AOD 和粗模态 AOD
+$$
+\tau_{0.55}^{f} = \eta_{0.55}\tau_{0.55} \newline
+\tau_{0.55}^{c} = (1-\eta_{0.55})\tau_{0.55}
+$$
+<code>Optical_Depth_Small_Average_Ocean</code>：Average Solution 得到的七个波段的细模态 AOD，相当于提前帮你准备好了细模态 AOD，不需要用 FMF 手动进行计算。</p>
+<p><code>Optical_Depth_Large_Average_Ocean</code>：同上，提前准备好的粗模态 AOD。</p>
+<p><code>Quality_Assurance_Ocean</code>：QA 标记，数据类型为 short，QA 相关的信息需要通过位运算从 bit 中提取（详见 <a href="https://atmosphere-imager.gsfc.nasa.gov/documentation/atbds-plans-guides" target="_blank">MODIS Atmosphere QA Plan</a>），例如 QAC 可以这样提取</p>
+<pre><code class="language-python">QAC = (Quality_Assurance_Ocean[:, :, 0] &amp; 14) &gt;&gt; 1
+</code></pre>
+<p>这种操作还是挺麻烦的，所以文件中的 <code>Land_Ocean_Quality_Flag</code> 变量直接提供 0 ~ 3 的 QAC 值，其中还含有后面会介绍的 DT-land 的 QAC。例如筛去低质量的 AOD</p>
+<pre><code class="language-python">Effective_Optical_Depth_0p55um_Ocean[Land_Ocean_Quality_Flag == 0] = np.nan
+</code></pre>
+<p>下面以 2015 年 2 月 11 日扫过中国东南沿海地区的 <code>MYD04_L2.A2015042.0535.061.2018047210001.hdf</code> 文件为例，画出变量 0.55 μm 的 AOD 和 FMF。首先在 <a href="https://worldview.earthdata.nasa.gov/" target="_blank">EOSDIS Worldview</a> 网站在线查看当天 Aqua MODIS 的真彩色图</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/worldview_1.png" alt="worldview_1" />
+</p>
+<p>可见沿海地区被“灰霾”覆盖，说明有气溶胶存在。接着在 Python 中用 Matplotlib 和 cartopy 包画图</p>
+<pre><code class="language-python">import copy
+
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
+import cartopy.crs as ccrs
+
+from reader import ReaderMYD
+from map_funcs import set_map_extent_and_ticks
+
+# 读取经纬度,时间和AOD变量.
+filepath = './MYD04_L2.A2015042.0535.061.2018047210001.hdf'
+with ReaderMYD(filepath) as f:
+    lon, lat = f.read_lonlat()
+    time = f.read_time()
+    aod = f.read_sds('Effective_Optical_Depth_0p55um_Ocean')
+    fmf = f.read_sds('Optical_Depth_Ratio_Small_Ocean_0.55micron')
+
+# 设置地图.
+extent = [100, 130, 10, 40]
+proj = ccrs.PlateCarree()
+fig, axes = plt.subplots(
+    1, 2, figsize=(10, 6), subplot_kw={'projection': proj}
+)
+for ax in axes:
+    ax.coastlines(resolution='10m', lw=0.3)
+    set_map_extent_and_ticks(
+        ax, extent,
+        xticks=np.arange(-180, 190, 10),
+        yticks=np.arange(-90, 100, 10),
+        nx=1, ny=1
+    )
+    ax.tick_params(labelsize='small')
+
+# 缺测设为灰色.
+cmap = copy.copy(plt.cm.jet)
+cmap.set_bad('lightgray')
+
+# 绘制AOD.
+im = axes[0].pcolormesh(
+    lon, lat, aod, cmap=cmap, vmin=0, vmax=2,
+    shading='nearest', transform=proj
+)
+cbar = fig.colorbar(
+    im, ax=axes[0], pad=0.1,
+    ticks=MultipleLocator(0.5), orientation='horizontal'
+)
+cbar.set_label('AOD', fontsize='medium')
+cbar.ax.tick_params(labelsize='small')
+axes[0].set_title('Effective_Optical_Depth_0p55um_Ocean', fontsize='medium')
+
+# 绘制FMF
+im = axes[1].pcolormesh(
+    lon, lat, fmf, cmap=cmap, vmin=0, vmax=1,
+    shading='nearest', transform=proj
+)
+cbar = fig.colorbar(
+    im, ax=axes[1], pad=0.1,
+    ticks=MultipleLocator(0.2), orientation='horizontal'
+)
+cbar.set_label('FMF', fontsize='medium')
+cbar.ax.tick_params(labelsize='small')
+axes[1].set_title(
+    'Optical_Depth_Ratio_Small_Ocean_0.55micron', fontsize='medium'
+)
+
+# 用平均过境时间作为标题.
+time_str = time.mean().strftime('%Y-%m-%d %H:%M')
+fig.suptitle(time_str, fontsize='large')
+
+plt.show()
+</code></pre>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/fig_dt_ocean.png" alt="fig_dt_ocean" />
+</p>
+<p>代码中 <code>set_map_extent_and_ticks</code> 函数的定义请见 <a href="https://zhajiman.github.io/post/cartopy_introduction/" target="_blank">Cartopy 系列：从入门到放弃</a> 一文。图中 Aqua 卫星于 UTC 时间 05:37，即北京时间下午 13:37 过境，MODIS 在黄海反演出 1.0 左右的 AOD 和 0.8 以上的 FMF，暗示主要为粒径偏小的人为排放气溶胶。同时台湾北侧因为有云遮挡而全部缺测。</p>
+<h2 id="dt-land-算法及其变量">DT-land 算法及其变量</h2>
+<p>DT-land 算法的基本思路与 DT-ocean 一致，但因为陆面在可见光和短波红外波段的反射率明显不为零，所以为了排除地表信号的影响，需要额外估算地表反射率。同时因为用到的观测波段变少了，采用的气溶胶模型也不同于 DT-ocean。</p>
+<p>首先，DT-land 算法主要使用 0.47、0.65 和 2.12 μm 三个波段的观测数据，波段太少难以像 DT-ocean 那种动态选取细模态和粗模态气溶胶进行组合。取而代之的是一种更为宽泛的表示方法：fine model 和 coarse model。一个 model 由多个模态组成，反映了多种气溶胶的综合效应，fine model 即细模态气溶胶占主导地位的 model，coarse model 同理。DT-land 算法中将气溶胶概括以下五种 model</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/aerosol_table_land.png" alt="aerosol_table_land" />
+</p>
+<p>前四种是 fine model，第五种即沙尘是单独的 coarse model。其中 continental model 仅用于后面将会提到的地表偏亮情况时的反演。利用聚类分析等统计方法可以从 AERONET 站点的观测数据中得出全球不同区域各季节占主导地位的 fine model，之后的反演会参考这一结果预先选取合适的 fine model，再与沙尘 model 相组合。通过辐射传输模式计算的每种 model 产生的大气顶反射率等信息会被存入 LUT 中。</p>
+<p>其次，地表反射率的估计有赖于 VISvs2.12 关系。Kaufmann 等通过观测和模拟研究发现，在植被覆盖或深色土壤的地表，可见光与短波红外波段的地表反射率的比值近乎定值，例如 0.47vs2.12 约为 0.25，0.65vs2.12 约为 0.5，这被称作 VISvs2.12 关系。DT-land 使用的 VISvs2.12 关系用散射角和短波短波红外 NDVI（衡量地表绿度）进行了修正，若已知 2.12 μm 的地表反射率，便可以根据该关系计算出 0.47 和 0.65 μm 波段的值。</p>
+<p>对于暗地表，fine model、coarse model 和地表三者产生的大气顶反射率表示为
+$$
+\rho_{\lambda}^{*} = \eta\rho_{\lambda}^{*f} + (1-\eta)\rho_{\lambda}^{*c}
+$$
+其中 $\rho_{\lambda}^{*f}$ 是 fine model 的反射率 $\rho_{\lambda}^{f}$ 与地表反射率 $\rho_{\lambda}^{s}$ 的综合效果，其数值可以用 $\tau_{0.55}$ 在 LUT 中查询得到，$\rho_{\lambda}^{*c}$ 同理。细粒子比 $\eta$（或 $\eta_{0.55}$） 用于衡量 fine model 和 coarse model 的贡献。需要注意，除了 $\tau_{0.55}$ 和 $\eta_{0.55}$，$\rho_{\lambda}^{s}$ 也是要求解的量，不同波段的值由 VISvs2.12 关系相关联。求解方程为
+$$
+\rho_{0.47}^{*} - \rho_{0.47}^{m} = 0 \newline
+\rho_{0.66}^{*} - \rho_{0.66}^{m} = \epsilon \newline
+\rho_{2.12}^{*} - \rho_{2.12}^{m} = 0
+$$
+即让 0.47 和 2.12 μm 波段的模拟值与实测值恰好相等，然后找出最小化 0.66 μm 波段误差 $\epsilon$ 的 $\tau_{0.55}$、$\eta_{0.55}$ 和 $\rho_{2.12}^{s}$——此即反演的主要产品：0.55 μm 的 AOD 和 FMF，以及 2.12 μm 的地表反射率。之后可以利用 LUT 查询其它波段的值，并计算一系列的衍生量。</p>
+<p>为了确保解的唯一性，$\eta_{0.55}$ 仅取 -0.1 ~ 1.1 之间间隔为 0.1 的离散值，非物理的 -0.1 和 1.1 是为了在反演时容纳误差，反演结束后会被设为 0 和 1。另外当 $\tau_{0.55} &lt; 2$ 时，$\eta_{0.55}$ 准确度非常差，所以直接设为缺测。</p>
+<p>对于不那么暗、稍微有点亮的地表也能进行反演，此时会设定 $\eta_{0.55} = 1$，气溶胶模型仅由 continental model 构成，然后直接求解 0.47 和 2.12 μm 波段模拟值与实测值的方程。因为 VISvs2.12 关系在这种地表的误差会增大，导致反演结果不准，所以走这一流程的像元会被打上 QAC = 0 的标记。</p>
+<p>DT-land 一个很特殊的地方在于，允许反演的 AOD 存在负值。因为反演在 0 附近存在误差，如果把值截断在 0 反而会使数据有偏，所以统计意义上有负值会更好。不过值最低也只允许到 -0.05 罢了。</p>
+<p>因为陆面远比洋面复杂多变，所以 DT-land 的误差要比 DT-ocean 大。C5 版本的验证结果表示全球尺度上 DT-ocean AOD 的误差为 ±(0.03 + 5%)，DT-land AOD 的误差为 ±(0.05 + 15%)。验证还发现，陆面上的 FMF 和 AE 不太靠谱，仅有定性的价值，用其进行论证时需要留心。</p>
+<p>DT-land 的 QA 同 DT-ocean，官方推荐使用 QAC = 3 的像元进行定量研究，这要求就比 DT-ocean 高很多，也可以理解为是陆面反演误差大，需要更强的限制。</p>
+<p>因为 DT-land 的坑很多所以上面写的零零散散的。接着具体介绍变量</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/variable_table_land.png" alt="variable_table_land" />
+</p>
+<p><code>Corrected_Optical_Depth_Land</code>：0.47、0.55 和 0.66 μm 三个波段的 AOD。跟 DT-ocean 类似，有个意义不明的 <code>Corrected</code> 的前缀。</p>
+<p><code>Optical_Depth_Ratio_Small_Land</code>：0.55 μm 的 FMF，数值是间隔为 0.1 的离散值。同时如前所述，因为陆面的 FMF 和 AE 不靠谱，所以最新的 C6.1 版本里陆面的 AE 和 fine model AOD 惨遭移除，如果有需求必须手动计算。</p>
+<p><code>Quality_Assurance_Land</code>：QA 标记，推荐直接使用 <code>Land_Ocean_Quality_Flag</code>，例如</p>
+<pre><code class="language-python">Corrected_Optical_Depth_Land[:, Land_Ocean_Quality_Flag &lt; 3] = np.nan
+</code></pre>
+<p>还是 DT-ocean 中那个例子，画出 0.55 μm 的 AOD 和 FMF</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/fig_dt_land.png" alt="fig_dt_land" />
+</p>
+<p>可以看到江苏省区域 AOD 较大FMF 偏高。同时注意到西边 AOD 较低的区域 FMF 直接缺测。</p>
+<h2 id="dt-ocean-和-dt-land-联合的变量">DT-ocean 和 DT-land 联合的变量</h2>
+<p>为了便于使用，MYD04_L2 提供两个把 DT-ocean 和 DT-land 结果合并的变量：</p>
+<ul>
+<li><code>Image_Optical_Depth_Land_And_Ocean</code>：把 0.55 μm 的陆面 AOD 和 average solution 的洋面 AOD 直接拼在一起。因为没做任何质量控制，所以有值的像元很多，适合做图，这也呼应了其名字中的 image 一词。</li>
+<li><code>Optical_Depth_Land_And_Ocean</code>：类似于前者，但洋面要求 QAC &gt; 0，陆面要求 QAC = 3。虽然会使很多像元缺测，但更适合用于定量研究。</li>
+</ul>
+<p>以前面的例子做图</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/fig_dt_land_and_ocean.png" alt="fig_dt_land_and_ocean" />
+</p>
+<p>这下终于能在地图上连续展示 AOD 的水平分布了。右图中陆面有值的像元数量有所缩水，但还可以接受。</p>
+<h2 id="db-算法及其变量">DB 算法及其变量</h2>
+<p>沙漠和干旱地区的地表反射率在可见光波段很高，但在 412 nm 的深蓝波段又变得很低，DB 算法便是利用这一信息实现了亮地表的反演，同时也适用于一般的植被覆盖区域。具体算法详见 <a href="https://deepblue.gsfc.nasa.gov/publications" target="_blank">Hsu 等的一系列论文</a>，类似于 DT-land，同样需要选取气溶胶模型、构建 LUT、估算地表反射率、模拟大气层顶的反射率等。DB 算法主要基于 412、470 和 650 nm 波段的观测，反演的主要变量是 AOD（550 nm） 和 AE（亮地表对应 412/470，暗地表对应 470/670）。后者定义为
+$$
+\alpha = \frac{\ln(\tau_{\lambda_1}/\tau_{\lambda_2})}{\ln(\lambda_1/\lambda_2)}
+$$
+一般来说 AE 小于 1 暗示粗粒子，大于 1 暗示细粒子。下面这张图展示了常见气溶胶的 AOD 和 AE</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/aod_histogram_final.png" alt="aod_histogram_final" />
+</p>
+<p>DB 同样有 QA 标记，与 DT 的区别在于 0 直接表示缺测。</p>
+<p>肯定会有人问，既然 DT 和 DB 都能反演陆面，那么选哪个好？据 <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2014JD022453" target="_blank">Sayer 等的验证研究</a>，全球陆面上二者反演的 AOD 及其与 AERONET 观测的一致性都很相近，虽然 DT 与 AERONET 的相关性更好，但 DB 可以反演的空间范围更广，并且在低 AOD 情况下的误差更小。也许在一些特定的场合某个算法表现会更好，但一般任选一个使用就行，详细的区别还请自行查阅。</p>
+<p>DB 相关的主要变量如下表所示</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/variable_table_db.png" alt="variable_table_db" />
+</p>
+<p><code>Deep_Blue_Aerosol_Optical_Depth_550_Land</code>：550 nm 的 AOD。</p>
+<p><code>Deep_Blue_Aerosol_Optical_Depth_550_Land_Best_Estimate</code>：同上，但是仅选取 QA &gt; 1 的值，官方将其描述为“大部分用户应该使用的量”。</p>
+<p><code>Deep_Blue_Aerosol_Optical_Depth_550_Land_QA_Flag</code>：QA 标记，不需要解码直接使用即可。</p>
+<p><code>Deep_Blue_Angstrom_Exponent_Land</code>：AE，亮地表对应于 412/470，暗地表对应于 470/670。</p>
+<p>接下来画出 AOD 和 AE 看看</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/fig_db.png" alt="fig_db" />
+</p>
+<p>AOD 的水平分布与 DT-land 一致，但有值的像元增加了很多。山东和江苏区域的 AOD 值很高，甚至能超过 2.0，而 1.7 左右的 AE 暗示气溶胶粒径偏小。</p>
+<h2 id="dt-和-db-联合的变量">DT 和 DB 联合的变量</h2>
+<p>介绍完前面五花八门的变量，终于到了集大成的时刻——将 DT-ocean、DT-land 和 DB 算法反演出来的最好的 0.55 μm AOD 合并成一个变量。这一联合变量于 C6 版本引入，目前为 Aqua 卫星专供，合并的策略并不复杂：</p>
+<ul>
+<li>洋面直接使用 QA_DT &gt; 0 的 DT-ocean AOD。</li>
+<li>对于陆面，当 NDVI &lt; 0.2，即植被稀疏时，采用 QA_DB &gt; 1 的 DB AOD；当 NDVI &gt; 0.3，即植被茂密时，采用 QA_DT = 3 的 DT-land AOD；当 NDVI 介于中间时：
+<ul>
+<li>QA_DB &gt; 1 且 QA_DT = 3，则取两种 AOD 的平均值。</li>
+<li>若有一方的 QA 不满足上一条，则选取满足的那一方。</li>
+<li>若双方的 QA 都不达标，则设为缺测。</li>
+</ul>
+</li>
+</ul>
+<p>合并得到的 AOD 也有 QA，数值基本继承自 QA_DT 和 QA_DB，和 QA_DB 一样用 0 表示缺测。不过既然合并策略里已经进行了质量控制，这个 QA 略显多余。另外需要注意这个量的可靠性目前还没有得到系统性的验证。</p>
+<p><code>AOD_550_Dark_Target_Deep_Blue_Combined</code>：顾名思义，DT 和 DB 合并得到的 0.55 μm AOD。</p>
+<p><code>AOD_550_Dark_Target_Deep_Blue_Combined_Algorithm_Flag</code>：像元具体采用了哪个算法，0 表示 DT，1 表示 DB，2 表示混合（即平均）。</p>
+<p>下面画出这两个量</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/fig_merged.png" alt="fig_merged" />
+</p>
+<p>可以看出中国东南区域的合并 AOD 主要基于 DT，到了北边才开始使用 DB。</p>
+<h2 id="格点化处理">格点化处理</h2>
+<p>本节以 2021 年 3 月 15 日中国发生的沙尘暴天气为例，演示如何把一系列 MYD04_L2 文件里的 AOD 数据格点化并画出来。AOD 就选取上一节介绍的 <code>AOD_550_Dark_Target_Deep_Blue_Combined</code>，在南方植被茂密的区域会选用成熟的 DT 算法，而在北方的干旱区域又能发挥 DB 算法的优势，并且只含高 QA 的结果。下图为当天的 Aqua MODIS 真彩色图</p>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/worldview_2.png" alt="worldview_2" />
+</p>
+<p>中国北方一带明显可见浓厚的黄色沙尘，甚至还卷入了东边的气旋中，不难预测这些区域会有特别高的 AOD。下载 MYD04_L2 产品可以到 NASA 的 <a href="https://search.earthdata.nasa.gov/search" target="_blank">EARTHDATA</a> 网站，选中这一天，经纬度范围设为 70°E ~ 140°E，10°N ~ 60°N，最后会筛选出十多个文件。代码和结果如下</p>
+<pre><code class="language-python">from pathlib import Path
+from collections import namedtuple
+
+import numpy as np
+from scipy.stats import binned_statistic_2d
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from matplotlib.ticker import MultipleLocator
+import cartopy.crs as ccrs
+
+from reader import ReaderMYD
+from map_funcs import add_Chinese_provinces, set_map_extent_and_ticks
+
+Granule = namedtuple('Granule', 'lon lat aod')
+def read_granule(filepath):
+    '''读取一个文件含有的经纬度和AOD.'''
+    with ReaderMYD(str(filepath)) as f:
+        lon, lat = f.read_lonlat()
+        aod = f.read_sds('AOD_550_Dark_Target_Deep_Blue_Combined')
+
+    return Granule(lon, lat, aod)
+
+def flatten_granules(granules):
+    '''将每个granule中的数据展平成一维数组.'''
+    lons, lats, aods = [], [], []
+    for granule in granules:
+        lons.append(granule.lon.ravel())
+        lats.append(granule.lat.ravel())
+        aods.append(granule.aod.ravel())
+    lons = np.concatenate(lons)
+    lats = np.concatenate(lats)
+    aods = np.concatenate(aods)
+
+    return lons, lats, aods
+
+Grid = namedtuple('Grid', 'x y z')
+def grid_data(data, x, y, xbins, ybins):
+    '''
+    利用平均的方式格点化一维散点数据.
+
+    若格点内没有数据,则记作nan.
+    结果的维度为(ny, nx).
+    '''
+    mask = ~np.isnan(data)
+    avg = binned_statistic_2d(
+        y[mask], x[mask], data[mask],
+        statistic='mean', bins=[ybins, xbins]
+    ).statistic
+    xc = (xbins[1:] + xbins[:-1]) / 2
+    yc = (ybins[1:] + ybins[:-1]) / 2
+
+    return Grid(xc, yc, avg)
+
+def aod_cmap():
+    '''制作适用于AOD的cmap.'''
+    rgb = np.loadtxt('./NEO_modis_aer_od.csv', delimiter=',')
+    cmap = ListedColormap(rgb / 256)
+
+    return cmap
+
+if __name__ == '__main__':
+    # 读取MYD04_L2文件.
+    dirpath = Path('./data')
+    granules = []
+    for filepath in dirpath.iterdir():
+        granules.append(read_granule(filepath))
+
+    # 设定网格.
+    extent = [70, 140, 10, 60]
+    lonmin, lonmax, latmin, latmax = extent
+    dlon, dlat = 1, 1
+    lon_bins = np.arange(lonmin, lonmax + 0.5 * dlon, dlon)
+    lat_bins = np.arange(latmin, latmax + 0.5 * dlat, dlat)
+    # 格点化.
+    lons, lats, aods = flatten_granules(granules)
+    grid = grid_data(aods, lons, lats, lon_bins, lat_bins)
+
+    # 设置地图.
+    proj = ccrs.PlateCarree()
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection=proj)
+    add_Chinese_provinces(ax, lw=0.3, ec='k', fc='none')
+    ax.coastlines(resolution='10m', lw=0.3)
+    set_map_extent_and_ticks(
+        ax, extent=extent,
+        xticks=np.arange(-180, 190, 10),
+        yticks=np.arange(-90, 100, 10),
+        nx=1, ny=1
+    )
+    ax.tick_params(labelsize='x-small')
+
+    # 画出格点化的AOD.
+    cmap = aod_cmap()
+    cmap.set_bad('lightgray')   # 缺测设为灰色.
+    im = ax.pcolormesh(
+        grid.x, grid.y, grid.z, cmap=cmap, vmin=0, vmax=3,
+        shading='nearest', transform=proj
+    )
+    cbar = fig.colorbar(
+        im, ax=ax, ticks=MultipleLocator(0.5),
+        shrink=0.8, pad=0.1, aspect=30,
+        orientation='horizontal'
+    )
+    cbar.set_label('AOD', fontsize='small')
+    cbar.ax.tick_params(labelsize='x-small')
+
+    # 日期作为标题.
+    ax.set_title('2021-03-15', fontsize='medium')
+
+    # 保存图片.
+    fig.savefig('gridded.png', dpi=200, bbox_inches='tight')
+    plt.close(fig)
+</code></pre>
+<p><img class="img-zoomable" src="/guide_to_modis_aerosol_product/gridded.png" alt="gridded" />
+</p>
+<p>格点化采用计算落入格子中的数据点的平均值的方式，可以通过写循环数格子来实现，不过这里选择直接调用 <code>scipy.stats.binned_statistic_2d</code> 函数。该函数能统计一维散点数据在二维数据框（bin）中的统计值，在计算平均值时会正确地将空格点设为 NaN。此外为了美观，colormap 选用 <a href="https://www.giss.nasa.gov/tools/panoply/colorbars/" target="_blank">Panoply Additional Color Tables</a> 中的 NEO_modis_aer_od，颜色从米黄向深红过渡，个人觉得很适合展示 AOD。不过下载到的 colormap 是 Adobe 的 ACT 格式，需要用这篇 <a href="https://graphicdesign.stackexchange.com/questions/90809/export-adobe-photoshop-color-table-act-file-as-csv-file" target="_blank">Stack Exchange 回答</a> 中的代码转换为 CSV 格式以方便读取。</p>
+<p>画出来的结果不出所料，一条长长的“沙龙”从新疆延伸到东北，AOD 超过了 3.0，这算是非常高的值了，暗示会给沿途的地面带来强烈的污染。中国以北因为存在大片云系所以基本都缺测了。调查资料可知这次沙尘天气的两大成因：一是我国西北和蒙古国地区前期气温偏高、降水稀少，因而地表容易起沙；二是蒙古气旋带来的大风为沙尘的扬起和传输提供了动力条件。</p>
+<h2 id="总结">总结</h2>
+<p>MODIS 气溶胶产品提供的变量众多，抛开前文冗长的讲解，这里给出极简使用指南。</p>
+<p>想画 AOD 图：</p>
+<ul>
+<li><code>Image_Optical_Depth_Land_And_Ocean</code></li>
+</ul>
+<p>想定量研究 AOD：</p>
+<ul>
+<li><code>Optical_Depth_Land_And_Ocean</code></li>
+</ul>
+<p>专注于洋面上的气溶胶：</p>
+<ul>
+<li><code>Effective_Optical_Depth_0p55um_Ocean</code></li>
+<li><code>Optical_Depth_Ratio_Small_Ocean_0.55micron</code></li>
+<li><code>Land_Ocean_Quality_Flag</code></li>
+</ul>
+<p>专注陆面上的气溶胶：</p>
+<ul>
+<li><code>Corrected_Optical_Depth_Land</code></li>
+<li><code>Optical_Depth_Ratio_Small_Land</code></li>
+<li><code>Land_Ocean_Quality_Flag</code></li>
+</ul>
+<p>需要研究沙漠和干旱地区：</p>
+<ul>
+<li><code>Deep_Blue_Aerosol_Optical_Depth_550_Land</code></li>
+<li><code>Deep_Blue_Angstrom_Exponent_Land</code></li>
+<li><code>Deep_Blue_Aerosol_Optical_Depth_550_Land_QA_Flag</code></li>
+</ul>
+<p>想结合暗目标算法和深蓝算法的结果：</p>
+<ul>
+<li><code>AOD_550_Dark_Target_Deep_Blue_Combined</code></li>
+</ul>
+<p>如果你需要用到 C6.1 之前的产品，例如 C5 产品，很可能会发现许多变量名字不一样，甚至是找不到。不过，要是你理解了各个算法的基本概念，再多去官网搜搜，一定能推理并找出所需的变量。就算以后 MODIS 产品有了新版本，或者说要面对其它采用了同样算法的卫星产品（例如 VIIRS、NPP）也应该不会有问题。</p>
+<h2 id="参考资料">参考资料</h2>
+<p>MODIS 及其气溶胶产品的基本介绍：</p>
+<p><a href="https://en.wikipedia.org/wiki/Moderate_Resolution_Imaging_Spectroradiometer" target="_blank">Wikipedia: Moderate Resolution Imaging Spectroradiometer</a></p>
+<p><a href="https://atmosphere-imager.gsfc.nasa.gov/products/aerosol" target="_blank">Atmosphere Discipline Team Imager Products: Aerosol (04_L2)</a></p>
+<p><a href="https://amt.copernicus.org/articles/6/2989/2013/" target="_blank">The Collection 6 MODIS aerosol products over land and ocean</a></p>
+<p>Understanding the Details of the MODIS Aerosol Product（某个 Training 的 PPT，我搜不到链接了）</p>
+<p><a href="https://darktarget.gsfc.nasa.gov/products" target="_blank">DARK TARGET AEROSOL PRODUCTS USER’S GUIDE</a></p>
+<p>DT 和 DB 算法小组的官网，详细介绍了算法和数据使用的建议：</p>
+<p><a href="https://darktarget.gsfc.nasa.gov/" target="_blank">Dark Target Website</a></p>
+<p><a href="https://deepblue.gsfc.nasa.gov/data" target="_blank">Deep Blue Website</a></p>
+<p>利用 Python 读取 MYD04_L2 文件的教程：</p>
+<p><a href="https://moonbooks.org/Articles/How-to-read-a-MODIS-HDF-file-using-python-" target="_blank">How to read a MODIS HDF4 file using python and pyhdf ?</a></p>
+<p><a href="https://appliedsciences.nasa.gov/join-mission/training/english/arset-data-analysis-tools-high-resolution-air-quality-satellite" target="_blank">ARSET - Data Analysis Tools for High Resolution Air Quality Satellite Datasets</a></p>
+<p><a href="https://hdfeos.org/zoo/LAADS_MOD_py.php" target="_blank">MORE PYTHON COMPREHENSIVE EXAMPLES FOR LAADS MOD PRODUCTS</a></p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#基本介绍">基本介绍</a></li>
+    <li><a href="#读取准备">读取准备</a></li>
+    <li><a href="#dt-ocean-算法及其变量">DT-ocean 算法及其变量</a></li>
+    <li><a href="#dt-land-算法及其变量">DT-land 算法及其变量</a></li>
+    <li><a href="#dt-ocean-和-dt-land-联合的变量">DT-ocean 和 DT-land 联合的变量</a></li>
+    <li><a href="#db-算法及其变量">DB 算法及其变量</a></li>
+    <li><a href="#dt-和-db-联合的变量">DT 和 DB 联合的变量</a></li>
+    <li><a href="#格点化处理">格点化处理</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#基本介绍">基本介绍</a></li>
+    <li><a href="#读取准备">读取准备</a></li>
+    <li><a href="#dt-ocean-算法及其变量">DT-ocean 算法及其变量</a></li>
+    <li><a href="#dt-land-算法及其变量">DT-land 算法及其变量</a></li>
+    <li><a href="#dt-ocean-和-dt-land-联合的变量">DT-ocean 和 DT-land 联合的变量</a></li>
+    <li><a href="#db-算法及其变量">DB 算法及其变量</a></li>
+    <li><a href="#dt-和-db-联合的变量">DT 和 DB 联合的变量</a></li>
+    <li><a href="#格点化处理">格点化处理</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2021
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+                
+                | Visits: <span id="busuanzi_value_site_pv"></span>
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" integrity="sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js" integrity="sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError : false
+        });
+    });
+</script>
+
+
+
+
+</body>
+
+</html>

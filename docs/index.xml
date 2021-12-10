@@ -6,7 +6,18 @@
     <description>Recent content on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 29 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 04 Dec 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MODIS 二级气溶胶产品指北（with Python）</title>
+      <link>https://zhajiman.github.io/post/guide_to_modis_aerosol_product/</link>
+      <pubDate>Sat, 04 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/guide_to_modis_aerosol_product/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;笔者初次使用 MODIS 二级气溶胶产品时，一下就被密密麻麻一堆变量搞懵了：很多变量名字里带个 &lt;code&gt;Optical_Depth&lt;/code&gt;，这我能猜到，就是气溶胶光学厚度，但各种 &lt;code&gt;Corrected&lt;/code&gt;、&lt;code&gt;Effective&lt;/code&gt;、&lt;code&gt;Best&lt;/code&gt;、&lt;code&gt;Average&lt;/code&gt;、&lt;code&gt;Small&lt;/code&gt;、&lt;code&gt;Large&lt;/code&gt; 的前后缀鬼知道是什么。看过的论文基本不说具体用的哪个变量，各种教程也不会告诉你这些亲戚间的差异，似乎这件事一点也不重要。本着 know your data 的心态，我在翻阅了 MODIS 的几个官网后总算从反演的原理中稍微体会到了这些前后缀的意义。现将学习经验总结归纳如下，希望能帮到和我一样疑惑的小伙伴。同时本文还会提供简单的 Python 示例代码。&lt;/p&gt;
+&lt;p&gt;如果嫌正文太啰嗦，可以直接跳到文末的总结部分，那里直接给出了各个变量的使用建议。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Python 相关资源汇总（持续更新中）</title>
       <link>https://zhajiman.github.io/post/python_resources/</link>
