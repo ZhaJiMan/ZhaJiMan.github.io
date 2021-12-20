@@ -49,6 +49,8 @@ tags:
 
 [Anatomy of Matplotlib](https://github.com/matplotlib/AnatomyOfMatplotlib)：很经典的入门教程，比官方 User Guide 更详细一点。
 
+[Cheatsheets for Matplotlib users](https://github.com/matplotlib/cheatsheets/)：速查表，有助于快速查询颜色、色表、线形、散点形状、常用函数等。
+
 [Matplotlib 3.0 Cookbook](https://github.com/apachecn/apachecn-ds-zh/tree/master/docs/matplotlib-30-cookbook)：覆盖了方方面面的技巧，有需要可以查阅。
 
 [Scientific Visualization: Python + Matplotlib](https://github.com/rougier/scientific-visualization-book)：站在科学可视化的高视点指导作图，虽然缺乏操作细节，但书中的示例非常炫酷，代码很值得学习。

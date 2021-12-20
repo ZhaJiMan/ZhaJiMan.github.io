@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Matplotlib 系列：图解 quiver - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="matplotlib, cartopy" />
+
+
+<meta property="og:title" content="Matplotlib 系列：图解 quiver" />
+<meta name="twitter:title" content="Matplotlib 系列：图解 quiver" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/matplotlib_quiver/" /><meta property="og:description" content="前言
+Matplotlib 中用箭头表示风场或电磁场等矢量场时需要用到 quiver 方法，据字典，quiver 一词的意思是颤动、颤抖或箭袋，貌似也就最后一个意思跟箭头搭得上边。相比于其它画图方法，quiver 的参数又多又容易混淆，所以本文将以图解的方式逐一介绍。这些参数按功能可分为三种：控制箭头位置和数值的、控制箭头长度和角度的，以及控制箭头尺寸和形状的。下面会按照这个分组顺序来解说。本文代码基于 Matplotlib 3.3.4。" />
+<meta name="twitter:description" content="前言
+Matplotlib 中用箭头表示风场或电磁场等矢量场时需要用到 quiver 方法，据字典，quiver 一词的意思是颤动、颤抖或箭袋，貌似也就最后一个意思跟箭头搭得上边。相比于其它画图方法，quiver 的参数又多又容易混淆，所以本文将以图解的方式逐一介绍。这些参数按功能可分为三种：控制箭头位置和数值的、控制箭头长度和角度的，以及控制箭头尺寸和形状的。下面会按照这个分组顺序来解说。本文代码基于 Matplotlib 3.3.4。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-12-18T00:00:00+00:00" /><meta property="article:modified_time" content="2021-12-18T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/matplotlib_quiver/">Matplotlib 系列：图解 quiver</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-12-18</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3288 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;</span>
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="前言">前言</h2>
+<p>Matplotlib 中用箭头表示风场或电磁场等矢量场时需要用到 <code>quiver</code> 方法，据字典，quiver 一词的意思是颤动、颤抖或箭袋，貌似也就最后一个意思跟箭头搭得上边。相比于其它画图方法，<code>quiver</code> 的参数又多又容易混淆，所以本文将以图解的方式逐一介绍。这些参数按功能可分为三种：控制箭头位置和数值的、控制箭头长度和角度的，以及控制箭头尺寸和形状的。下面会按照这个分组顺序来解说。本文代码基于 Matplotlib 3.3.4。</p>
+<h2 id="箭头的位置和数值">箭头的位置和数值</h2>
+<p>据文档，<code>quiver</code> 的函数签名为</p>
+<pre><code class="language-python">quiver([X, Y], U, V, [C], **kw)
+</code></pre>
+<ul>
+<li><code>X</code> 和 <code>Y</code> 指定矢量及箭头的位置。</li>
+<li><code>U</code> 和 <code>V</code> 指定矢量的横纵分量。</li>
+<li><code>C</code> 数组的数值会通过 <code>cmap</code> 和 <code>norm</code> 映射为箭头的颜色（原理详见 <a href="https://zhajiman.github.io/post/matplotlib_colormap/" target="_blank">Matplotlib 系列：colormap 的设置</a>），例如可以取矢量长度 <code>np.hypot(U, V)</code>。如果只是想让所有箭头颜色相同，使用 <code>color</code> 参数即可。</li>
+</ul>
+<p><code>quiver</code> 既可以像 <code>scatter</code> 那样接受一维散点数据，画出任意位置的箭头，也可以像 <code>pcolormesh</code> 那样绘制二维网格数据。</p>
+<p><code>pivots</code> 参数可以指定 <code>X</code> 和 <code>Y</code> 的位置对应于箭头的尾部、中间，还是头部，默认 <code>pivot = tail</code>，即箭头从 <code>X</code> 和 <code>Y</code> 的位置出发。下面基于这个设置讲解箭头的长度和角度。</p>
+<h2 id="箭头的长度和角度">箭头的长度和角度</h2>
+<p>箭头的长度和角度能直接反映矢量的强度和方向，所以控制这些量的参数无疑是最重要的。其中长度由 <code>scale_units</code> 和 <code>scale</code> 两个参数控制，角度由 <code>angles</code> 参数控制。对于一个分量为 <code>(u, v)</code> 的矢量来说，其在 uv 空间里的长度和角度分别为</p>
+<pre><code>len_vector = sqrt(u**2 + v**2)
+angle_vector = arctan(v / u)
+</code></pre>
+<p>箭头是画在 <code>Axes</code> 的 xy 空间里的，从矢量到箭头要经过两个空间之间的变换。首先介绍如何得到箭头长度</p>
+<pre><code>len_arrow = len_vector / scale [scale_units]
+</code></pre>
+<p>其中 <code>scale</code> 用于放缩数值，<code>scale_units</code> 决定箭头的长度单位。所谓单位即某个基准长度，需要参考图中已有的元素来进行设定。例如当 <code>scale = 1</code> 时，箭头长度等于矢量长度的数值乘上这个基准长度。<code>scale_units</code> 可取七种：<code>'inches'</code>、<code>'dots'</code>、<code>'width'</code>、<code>'height'</code>、<code>'x'</code>、<code>'y'</code> 和 <code>'xy'</code>。下图展示了前六种</p>
+<p><img class="img-zoomable" src="/matplotlib_quiver/blank.png" alt="blank" />
+</p>
+<p>该图由 <code>fig, ax = plt.subplots()</code> 语句生成，默认 <code>figsize = (6.4, 4.8)</code>，<code>dpi = 100</code>，所以尺寸为 6.4 x 4.8 英寸，或 640 x 480 像素（英寸和像素的意义详见 <a href="https://zhajiman.github.io/post/matplotlib_dpi/" target="_blank">Matplotlib 系列：导出高 DPI 的图片</a>）。以 <code>inches</code> 为例，若 <code>scale = 1</code>，那么长度为 1 的矢量在图上对应于长度为 1 英寸的箭头，其它单位同理。图中未展示的 <code>'xy'</code> 单位比较特殊，后面讲到 <code>angles</code> 时再细说。</p>
+<p>七种单位中 <code>inches</code> 和 <code>dots</code> 显然是绝对单位，而剩下的均为相对于 <code>Axes</code> 的元素设定的单位。在 <code>plt.show</code> 弹出的交互式窗口内缩放 <code>Axes</code> 时，基于相对单位的箭头长度会动态变化，而基于绝对单位的箭头长度则纹丝不动。无论选用哪种单位，若箭头过长或过短，都可以用 <code>scale</code> 参数缩放到合适的范围：<code>scale</code> 越小，箭头越长；<code>scale</code> 越大，箭头越短。</p>
+<p>接着来看如何得到箭头角度。控制箭头角度的 <code>angles</code> 有三种设置：一是把单个浮点数或数组传给 <code>angles</code> 参数，直接指定每个箭头的角度，此时矢量的 <code>u</code> 和 <code>v</code> 分量和箭头角度没有任何关系。二是令 <code>angles = 'uv'</code>，表示沿用矢量角度</p>
+<pre><code>angle_arrow = angle_vector
+</code></pre>
+<p>三是令 <code>angles = 'xy'</code>，一般需要和 <code>scale_units = 'xy'</code> 联用，此时箭头等同于 xy 平面里 <code>(x, y)</code> 到 <code>(x + u, y + v)</code> 的连线箭头。例如当 xy 平面是空间位置，矢量表示位移时就适合用这个设置。下面示意 <code>angles</code> 的效果</p>
+<p><img class="img-zoomable" src="/matplotlib_quiver/angles.png" alt="angles" />
+</p>
+<p>图中为了体现 uv 空间和 xy 空间的差异，特地设置 <code>ax.set_aspect(0.5)</code> ，于是网格单元的宽高比为 2:1。可以看到，<code>angles = 'uv'</code> 时，箭头角度就为 45°；<code>angles = 'xy'</code> 且 <code>scale_units = 'xy'</code> 时，箭头与网格单元的对角线刚好重合。这里未展示 <code>angles</code> 为定值的结果，是因为 <code>scale_units = 'xy'</code> 与之冲突，导致画不出箭头，也许是个 bug。</p>
+<p><code>scale_units</code> 和 <code>scale</code> 默认为 <code>None</code>，表示 Matplotlib 会自动根据矢量长度的平均值，以及矢量的个数决定箭头的长度。<code>angles</code> 默认为 <code>'uv'</code>。一般我们只需要调整 <code>scale_units</code> 和 <code>scale</code>，而不需要改动 <code>angles</code>。</p>
+<p>值得一提的是，若通过 <code>ax.set_aspect(1)</code> 使 <code>Axes</code> 两个坐标轴的单位长度等长，那么 <code>'x'</code>、<code>'y'</code> 和 <code>'xy'</code> 三种长度单位的结果相同， <code>'uv'</code> 和 <code>'xy'</code> 两种角度设置的结果也相同。</p>
+<h2 id="箭头的尺寸和形状">箭头的尺寸和形状</h2>
+<p>类似于箭头长度与 <code>scale_units</code> 的关系，箭头尺寸的单位由 <code>units</code> 给出，同样可取七种：<code>'inches'</code>、<code>'dots'</code>、<code>'width'</code>、<code>'height'</code>、<code>'x'</code>、<code>'y'</code>、<code>'xy'</code>。此处 <code>'xy'</code> 的含义不同于上一节，仅指 <code>Axes</code> 对角线的单位长度。<code>units</code> 默认为 <code>width</code>。</p>
+<p>选好单位后首先需要设置的参数是 <code>width</code>，箭杆（shaft）的宽度就等于 <code>width</code> 的数值乘上单位对应的基准长度。之后其它形状参数——<code>headwidth</code>、<code>headlength</code>、<code>headaxislength</code>——均以箭杆的宽度为单位。下图描绘了这些参数代表的部分</p>
+<p><img class="img-zoomable" src="/matplotlib_quiver/shape.png" alt="shape" />
+</p>
+<p><code>width</code> 默认为 <code>None</code>，表示 Matplotlib 会自动决定箭杆宽度。而其它参数都有提前设好的值，例如 <code>headwidth</code> 默认为 3，表示箭镞（暂且用古文称呼箭头尖尖）的宽度总是箭杆的三倍。</p>
+<p>最后提一个神秘的地方，文档指出 <code>units</code> 不会影响箭头长度，但事实是在不给出 <code>scale_units</code> 时，<code>units</code> 会同时决定箭头长度和尺寸的单位。例如参考资料的最后一篇便展示了 <code>units</code> 对箭头长度的影响，我个人认为这是 Matplotlib 的设计失误。</p>
+<h2 id="箭头的阈值">箭头的阈值</h2>
+<p>你可能会碰到箭头的尺寸不合预期、或箭头缩成了一个点的情形，这都是 <code>minshaft</code> 和 <code>minlength</code> 这两个阈值参数导致的。</p>
+<p><code>minshaft</code> 以 <code>headlength</code> 为单位，默认为 1，当箭头长度小于 <code>minshaft</code> 代表的长度时，箭头整体尺寸会按箭头长度等比例缩小。</p>
+<p><code>minlength</code> 以 <code>width</code> 为单位，默认为 1，当箭头长度小于 <code>minlength</code> 代表的长度时，箭头直接退化成以该长度为直径的六边形。</p>
+<p>选用默认值的场合，<code>minshaft</code> 是五倍 <code>width</code> 的长度，<code>minlength</code> 是单倍 <code>width</code> 的长度，当矢量长度越来越小时，对应的箭头一开始只缩短长度，后来尺寸也跟着缩小，最后直接缩成一个点（六边形）。如果没有这两个参数，那么特别短的矢量在图上仍然会挂着一个特别大的箭镞，既不美观，还可能影响我们的判断。下面改编一个 <a href="https://matplotlib.org/stable/gallery/images_contours_and_fields/quiver_simple_demo.html" target="_blank">官网示例</a></p>
+<p><img class="img-zoomable" src="/matplotlib_quiver/min.png" alt="min" />
+</p>
+<p>可以看到左图中间的短矢量与周围的长矢量通过尺寸差异被区分开来，而右边则很难辨认，中间的箭头还出现了空心情况。这两个阈值一般不需要改动，默认条件下就有不错的效果。</p>
+<h2 id="箭头的图例">箭头的图例</h2>
+<p>箭头的图例通过 <code>quiverkey</code> 方法添加，由一个箭头和文本标签构成。函数签名为</p>
+<pre><code>quiverkey(Q, X, Y, U, label, **kwargs)
+</code></pre>
+<p>下面列举常用参数：</p>
+<ul>
+<li><code>Q</code>：<code>quiver</code> 方法返回的 <code>Quiver</code> 对象，借此可以画出与 <code>quiver</code> 类似的箭头。</li>
+<li><code>X</code> 和 <code>Y</code>：图例的位置。虽然用大写字母表示，其实并不是数组。</li>
+<li><code>U</code>：箭头的长度，用矢量长度衡量。</li>
+<li><code>label</code>：标签的文本，一般填 <code>U</code> 的数值和矢量的单位。</li>
+<li><code>coordinates</code>：指定 <code>X</code> 和 <code>Y</code> 是什么坐标，可选 <code>'axes'</code>、<code>'figure'</code>、<code>'data'</code> 和 <code>'inches'</code>，默认为 <code>'axes'</code>。坐标间的差异请见文档的 <a href="https://matplotlib.org/stable/tutorials/advanced/transforms_tutorial.html#sphx-glr-tutorials-advanced-transforms-tutorial-py" target="_blank">Transformations Tutorial</a>。</li>
+<li><code>labelpos</code>：标签相对于箭头的位置，可选 <code>'N'</code>、<code>'S'</code>、<code>'E'</code> 和 <code>'W'</code>。默认为北，即标签在箭头上面。</li>
+<li><code>labelsep</code>：标签与箭头间的距离，默认为 0.1 pt。</li>
+<li><code>fontproperties</code>：用于指定标签字体参数的字典。</li>
+</ul>
+<p><a href="https://zhajiman.github.io/post/cartopy_introduction/" target="_blank">Cartopy 系列：从入门到放弃</a> 文末提供了一个示例，同时为了实现 NCL 那种箭头图例外面带个方框的风格，在图例后面还加了个矩形补丁。</p>
+<h2 id="cartopy-中的-quiver">Cartopy 中的 quiver</h2>
+<p>Cartopy 的 <code>GeoAxes</code> 对 <code>Axes</code> 的 <code>quiver</code> 方法进行了装饰，使之能通过 <code>transform</code> 参数将矢量的地理坐标变换到合适的投影坐标上（详见 <a href="https://zhajiman.github.io/post/cartopy_appendix/" target="_blank">Cartopy 系列：对入门教程的补充</a>）。注意所有投影的 <code>GeoAxes</code> 的 <code>aspect_ratio</code> 都为 1，所以正如本文开头提到的，<code>scale_units</code> 取 <code>x</code>、<code>y</code> 或 <code>xy</code> 时结果没区别，<code>angles</code> 取 <code>uv</code> 或 <code>xy</code> 结果也没有区别。尽管如此，考虑到各种投影坐标系的 x 范围和 y 范围通常都很怪，胆小的我还是会取 <code>scale_units = 'inches'</code>，<code>angles = 'uv'</code>。</p>
+<p>此外 Cartopy 还提供了一个非常便利的新参数 <code>regrid_shape</code>，可以将矢量场重新插值到投影坐标系中的规则网格上，以达到规整矢量位置或稀疏箭头密度的目的。<code>regrid_shape</code> 接收二元组或整数，前者指定 x 和 y 方向上的箭头个数，后者指定短边上的箭头个数，然后长边的个数通过地图范围的宽高比缩放得出。默认为 <code>None</code>，即不进行网格化。下面改编一个 <a href="https://scitools.org.uk/cartopy/docs/latest/gallery/vector_data/regridding_arrows.html" target="_blank">官网示例</a></p>
+<p><img class="img-zoomable" src="/matplotlib_quiver/cartopy.png" alt="cartopy" />
+</p>
+<p>两图中的风场基于 <code>NorthPolarStereo</code> 坐标里的规则网格，地图则基于 <code>PlateCarree</code> 坐标。上图未进行网格化，风箭头明显间距不一。下图指定 <code>regrid_shape = 10</code> 后，风场被 <code>scipy.interpolate.griddata</code> 函数线性插值到地图上形为 <code>(16, 10)</code> 的规则网格中，箭头因而清晰可辨。</p>
+<h2 id="结语">结语</h2>
+<p>文中未给出渐变色箭头的例子，读者可以参考 <a href="https://matplotlib.org/stable/gallery/images_contours_and_fields/quiver_demo.html" target="_blank">官网的 demo</a>。另外矢量场除了用 <code>quiver</code> 画箭头表示，还可以用 <code>streamplot</code> 画流线表示，以后有机会再另行介绍。</p>
+<h2 id="参考资料">参考资料</h2>
+<p><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.quiver.html" target="_blank">matplotlib.axes.Axes.quiver</a></p>
+<p><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.quiverkey.html#matplotlib.axes.Axes.quiverkey" target="_blank">matplotlib.axes.Axes.quiverkey</a></p>
+<p><a href="https://scitools.org.uk/cartopy/docs/latest/reference/generated/cartopy.mpl.geoaxes.GeoAxes.html#cartopy.mpl.geoaxes.GeoAxes.quiver" target="_blank">cartopy.mpl.geoaxes.GeoAxes.quiver</a></p>
+<p><a href="https://chemstat.hatenablog.com/entry/2020/10/26/050441" target="_blank">【python】quiverの矢印の長さをうまく調整したい【matplotlib.pyplot.quiver】</a></p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#箭头的位置和数值">箭头的位置和数值</a></li>
+    <li><a href="#箭头的长度和角度">箭头的长度和角度</a></li>
+    <li><a href="#箭头的尺寸和形状">箭头的尺寸和形状</a></li>
+    <li><a href="#箭头的阈值">箭头的阈值</a></li>
+    <li><a href="#箭头的图例">箭头的图例</a></li>
+    <li><a href="#cartopy-中的-quiver">Cartopy 中的 quiver</a></li>
+    <li><a href="#结语">结语</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#箭头的位置和数值">箭头的位置和数值</a></li>
+    <li><a href="#箭头的长度和角度">箭头的长度和角度</a></li>
+    <li><a href="#箭头的尺寸和形状">箭头的尺寸和形状</a></li>
+    <li><a href="#箭头的阈值">箭头的阈值</a></li>
+    <li><a href="#箭头的图例">箭头的图例</a></li>
+    <li><a href="#cartopy-中的-quiver">Cartopy 中的 quiver</a></li>
+    <li><a href="#结语">结语</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2021
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+                
+                | Visits: <span id="busuanzi_value_site_pv"></span>
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

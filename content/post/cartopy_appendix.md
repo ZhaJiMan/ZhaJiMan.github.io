@@ -69,9 +69,9 @@ ax.plot([300, 420], [0, 0], transform=line_proj)
 
 ### 地理坐标与投影坐标
 
-地理坐标即经纬度，能够描述地球表面任意一点的位置；而投影坐标则是将地球球体投影到平面上得到的坐标。二者的数值和单位一般不同，但可以根据投影时用到的数学公式进行换算。画图用的源数据（站点位置、卫星像元网格、再分析网格等）一般基于地理坐标，而 Cartopy 地图（即 GeoAxes）因为处于屏幕这个平面上，自然是基于投影坐标的。
+地理坐标即经纬度，能够描述地球表面任意一点的位置；而投影坐标则是将地球球体投影到平面上得到的坐标。二者的数值和单位一般不同，但可以根据投影时用到的数学公式进行换算。画图用的源数据（站点位置、卫星像元网格、再分析网格等）一般基于地理坐标，而 Cartopy 地图（即 `GeoAxes`）因为处于屏幕这个平面上，自然是基于投影坐标的。
 
-Cartopy 将坐标系称为“坐标参考系统”（coordinate reference system，CRS），并在 `cartopy.crs` 模块中定义了一系列表示 CRS 的类，其中也包括各种地图投影，比如 `PlateCarree`、`Mercator`、`Mollweide`、`LambertConformal` 类等。在创建 Axes 时将 CRS 对象传给 `projection` 参数，即可将 Axes 转为这个 CRS 代表的投影的 GeoAxes。例如下面这段代码分别创建了等经纬度投影和麦卡托投影的地图
+Cartopy 将坐标系称为“坐标参考系统”（coordinate reference system，CRS），并在 `cartopy.crs` 模块中定义了一系列表示 CRS 的类，其中也包括各种地图投影，比如 `PlateCarree`、`Mercator`、`Mollweide`、`LambertConformal` 类等。在创建 `Axes` 时将 CRS 对象传给 `projection` 参数，即可将 `Axes` 转为这个 CRS 代表的投影的 `GeoAxes`。例如下面这段代码分别创建了等经纬度投影和麦卡托投影的地图
 
 ```python
 import matplotlib.pyplot as plt
@@ -84,7 +84,7 @@ ax1 = fig.add_subplot(211, projection=proj1)
 ax2 = fig.add_subplot(212, projection=proj2)
 ```
 
-下面以最常用的 `PlateCarree` 类为例讲解地理坐标和投影坐标的关系。`PlateCarree` 类有一个初始化参数 `central_longitude`，能够指定画全球地图（通过 `ax.set_global` 方法）时正中间的经度，默认值为 0，即全球地图默认会把本初子午线放在画面中心。若指定 `central_longitude=180`，则全球地图会以对向子午线为中心，图这里就不放了。除这个功能以外，`central_longitude` 还会影响到 `PlateCarree` 坐标与地理坐标间的关系。`PlateCarree` 是一个标准的笛卡尔坐标系，其横坐标 x 与经度 lon 满足关系
+下面以最常用的 `PlateCarree` 类为例讲解地理坐标和投影坐标的关系。`PlateCarree` 类有一个初始化参数 `central_longitude`，能够指定画全球地图（通过 `ax.set_global` 方法）时正中间的经度，默认值为 0，即全球地图默认会把本初子午线放在画面中心。若指定 `central_longitude = 180`，则全球地图会以对向子午线为中心，图这里就不放了。除这个功能以外，`central_longitude` 还会影响到 `PlateCarree` 坐标与地理坐标间的关系。`PlateCarree` 是一个标准的笛卡尔坐标系，其横坐标 x 与经度 lon 满足关系
 
 ```python
 x = convert_lon(lon - central_longitude)
@@ -94,13 +94,13 @@ x = convert_lon(lon - central_longitude)
 
 ![rotate](/cartopy_appendix/rotate.png)
 
-图中黑色表盘为经度 lon，将其逆时针旋转 `central_longitude` 度后即得到代表 x 的蓝色表盘。`PlateCarree` 的纵坐标 y 则与纬度 lat 直接对应，纬度是多少纵坐标就是多少。很容易注意到，当 `central_longitude=0` 时，横坐标与经度直接对应，纵坐标与经度直接对应，即 `PlateCarree` 坐标正好等价于地理坐标。我们后面还会频繁用到这一点。
+图中黑色表盘为经度 lon，将其逆时针旋转 `central_longitude` 度后即得到代表 x 的蓝色表盘。`PlateCarree` 的纵坐标 y 则与纬度 lat 直接对应，纬度是多少纵坐标就是多少。很容易注意到，当 `central_longitude = 0` 时，横坐标与经度直接对应，纵坐标与经度直接对应，即 `PlateCarree` 坐标正好等价于地理坐标。我们后面还会频繁用到这一点。
 
-举个例子，对投影 `proj=ccrs.PlateCarree(central_longitude=180)` 来说，地理坐标 `(-160, 30)` 对应于投影坐标 `(20, 30)`。这可以通过 Matplotlib 的 `plt.show` 函数创建的交互式界面得到直观验证
+举个例子，对投影 `proj = ccrs.PlateCarree(central_longitude=180)` 来说，地理坐标 `(-160, 30)` 对应于投影坐标 `(20, 30)`。这可以通过 Matplotlib 的 `plt.show` 函数创建的交互式界面得到直观验证
 
 ![plt_show](/cartopy_appendix/plt_show.png)
 
-Matplotlib 里若把鼠标指针放在 Axes 的图像上，窗口右上角就会显示指针位置的坐标。Cartopy 的 GeoAxes 增强了这一功能，还会在坐标后面的括号里显示对应的地理坐标。如上图所示，投影坐标 `(20.32, 30.05)` 对应的地理坐标为 `(159.677419, 30.048387)`。注意图中是纬度在前经度在后，且两种坐标对小数部分的显示有所不同，所以看起来像是有误差。探索一番还能发现，全球地图里 x 的范围为 [-180°, 180°]，y 的范围为 [-90°, 90°]，地图中央，也就是 `central_longitude` 所在位置的 x 总为 0°。Matplotlib 的这一功能对日常 debug 来说非常实用。
+Matplotlib 里若把鼠标指针放在 `Axes` 的图像上，窗口右上角就会显示指针位置的坐标。Cartopy 的 `GeoAxes` 增强了这一功能，还会在坐标后面的括号里显示对应的地理坐标。如上图所示，投影坐标 `(20.32, 30.05)` 对应的地理坐标为 `(159.677419, 30.048387)`。注意图中是纬度在前经度在后，且两种坐标对小数部分的显示有所不同，所以看起来像是有误差。探索一番还能发现，全球地图里 x 的范围为 [-180°, 180°]，y 的范围为 [-90°, 90°]，地图中央，也就是 `central_longitude` 所在位置的 x 总为 0°。Matplotlib 的这一功能对日常 debug 来说非常实用。
 
 此外 CRS 对象的 `transform_points` 方法能直接进行不同坐标系统间的坐标换算。例如
 
@@ -139,7 +139,7 @@ for i in range(npt):
 
 由上一节的解说，Cartopy 官方文档里着重强调的 `crs` 和 `transform` 参数就很好理解了。
 
-GeoAxes 不仅工作在投影坐标系，其设置刻度的 `set_xticks` 和 `set_yticks` 方法、截取区域的 `set_extent` 方法，乃至各种绘图的 `plot`、`contourf`、`pcolormesh` 等方法等，都默认我们给出的数据也是基于投影坐标系的。所以需要提前把数据的地理坐标换算为地图的投影坐标，再把数据添加到地图上。例如下面这段代码
+`GeoAxes` 不仅工作在投影坐标系，其设置刻度的 `set_xticks` 和 `set_yticks` 方法、截取区域的 `set_extent` 方法，乃至各种绘图的 `plot`、`contourf`、`pcolormesh` 等方法等，都默认我们给出的数据也是基于投影坐标系的。所以需要提前把数据的地理坐标换算为地图的投影坐标，再把数据添加到地图上。例如下面这段代码
 
 ```python
 map_proj = ccrs.PlateCarree(central_longitude=180)
@@ -148,13 +148,13 @@ ax = fig.add_subplot(111, projection=map_proj)
 ax.set_xticks([0, 90])
 ```
 
-`set_xticks` 方法会在地图 `x=0` 和 `x=90` 的位置画出刻度——注意是 x 而不是经度！如果我们需要的是 `lon=0` 和 `lon=90` 处的刻度，就需要手动换算一下（根据上一节 x 和 lon 的关系式）
+`set_xticks` 方法会在地图 `x = 0` 和 `x = 90` 的位置画出刻度——注意是 x 而不是经度！如果我们需要的是 `lon = 0` 和 `lon = 90` 处的刻度，就需要手动换算一下（根据上一节 x 和 lon 的关系式）
 
 ```python
 ax.set_xticks([-180, -90])
 ```
 
-`PlateCarree` 这样简单的投影还比较容易手动换算，如果是更复杂的兰伯特投影之类的，就需要利用 CRS 对象的 `transform_points` 方法了。但 Cartopy 能够通过 `crs` 和 `transform` 参数省略掉这一换算过程：通过将 CRS 对象传给设置刻度时的 `crs` 参数，或绘制图像时的 `transform` 参数，能够告知 Cartopy 你的数据基于这个 CRS 坐标系，之后 Cartopy 在内部会根据这一信息将你的数据换算到 GeoAxes 所处的坐标系中。因为我们的数据一般都基于地理坐标，所以我们常把等价于地理坐标系的 `ccrs.PlateCarree()` 对象传给 `crs` 和 `transform` 参数。例如上面在 `lon=0` 处和 `lon=90` 处标出刻度的写法可以改为
+`PlateCarree` 这样简单的投影还比较容易手动换算，如果是更复杂的兰伯特投影之类的，就需要利用 CRS 对象的 `transform_points` 方法了。但 Cartopy 能够通过 `crs` 和 `transform` 参数省略掉这一换算过程：通过将 CRS 对象传给设置刻度时的 `crs` 参数，或绘制图像时的 `transform` 参数，能够告知 Cartopy 你的数据基于这个 CRS 坐标系，之后 Cartopy 在内部会根据这一信息将你的数据换算到 `GeoAxes` 所处的坐标系中。因为我们的数据一般都基于地理坐标，所以我们常把等价于地理坐标系的 `ccrs.PlateCarree()` 对象传给 `crs` 和 `transform` 参数。例如上面在 `lon = 0` 处和 `lon = 90` 处标出刻度的写法可以改为
 
 ```python
 tick_proj = ccrs.PlateCarree()
@@ -168,7 +168,7 @@ line_proj = ccrs.PlateCarree()
 ax.plot([0, 90], [30, 30], transform=line_proj)
 ```
 
-所以只要用好 `crs` 参数和 `transform` 参数，就可以忽略坐标转换的细节，统一使用地理坐标来描述和操作地图了。可能有人会指出，当地图投影 `map_proj=ccrs.PlateCarree()` 时 `crs` 和 `transform` 参数都可以省去，这确实没错，不过正如 Python 之禅说的，“显式胜于隐式”，显式地指定这些参数有助于明确坐标间的关系。
+所以只要用好 `crs` 参数和 `transform` 参数，就可以忽略坐标转换的细节，统一使用地理坐标来描述和操作地图了。可能有人会指出，当地图投影 `map_proj = ccrs.PlateCarree()` 时 `crs` 和 `transform` 参数都可以省去，这确实没错，不过正如 Python 之禅说的，“显式胜于隐式”，显式地指定这些参数有助于明确坐标间的关系。
 
 ### Geodetic 坐标
 
@@ -184,7 +184,7 @@ ax.legend()
 
 ![geodetic](/cartopy_appendix/geodetic.png)
 
-虽然乍一看橙线比蓝线长，但投影回球面后，橙线才是两点间的最短连线。`Geodetic` 是一种 CRS，但不属于地图投影，所以不能用于 GeoAxes 的创建。平时画图时除非对测地线或大圆有需求，一般使用 `PlateCarree` 坐标即可，实际上，目前 `Geodetic` 对象还不能用作 `contourf`、`pcolormesh` 等画图函数的 `transform` 参数，可能是 Matplotlib 还无法实现曲线网格的填色吧。
+虽然乍一看橙线比蓝线长，但投影回球面后，橙线才是两点间的最短连线。`Geodetic` 是一种 CRS，但不属于地图投影，所以不能用于 `GeoAxes` 的创建。平时画图时除非对测地线或大圆有需求，一般使用 `PlateCarree` 坐标即可，实际上，目前 `Geodetic` 对象还不能用作 `contourf`、`pcolormesh` 等画图函数的 `transform` 参数，可能是 Matplotlib 还无法实现曲线网格的填色吧。
 
 ## 关于刻度设置
 
@@ -196,7 +196,7 @@ ax.legend()
 import cartopy.feature as cfeature
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-# 分别指定GeoAxes所处的投影和刻度所处的投影.
+# 分别指定`GeoAxes`所处的投影和刻度所处的投影.
 map_proj = ccrs.PlateCarree(central_longitude=180)
 tick_proj = ccrs.PlateCarree(central_longitude=0)
 
@@ -225,11 +225,11 @@ plt.show()
 
 ![ticks_and_formatter](/cartopy_appendix/ticks_and_formatter.png)
 
-可以看到上图中的刻度标签显示的是 x 的值，下图中 Formatter 通过读取 GeoAxes 的投影信息，将刻度值换算为经纬度，并追加了度数和方向的符号。`LongitudeFormatter` 和 `LatitudeFormatter` 还提供丰富的参数来修改刻度的显示效果，不过一般来说默认设置就够用了。另外这两个 Formatter 还可以用于普通的 Axes，会将 Axes 的坐标视为地理坐标。
+可以看到上图中的刻度标签显示的是 x 的值，下图中 Formatter 通过读取 `GeoAxes` 的投影信息，将刻度值换算为经纬度，并追加了度数和方向的符号。`LongitudeFormatter` 和 `LatitudeFormatter` 还提供丰富的参数来修改刻度的显示效果，不过一般来说默认设置就够用了。另外这两个 Formatter 还可以用于普通的 `Axes`，会将 `Axes` 的坐标视为地理坐标。
 
 ### set_xticks 和 gridlines 的 bug
 
-`set_xticks` 方法存在 bug：当省略 `crs` 参数，或提供的 CRS 对象与 GeoAxes 的投影等价（源码里通过 `==` 判断）时，会跳过坐标变换的环节，直接使用你提供的刻度。例如
+`set_xticks` 方法存在 bug：当省略 `crs` 参数，或提供的 CRS 对象与 `GeoAxes` 的投影等价（源码里通过 `==` 判断）时，会跳过坐标变换的环节，直接使用你提供的刻度。例如
 
 ```python
 map_proj = ccrs.PlateCarree()
@@ -379,17 +379,17 @@ plt.show()
 
 ![set_extent](/cartopy_appendix/set_extent.png)
 
-截取范围为经度 [120°, 240°]，纬度 [20°, 80°]。第一排图片 `central_longitude=0`，红色方块标识出了截取范围，可以看到这张图中截取范围跨越了地图边界（180°），然后右边对纬度的截取成功了，但对经度的截取失败了——经度范围仍然是 [-180°, 180°]，所以地图变成了长条状。第二排图片 `central_longitude=180`，此时地图边界变为 0°，截取范围因此没有跨越边界，然后右边得到了正确的截取结果。
+截取范围为经度 [120°, 240°]，纬度 [20°, 80°]。第一排图片 `central_longitude = 0`，红色方块标识出了截取范围，可以看到这张图中截取范围跨越了地图边界（180°），然后右边对纬度的截取成功了，但对经度的截取失败了——经度范围仍然是 [-180°, 180°]，所以地图变成了长条状。第二排图片 `central_longitude = 180`，此时地图边界变为 0°，截取范围因此没有跨越边界，然后右边得到了正确的截取结果。
 
 由此引出了 `central_longitude` 的又一作用：控制地图边界，以保证 `set_extent` 生效。额外再提一点，使用 `set_extent` 截取完后，若再调用 `set_xticks` 和 `set_yticks` 画超出截取范围的刻度时，会强制拓宽当前地图的范围。所以建议先设置刻度，再进行截取（这点对 `set_global` 也是一样的）。 
 
-## GeoAxes 的位置
+## GeoAxes 的大小
 
-Matplotlib 中可以通过 `set_aspect` 方法调整 Axes 横纵坐标单位的比例，例如 `ax.set_aspect(1)` 使横纵坐标单位比例为 1:1，因而图片上一个单位的 x 和一个单位的 y 代表的物理长度（英寸）相等。
+Matplotlib 中 `Axes` 横纵坐标单位长度的比例称作 `aspect_ratio`，通常会自动根据 `figsize`、`rect`、`xlim`、`ylim` 等参数动态变化。也可以利用 `set_aspect` 方法设定固定的值，例如 `ax.set_aspect(1)` 会使图片上一个单位的 x 和一个单位的 y 代表的物理长度（英寸或像素）相等。
 
-之所以要提这一点，是因为 GeoAxes（即地图）的横纵坐标单位比例必须保持不变，不然随便调整一下 `figsize`、`rect`、`xlim`、`ylim` 等参数，地图就会变形，相当于地图的投影被改变了。例如等经纬度投影的地图单位经度和单位纬度必须等长，否则就名不副其实了。用 `PlateCarree` 对象创建 GeoAxes 时，Cartopy 会自动进行类似于 `ax.set_aspect(1)` 的操作，以满足这一条件。
+之所以要提这一点，是因为所有投影的 `GeoAxes` 的 `aspect_ratio` 都固定为 1。试想一下，如果地图的 `aspect_ratio` 会随其它参数发生变化，或者可以任意赋值，那么就相当于地图的投影被改变了。例如等经纬度投影的地图单位经度和单位纬度必须等长，否则就会名不副实。
 
-不过由此也会带来一个问题：你无法在改变比例的同时维持 Axes 的形状不变（特指 `adjustable='box'` 时，详见 [matplotlib.axes.Axes.set_adjustable](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_adjustable.html)）。例如用 `fig.add_axes` 创建 `PlateCarree` 投影的 GeoAxes 时，可以用 `rect` 参数指定 GeoAxes 方框的大小和位置，但如前所述，GeoAxes 会自动设置比例为 1，所以最后画出来的地图方框很可能并不符合 `rect`。下面用代码进行演示
+不过固定的 `aspect_ratio` 也会带来一个问题：使用 `fig.add_axes` 创建 `GeoAxes` 时，虽然 `rect` 参数已经指定了 `GeoAxes` 的边界形状，但 `GeoAxes` 为了满足 `aspect_ratio = 1` 的条件，其形状很可能会发生变动，导致其大小不合我们的预期。下面用代码进行演示
 
 ```python
 from matplotlib.transforms import Bbox
@@ -440,7 +440,7 @@ Actual Box: Bbox(x0=0.2, y0=0.30000000000000004, x1=0.8, y1=0.7000000000000002)
 
 ![box_1](/cartopy_appendix/box_1.png)
 
-可以看到地图的实际方框维持中心位置和宽度不变，但对恒定比例的要求使其高度缩短了。实际上，若通过 `set_extent` 方法截取区域，还可能出现实际方框高度不变、宽度缩短的情况，这里就不放图片了。总之是想说明，`PlateCarree` 投影的 GeoAxes 常常出现会出现高度或宽度短于预期的情况。其实际大小位置可以通过 `get_position` 方法获取，之后可以用于绘制等高或等宽的 colorbar 等（例子可见 [Matplotlib 系列：colorbar 的设置](https://zhajiman.github.io/post/matplotlib_colorbar/)）。
+可以看到地图的实际方框维持中心位置和宽度不变，但对恒定比例的要求使其高度缩短了。实际上，若通过 `set_extent` 方法截取区域，还可能出现实际方框高度不变、宽度缩短的情况，这里就不放图片了。总之是想说明，`PlateCarree` 投影的 `GeoAxes` 常常出现会出现高度或宽度短于预期的情况。其实际大小位置可以通过 `get_position` 方法获取，之后可以用于绘制等高或等宽的 colorbar 等（例子可见 [Python 绘制 CALIPSO L2 VFM 产品](http://bbs.06climate.com/forum.php?mod=viewthread&tid=101621)）。
 
 强行把地图填到 `rect` 指示的空间里也不是不行，只需要设置
 
@@ -450,7 +450,7 @@ ax.set_aspect('auto')
 
 ![box_2](/cartopy_appendix/box_2.png)
 
-不过这样一来投影就称不上等经纬度投影了。
+地图就会自动填满预期方框，不过这样一来投影便称不上等经纬度了。
 
 ## 结语
 

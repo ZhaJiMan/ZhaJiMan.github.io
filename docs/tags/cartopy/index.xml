@@ -6,7 +6,17 @@
     <description>Recent content in cartopy on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 06 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/cartopy/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 18 Dec 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/cartopy/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Matplotlib 系列：图解 quiver</title>
+      <link>https://zhajiman.github.io/post/matplotlib_quiver/</link>
+      <pubDate>Sat, 18 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/matplotlib_quiver/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;Matplotlib 中用箭头表示风场或电磁场等矢量场时需要用到 &lt;code&gt;quiver&lt;/code&gt; 方法，据字典，quiver 一词的意思是颤动、颤抖或箭袋，貌似也就最后一个意思跟箭头搭得上边。相比于其它画图方法，&lt;code&gt;quiver&lt;/code&gt; 的参数又多又容易混淆，所以本文将以图解的方式逐一介绍。这些参数按功能可分为三种：控制箭头位置和数值的、控制箭头长度和角度的，以及控制箭头尺寸和形状的。下面会按照这个分组顺序来解说。本文代码基于 Matplotlib 3.3.4。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Cartopy 系列：对入门教程的补充</title>
       <link>https://zhajiman.github.io/post/cartopy_appendix/</link>
