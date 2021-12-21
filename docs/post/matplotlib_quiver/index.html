@@ -114,7 +114,7 @@ Matplotlib 中用箭头表示风场或电磁场等矢量场时需要用到 quive
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-12-18</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3288 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3305 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;</span>
         
@@ -162,7 +162,7 @@ angle_vector = arctan(v / u)
 <p>选好单位后首先需要设置的参数是 <code>width</code>，箭杆（shaft）的宽度就等于 <code>width</code> 的数值乘上单位对应的基准长度。之后其它形状参数——<code>headwidth</code>、<code>headlength</code>、<code>headaxislength</code>——均以箭杆的宽度为单位。下图描绘了这些参数代表的部分</p>
 <p><img class="img-zoomable" src="/matplotlib_quiver/shape.png" alt="shape" />
 </p>
-<p><code>width</code> 默认为 <code>None</code>，表示 Matplotlib 会自动决定箭杆宽度。而其它参数都有提前设好的值，例如 <code>headwidth</code> 默认为 3，表示箭镞（暂且用古文称呼箭头尖尖）的宽度总是箭杆的三倍。</p>
+<p><code>width</code> 默认为 <code>None</code>，表示 Matplotlib 会自动决定箭杆宽度。而其它参数都有提前设好的值，例如 <code>headwidth</code> 默认为 3，表示箭镞（允许我用古文称呼箭头尖尖）的宽度总是箭杆的三倍。</p>
 <p>最后提一个神秘的地方，文档指出 <code>units</code> 不会影响箭头长度，但事实是在不给出 <code>scale_units</code> 时，<code>units</code> 会同时决定箭头长度和尺寸的单位。例如参考资料的最后一篇便展示了 <code>units</code> 对箭头长度的影响，我个人认为这是 Matplotlib 的设计失误。</p>
 <h2 id="箭头的阈值">箭头的阈值</h2>
 <p>你可能会碰到箭头的尺寸不合预期、或箭头缩成了一个点的情形，这都是 <code>minshaft</code> 和 <code>minlength</code> 这两个阈值参数导致的。</p>
@@ -189,8 +189,8 @@ angle_vector = arctan(v / u)
 </ul>
 <p><a href="https://zhajiman.github.io/post/cartopy_introduction/" target="_blank">Cartopy 系列：从入门到放弃</a> 文末提供了一个示例，同时为了实现 NCL 那种箭头图例外面带个方框的风格，在图例后面还加了个矩形补丁。</p>
 <h2 id="cartopy-中的-quiver">Cartopy 中的 quiver</h2>
-<p>Cartopy 的 <code>GeoAxes</code> 对 <code>Axes</code> 的 <code>quiver</code> 方法进行了装饰，使之能通过 <code>transform</code> 参数将矢量的地理坐标变换到合适的投影坐标上（详见 <a href="https://zhajiman.github.io/post/cartopy_appendix/" target="_blank">Cartopy 系列：对入门教程的补充</a>）。注意所有投影的 <code>GeoAxes</code> 的 <code>aspect_ratio</code> 都为 1，所以正如本文开头提到的，<code>scale_units</code> 取 <code>x</code>、<code>y</code> 或 <code>xy</code> 时结果没区别，<code>angles</code> 取 <code>uv</code> 或 <code>xy</code> 结果也没有区别。尽管如此，考虑到各种投影坐标系的 x 范围和 y 范围通常都很怪，胆小的我还是会取 <code>scale_units = 'inches'</code>，<code>angles = 'uv'</code>。</p>
-<p>此外 Cartopy 还提供了一个非常便利的新参数 <code>regrid_shape</code>，可以将矢量场重新插值到投影坐标系中的规则网格上，以达到规整矢量位置或稀疏箭头密度的目的。<code>regrid_shape</code> 接收二元组或整数，前者指定 x 和 y 方向上的箭头个数，后者指定短边上的箭头个数，然后长边的个数通过地图范围的宽高比缩放得出。默认为 <code>None</code>，即不进行网格化。下面改编一个 <a href="https://scitools.org.uk/cartopy/docs/latest/gallery/vector_data/regridding_arrows.html" target="_blank">官网示例</a></p>
+<p>Cartopy 的 <code>GeoAxes</code> 对 <code>Axes</code> 的 <code>quiver</code> 方法进行了装饰，使之能通过 <code>transform</code> 参数实现不同 CRS 间的坐标变换（详见 <a href="https://zhajiman.github.io/post/cartopy_appendix/" target="_blank">Cartopy 系列：对入门教程的补充</a>）。注意所有投影的 <code>GeoAxes</code> 的 <code>aspect_ratio</code> 都为 1，所以正如本文开头提到的，<code>scale_units</code> 取 <code>x</code>、<code>y</code> 或 <code>xy</code> 时结果没区别，<code>angles</code> 取 <code>uv</code> 或 <code>xy</code> 结果也没有区别。尽管如此，考虑到各种投影坐标系的 x 范围和 y 范围通常都很怪，胆小的我还是会取 <code>scale_units = 'inches'</code>，<code>angles = 'uv'</code>。</p>
+<p>此外 Cartopy 还提供了一个非常便利的新参数 <code>regrid_shape</code>，可以将矢量场重新插值到投影坐标系中的规则网格上，以达到规整矢量位置或稀疏箭头密度的目的，而在 <code>Axes</code> 中这活儿需要通过手动插值或跳步索引来实现。<code>regrid_shape</code> 接收二元组或整数，前者指定 x 和 y 方向上的箭头个数，后者指定短边上的箭头个数，然后长边的个数通过地图范围的宽高比缩放得出。默认为 <code>None</code>，即不进行网格化。下面改编一个 <a href="https://scitools.org.uk/cartopy/docs/latest/gallery/vector_data/regridding_arrows.html" target="_blank">官网示例</a></p>
 <p><img class="img-zoomable" src="/matplotlib_quiver/cartopy.png" alt="cartopy" />
 </p>
 <p>两图中的风场基于 <code>NorthPolarStereo</code> 坐标里的规则网格，地图则基于 <code>PlateCarree</code> 坐标。上图未进行网格化，风箭头明显间距不一。下图指定 <code>regrid_shape = 10</code> 后，风场被 <code>scipy.interpolate.griddata</code> 函数线性插值到地图上形为 <code>(16, 10)</code> 的规则网格中，箭头因而清晰可辨。</p>

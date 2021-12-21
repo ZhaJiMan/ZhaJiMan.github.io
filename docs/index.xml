@@ -6,7 +6,16 @@
     <description>Recent content on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 18 Dec 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 20 Dec 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>写博客是一种自虐行为</title>
+      <link>https://zhajiman.github.io/post/blog_masochism/</link>
+      <pubDate>Mon, 20 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/blog_masochism/</guid>
+      <description>&lt;p&gt;19 年中旬受 &lt;a href=&#34;https://crmnt.xyz&#34; target=&#34;_blank&#34;&gt;薄核兄&lt;/a&gt; 的启发创建了此博客，从开始到现在都以总结学习过程中遇到的编程问题为主，事实证明这些博文还挺有用。但随着篇数的增多，我的写作体验从最开始的事务性记录变成消遣，到现在又发展为一种自虐行为。所以本博客的第一篇牢骚——也就是本文——就来说说这是怎样一个自虐法。如果有读者不幸点了进来，我先为您的眼睛道个歉。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Matplotlib 系列：图解 quiver</title>
       <link>https://zhajiman.github.io/post/matplotlib_quiver/</link>

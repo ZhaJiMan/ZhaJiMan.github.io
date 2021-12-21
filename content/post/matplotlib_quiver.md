@@ -76,7 +76,7 @@ angle_arrow = angle_vector
 
 ![shape](/matplotlib_quiver/shape.png)
 
-`width` 默认为 `None`，表示 Matplotlib 会自动决定箭杆宽度。而其它参数都有提前设好的值，例如 `headwidth` 默认为 3，表示箭镞（暂且用古文称呼箭头尖尖）的宽度总是箭杆的三倍。
+`width` 默认为 `None`，表示 Matplotlib 会自动决定箭杆宽度。而其它参数都有提前设好的值，例如 `headwidth` 默认为 3，表示箭镞（允许我用古文称呼箭头尖尖）的宽度总是箭杆的三倍。
 
 最后提一个神秘的地方，文档指出 `units` 不会影响箭头长度，但事实是在不给出 `scale_units` 时，`units` 会同时决定箭头长度和尺寸的单位。例如参考资料的最后一篇便展示了 `units` 对箭头长度的影响，我个人认为这是 Matplotlib 的设计失误。
 
@@ -117,9 +117,9 @@ quiverkey(Q, X, Y, U, label, **kwargs)
 
 ## Cartopy 中的 quiver
 
-Cartopy 的 `GeoAxes` 对 `Axes` 的 `quiver` 方法进行了装饰，使之能通过 `transform` 参数将矢量的地理坐标变换到合适的投影坐标上（详见 [Cartopy 系列：对入门教程的补充](https://zhajiman.github.io/post/cartopy_appendix/)）。注意所有投影的 `GeoAxes` 的 `aspect_ratio` 都为 1，所以正如本文开头提到的，`scale_units` 取 `x`、`y` 或 `xy` 时结果没区别，`angles` 取 `uv` 或 `xy` 结果也没有区别。尽管如此，考虑到各种投影坐标系的 x 范围和 y 范围通常都很怪，胆小的我还是会取 `scale_units = 'inches'`，`angles = 'uv'`。
+Cartopy 的 `GeoAxes` 对 `Axes` 的 `quiver` 方法进行了装饰，使之能通过 `transform` 参数实现不同 CRS 间的坐标变换（详见 [Cartopy 系列：对入门教程的补充](https://zhajiman.github.io/post/cartopy_appendix/)）。注意所有投影的 `GeoAxes` 的 `aspect_ratio` 都为 1，所以正如本文开头提到的，`scale_units` 取 `x`、`y` 或 `xy` 时结果没区别，`angles` 取 `uv` 或 `xy` 结果也没有区别。尽管如此，考虑到各种投影坐标系的 x 范围和 y 范围通常都很怪，胆小的我还是会取 `scale_units = 'inches'`，`angles = 'uv'`。
 
-此外 Cartopy 还提供了一个非常便利的新参数 `regrid_shape`，可以将矢量场重新插值到投影坐标系中的规则网格上，以达到规整矢量位置或稀疏箭头密度的目的。`regrid_shape` 接收二元组或整数，前者指定 x 和 y 方向上的箭头个数，后者指定短边上的箭头个数，然后长边的个数通过地图范围的宽高比缩放得出。默认为 `None`，即不进行网格化。下面改编一个 [官网示例](https://scitools.org.uk/cartopy/docs/latest/gallery/vector_data/regridding_arrows.html)
+此外 Cartopy 还提供了一个非常便利的新参数 `regrid_shape`，可以将矢量场重新插值到投影坐标系中的规则网格上，以达到规整矢量位置或稀疏箭头密度的目的，而在 `Axes` 中这活儿需要通过手动插值或跳步索引来实现。`regrid_shape` 接收二元组或整数，前者指定 x 和 y 方向上的箭头个数，后者指定短边上的箭头个数，然后长边的个数通过地图范围的宽高比缩放得出。默认为 `None`，即不进行网格化。下面改编一个 [官网示例](https://scitools.org.uk/cartopy/docs/latest/gallery/vector_data/regridding_arrows.html)
 
 ![cartopy](/matplotlib_quiver/cartopy.png)
 
