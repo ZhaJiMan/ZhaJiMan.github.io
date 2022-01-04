@@ -1,6 +1,7 @@
 ---
 title: "Python 系列：小心默认的可变参数"
 date: 2021-11-14
+showToc: false
 tags:
 - python
 ---

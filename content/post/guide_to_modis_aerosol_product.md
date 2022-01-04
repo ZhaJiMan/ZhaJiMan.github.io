@@ -230,8 +230,8 @@ cmap.set_bad('lightgray')
 
 # 绘制AOD.
 im = axes[0].pcolormesh(
-    lon, lat, aod, cmap=cmap, vmin=0, vmax=2,
-    shading='nearest', transform=proj
+    lon, lat, aod[:-1, :-1], cmap=cmap, vmin=0, vmax=2,
+    shading='flat', transform=proj
 )
 cbar = fig.colorbar(
     im, ax=axes[0], pad=0.1,
@@ -243,8 +243,8 @@ axes[0].set_title('Effective_Optical_Depth_0p55um_Ocean', fontsize='medium')
 
 # 绘制FMF
 im = axes[1].pcolormesh(
-    lon, lat, fmf, cmap=cmap, vmin=0, vmax=1,
-    shading='nearest', transform=proj
+    lon, lat, fmf[:-1, :-1], cmap=cmap, vmin=0, vmax=1,
+    shading='flat', transform=proj
 )
 cbar = fig.colorbar(
     im, ax=axes[1], pad=0.1,
@@ -399,7 +399,6 @@ AOD 的水平分布与 DT-land 一致，但有值的像元增加了很多。山�
 
 ```python
 from pathlib import Path
-from collections import namedtuple
 
 import numpy as np
 from scipy.stats import binned_statistic_2d
@@ -411,45 +410,20 @@ import cartopy.crs as ccrs
 from reader import ReaderMYD
 from map_funcs import add_Chinese_provinces, set_map_extent_and_ticks
 
-Granule = namedtuple('Granule', 'lon lat aod')
-def read_granule(filepath):
-    '''读取一个文件含有的经纬度和AOD.'''
-    with ReaderMYD(str(filepath)) as f:
-        lon, lat = f.read_lonlat()
-        aod = f.read_sds('AOD_550_Dark_Target_Deep_Blue_Combined')
-
-    return Granule(lon, lat, aod)
-
-def flatten_granules(granules):
-    '''将每个granule中的数据展平成一维数组.'''
-    lons, lats, aods = [], [], []
-    for granule in granules:
-        lons.append(granule.lon.ravel())
-        lats.append(granule.lat.ravel())
-        aods.append(granule.aod.ravel())
-    lons = np.concatenate(lons)
-    lats = np.concatenate(lats)
-    aods = np.concatenate(aods)
-
-    return lons, lats, aods
-
-Grid = namedtuple('Grid', 'x y z')
-def grid_data(data, x, y, xbins, ybins):
+def grid_data(x, y, data, xbins, ybins):
     '''
     利用平均的方式格点化一维散点数据.
 
-    若格点内没有数据,则记作nan.
-    结果的维度为(ny, nx).
+    没有数据的格点记作NaN.若格点内的数据全部缺测会产生warning,可以无视.
+    为了便于画图,结果的维度为(ny, nx).
     '''
-    mask = ~np.isnan(data)
-    avg = binned_statistic_2d(
-        y[mask], x[mask], data[mask],
-        statistic='mean', bins=[ybins, xbins]
-    ).statistic
+    avg, ybins, xbins, _ = binned_statistic_2d(
+        y, x, data, bins=[ybins, xbins], statistic=np.nanmean
+    )
     xc = (xbins[1:] + xbins[:-1]) / 2
     yc = (ybins[1:] + ybins[:-1]) / 2
 
-    return Grid(xc, yc, avg)
+    return xc, yc, avg
 
 def aod_cmap():
     '''制作适用于AOD的cmap.'''
@@ -459,11 +433,20 @@ def aod_cmap():
     return cmap
 
 if __name__ == '__main__':
-    # 读取MYD04_L2文件.
+    # 读取MYD04_L2文件,收集所有granule的经纬度和AOD数据.
     dirpath = Path('./data')
-    granules = []
+    lon_all, lat_all, aod_all = [], [], []
     for filepath in dirpath.iterdir():
-        granules.append(read_granule(filepath))
+        with ReaderMYD(str(filepath)) as f:
+            lon, lat = f.read_lonlat()
+            aod = f.read_sds('AOD_550_Dark_Target_Deep_Blue_Combined')
+        lon_all.append(lon.ravel())
+        lat_all.append(lat.ravel())
+        aod_all.append(aod.ravel())
+    # 连接为一维数组.
+    lon_all = np.concatenate(lon_all)
+    lat_all = np.concatenate(lat_all)
+    aod_all = np.concatenate(aod_all)
 
     # 设定网格.
     extent = [70, 140, 10, 60]
@@ -472,8 +455,9 @@ if __name__ == '__main__':
     lon_bins = np.arange(lonmin, lonmax + 0.5 * dlon, dlon)
     lat_bins = np.arange(latmin, latmax + 0.5 * dlat, dlat)
     # 格点化.
-    lons, lats, aods = flatten_granules(granules)
-    grid = grid_data(aods, lons, lats, lon_bins, lat_bins)
+    lon_grid, lat_grid, aod_grid = grid_data(
+        lon_all, lat_all, aod_all, lon_bins, lat_bins
+    )
 
     # 设置地图.
     proj = ccrs.PlateCarree()
@@ -493,12 +477,12 @@ if __name__ == '__main__':
     cmap = aod_cmap()
     cmap.set_bad('lightgray')   # 缺测设为灰色.
     im = ax.pcolormesh(
-        grid.x, grid.y, grid.z, cmap=cmap, vmin=0, vmax=3,
+        lon_grid, lat_grid, aod_grid, cmap=cmap, vmin=0, vmax=3,
         shading='nearest', transform=proj
     )
     cbar = fig.colorbar(
         im, ax=ax, ticks=MultipleLocator(0.5),
-        shrink=0.8, pad=0.1, aspect=30,
+        extend='both', shrink=0.8, pad=0.1, aspect=30,
         orientation='horizontal'
     )
     cbar.set_label('AOD', fontsize='small')

@@ -12,9 +12,11 @@ tags:
 
 ![diagram](/connected_component_labelling/diagram.jpg)
 
-可以看到图中有三个独立的区域，我们希望找到并用数字标记它们，以便于计算各个区域的轮廓、外接形状、质心等参数。连通域标记最基本的两个算法是 Seed-Filling 算法和 Two-Pass 算法，下面便来分别介绍它们，并用 Python 加以实现。
+可以看到图中有三个独立的区域，我们希望找到并用数字标记它们，以便计算各个区域的轮廓、外接形状、质心等参数。连通域标记最基本的两个算法是 Seed-Filling 算法和 Two-Pass 算法，下面便来分别介绍它们，并用 Python 加以实现。
 
 <!--more-->
+
+（2022-01-04 更新：修复了 `seed_filling` 重复追加相邻像素的问题，修改了其它代码的表述。）
 
 ## Seed-Filling 算法
 
@@ -22,76 +24,74 @@ tags:
 
 ![seed-filling](/connected_component_labelling/seed-filling.gif)
 
-具体思路为：循环遍历图像中的每一个像素，如果某个像素是未被标记过的特征像素，那么用数字对其进行标记，并寻找与之相邻的未被标记过的特征像素，再对这些像素也进行标记，然后以同样的方法继续寻找邻居像素的邻居像素并加以标记……如此循环往复，直至将这些互相连通的像素都标记完毕。此即连通域 1，接着继续遍历图像像素，看能不能找到下一个连通域。下面的实现采用的是深度优先搜索（DFS）的策略，将找到的邻居像素压入栈中，弹出栈顶的像素，对其进行标记，再把这个像素的邻居像素压入栈中，重复操作直至栈内再无未标记的像素。
+具体思路为：循环遍历图像中的每一个像素，如果某个像素是未被标记过的特征像素，那么用数字对其进行标记，并寻找与之相邻的未被标记过的特征像素，再对这些像素也进行标记，然后以同样的方法继续寻找与这些像素相邻的像素并加以标记……如此循环往复，直至将这些互相连通的特征像素都标记完毕，此即连通域 1。接着继续遍历图像像素，看能不能找到下一个连通域。下面的实现采用深度优先搜索（DFS）的策略：将与当前位置相邻的特征像素压入栈中，弹出栈顶的像素，再把与这个像素相邻的特征像素压入栈中，重复操作直至栈内像素清空。
 
 ```python
 import numpy as np
 
-def get_neighbor_indices(labelled, row, col, connectivity):
-    '''找出一点邻域内label值为-1的点的下标.'''
-    nrow, ncol = labelled.shape
-    if connectivity == 4:
-        indices = (
-            (row - 1, col),  # 上
-            (row, col - 1),  # 左
-            (row, col + 1),  # 右
-            (row + 1, col)   # 下
-        )
-    elif connectivity == 8:
-        indices = (
-            (row - 1, col - 1), (row - 1, col), (row - 1, col + 1),  # 上
-            (row, col - 1),                         (row, col + 1),  # 中
-            (row + 1, col - 1), (row + 1, col), (row + 1, col + 1)   # 下
-        )
-
-    for x, y in indices:
-        if x >= 0 and x < nrow and y >= 0 and y < ncol:
-            if labelled[x, y] == -1:
-                yield x, y
-
-def seed_filling(image, connectivity=4):
+def seed_filling(image, diag=False):
     '''
-    用Seed-Filling算法寻找图片里的连通域.
+    用Seed-Filling算法标记图片中的连通域.
 
     Parameters
     ----------
     image : ndarray, shape (nrow, ncol)
-        二维整型数组,零值代表背景,非零值代表特征.
+        图片数组,零值表示背景,非零值表示特征.
 
-    connectivity : int
-        指定邻域为4或8个像素.
+    diag : bool
+        指定邻域是否包含四个对角.
 
     Returns
     -------
-    labelled : ndarray, shape (nrow, ncol)
-        二维整型数组,元素的数值表示所属连通域的标号.
-        0表示背景,从1开始表示不同的连通域.
+    labelled : ndarray, shape (nrow, ncol), dtype int
+        表示连通域标签的数组,0表示背景,从1开始表示标签.
 
     nlabel : int
-        图像中连通域的个数.
+        连通域的个数.
     '''
     # 用-1表示未被标记过的特征像素.
-    labelled = np.where(image != 0, -1, 0).astype(int)
-    nrow, ncol = labelled.shape
-    label = 1
+    image = np.asarray(image, dtype=bool)
+    nrow, ncol = image.shape
+    labelled = np.where(image, -1, 0)
 
+    # 指定邻域的范围.
+    if diag:
+        offsets = [
+            (-1, -1), (-1, 0), (-1, 1),(0, -1),
+            (0, 1), (1, -1), (1, 0), (1, 1)
+        ]
+    else:
+        offsets = [(-1, 0), (0, -1), (0, 1), (1, 0)]
+
+    def get_neighbor_indices(row, col):
+        '''获取(row, col)位置邻域的下标.'''
+        for (dx, dy) in offsets:
+            x = row + dx
+            y = col + dy
+            if 0 <= x < nrow and 0 <= y < ncol:
+                yield x, y
+
+    label = 1
     for row in range(nrow):
         for col in range(ncol):
-            # 跳过背景像素和已经被标记过的特征像素.
+            # 跳过背景像素和已经标记过的特征像素.
             if labelled[row, col] != -1:
                 continue
+            # 标记当前位置和邻域内的特征像素.
+            current_indices = []
             labelled[row, col] = label
-            neighbor_indices = list(
-                get_neighbor_indices(labelled, row, col, connectivity)
-            )
-            # 不断寻找邻居像素的邻居并标记之,直至再找不到未被标记的邻居.
-            while neighbor_indices:
-                neighbor_index = neighbor_indices.pop()
-                labelled[neighbor_index] = label
-                for new_index in get_neighbor_indices(
-                    labelled, *neighbor_index, connectivity
-                ):
-                    neighbor_indices.append(new_index)
+            for neighbor_index in get_neighbor_indices(row, col):
+                if labelled[neighbor_index] == -1:
+                    labelled[neighbor_index] = label
+                    current_indices.append(neighbor_index)
+            # 不断寻找与特征像素相邻的特征像素并加以标记,直至再找不到特征像素.
+            while current_indices:
+                current_index = current_indices.pop()
+                labelled[current_index] = label
+                for neighbor_index in get_neighbor_indices(*current_index):
+                    if labelled[neighbor_index] == -1:
+                        labelled[neighbor_index] = label
+                        current_indices.append(neighbor_index)
             label += 1
 
     return labelled, label - 1
@@ -105,14 +105,13 @@ def seed_filling(image, connectivity=4):
 
 具体思路为
 
-- 第一遍循环时，若一个特征像素周围全是背景像素，那它就很可能是一个新的连通域，需要赋予其一个新标签。如果这个特征像素周围有其它特征像素，则说明它们之间互相连通，此时随便用它们中的一个旧标签值来标记当前像素即可，同时要用并查集记录这些像素标签间的关系。
-- 因为我们总是只利用了当前像素邻域的信息（考虑到循环方向是从左上到右下，其实当前像素右下方的信息也是利用不到的），所以第一遍循环中找出的那些连通域可能会在邻域之外相连，导致同一个连通域内的像素含有不同的标签值。不过利用第一遍循环时获得的标签之间的关系（记录在并查集中），可以在第二遍循环中将同属一个集合（连通域）的不同标签修正为同一个标签。
+- 第一遍循环时，若一个特征像素周围全是背景像素，那它很可能是一个新的连通域，需要赋予其一个新标签。如果这个特征像素周围有其它特征像素，则说明它们之间互相连通，此时随便用它们中的一个旧标签值来标记当前像素即可，同时要用并查集记录这些像素的标签间的关系。
+- 因为我们总是只利用了当前像素邻域的信息（考虑到循环方向是从左上到右下，邻域只需要包含当前像素的上一行和本行的左边），所以第一遍循环中找出的那些连通域可能会在邻域之外相连，导致同一个连通域内的像素含有不同的标签值。不过利用第一遍循环时获得的标签之间的关系（记录在并查集中），可以在第二遍循环中将同属一个集合（连通域）的不同标签修正为同一个标签。
 - 经过第二遍循环的修正后，虽然假独立区域会被归并，但它所持有的标签值依旧存在，这就导致本应连续的标签值序列中有缺口（gap）。所以依据需求可以进行第三遍循环，去掉这些缺口，将标签值修正为连续的整数序列。
 
 其中提到的并查集是一种处理不相交集合的数据结构，支持查询元素所属、合并两个集合的操作。利用它就能处理标签和连通域之间的从属关系。我是看 [算法学习笔记(1) : 并查集](https://zhuanlan.zhihu.com/p/93647900) 这篇知乎专栏学的。下面的实现中仅采用路径压缩的优化，合并两个元素时始终让大的根节点被合并到小的根节点上，以保证连通域标签值的排列顺序跟数组的循环方向一致。
 
 ```python
-import numpy as np
 from scipy.stats import rankdata
 
 class UnionFind:
@@ -142,80 +141,72 @@ class UnionFind:
         else:
             return None
 
-def get_neighbor_labels(labelled, row, col, connectivity):
-    '''找出一点上边和左边大于零的label.'''
-    nrow, ncol = labelled.shape
-    if connectivity == 4:
-        indices = (
-            (row - 1, col),     # 上
-            (row, col - 1)      # 左
-        )
-    elif connectivity == 8:
-        indices = (
-            (row - 1, col - 1), # 左上
-            (row - 1, col),     # 上
-            (row - 1, col + 1), # 右上
-            (row, col - 1)      # 左
-        )
-    else:
-        raise ValueError('connectivity must be 4 or 8')
-
-    for x, y in indices:
-        if x >= 0 and x < nrow and y >= 0 and y < ncol:
-            neighbor_label = labelled[x, y]
-            if neighbor_label > 0:
-                yield neighbor_label
-
-def two_pass(image, connectivity=4):
+def two_pass(image, diag=False):
     '''
-    用Two-Pass算法寻找图片里的连通域.
+    用Two-Pass算法标记图片中的连通域.
 
     Parameters
     ----------
     image : ndarray, shape (nrow, ncol)
-        二维整型数组,零值代表背景,非零值代表特征.
+        图片数组,零值表示背景,非零值表示特征.
 
-    connectivity : int
-        指定邻域为4或8个像素.
+    diag : bool
+        指定邻域是否包含四个对角.
 
     Returns
     -------
-    labelled : ndarray, shape (nrow, ncol)
-        二维整型数组,元素的数值表示所属连通域的标号.
-        0表示背景,从1开始表示不同的连通域.
+    labelled : ndarray, shape (nrow, ncol), dtype int
+        表示连通域标签的数组,0表示背景,从1开始表示标签.
 
     nlabel : int
-        图像中连通域的个数.
+        连通域的个数.
     '''
+    image = np.asarray(image, dtype=bool)
     nrow, ncol = image.shape
     labelled = np.zeros_like(image, dtype=int)
     uf = UnionFind(image.size // 2)
-    label = 1
 
-    # 第一遍循环,用label标记出连通的区域.
+    # 指定邻域的范围,相比seed-filling只有半边.
+    if diag:
+        offsets = [(-1, -1), (-1, 0), (-1, 1), (0, -1)]
+    else:
+        offsets = [(-1, 0), (0, -1)]
+
+    def get_neighbor_indices(row, col):
+        '''获取(row, col)位置邻域的下标.'''
+        for (dx, dy) in offsets:
+            x = row + dx
+            y = col + dy
+            if 0 <= x < nrow and 0 <= y < ncol:
+                yield x, y
+
+    label = 1
     for row in range(nrow):
         for col in range(ncol):
-            # 跳过背景.
-            if image[row, col] == 0:
+            # 跳过背景像素.
+            if not image[row, col]:
                 continue
-            # 若当前像素周围没有label大于零的像素,则该像素获得新label.
-            # 否则用并查集记录相邻像素的label间的关系.
-            neighbor_labels = list(
-                get_neighbor_labels(labelled, row, col, connectivity)
-            )
-            if len(neighbor_labels) == 0:
+            # 寻找邻域内特征像素的标签.
+            feature_labels = []
+            for neighbor_index in get_neighbor_indices(row, col):
+                neighbor_label = labelled[neighbor_index]
+                if neighbor_label > 0:
+                    feature_labels.append(neighbor_label)
+            # 当前位置取邻域内的标签,同时记录邻域内标签间的关系.
+            if feature_labels:
+                first_label = feature_labels[0]
+                labelled[row, col] = first_label
+                for feature_label in feature_labels[1:]:
+                    uf.union(first_label, feature_label)
+            # 若邻域内没有特征像素,当前位置获得新标签.
+            else:
                 labelled[row, col] = label
                 label += 1
-            else:
-                first_label = neighbor_labels[0]
-                labelled[row, col] = first_label
-                for neighbor_label in neighbor_labels[1:]:
-                    uf.union(first_label, neighbor_label)
 
-    # 获取代表每个集合的label,并利用大小排名重新赋值.
+    # 获取所有集合的根节点,由大小排名得到标签值.
     roots = [uf.find(i) for i in range(label)]
     labels = rankdata(roots, method='dense') - 1
-    # 第二遍循环赋值利用ndarray的advanced indexing实现.
+    # 利用advanced indexing替代循环修正标签数组.
     labelled = labels[labelled]
 
     return labelled, labelled.max()
@@ -225,15 +216,27 @@ def two_pass(image, connectivity=4):
 
 ## 其它方法
 
-实际应用中推荐使用 `scipy.ndimage.label` 或 `skimage.measure.label` 函数，因为它们底层都是用 Cython 实现的，所以速度秒杀前面的手工实现。如果懂 OpenCV 的话，还可以调用 `cv2.connectedComponents` 函数。我完全不懂 OpenCV，就不介绍了。
+许多图像处理的包里有现成的函数，例如
+
+- `scipy.ndimage.label`
+- `skimage.measure.label`
+- `cv2.connectedComponets`
+
+具体信息和用法请查阅文档。顺便测一下各方法的速度，如下图所示（通过 IPython 的 `%timeit` 测得）
+
+![times](/connected_component_labelling/times.png)
+
+显然调包要比手工实现快 100 倍，这是因为 `scipy.ndimage.label` 和 `skimage.measure.label` 使用了更高级的算法和 Cython 代码。因为我不懂 OpenCV，所以这里没有展示 `cv2.connectedComponets` 的结果。
+
+值得注意的是，虽然上一节说理论上 Two-Pass 算法比 Seed-Filling 快，但测试结果相差不大，这可能是由于纯 Python 实现体现不出二者的差异（毕竟完全没用到 NumPy 数组的向量性质），也可能是我代码写的太烂，还请懂行的读者指点一下。
 
 ## 例子
 
-以一个随机生成的 50*50 的二值数组为例，测试 `scipy.ndimage.label`、Two-Pass 实现和 Seed-Filling 实现的效果，采用 8 邻域连通，效果如下图
+以一个随机生成的 `(50, 50)` 的二值数组为例，展示 `scipy.ndimage.label`、`seed_filling` 和 `two_pass` 三者的效果，采用 8 邻域连通，如下图所示
 
 ![random](/connected_component_labelling/result_random.png)
 
-可以看到三种方法都找出了 17 个连通域，并且连标签顺序都一模一样（填色相同）。不过若 Two-Pass 法中的并查集采用其它合并策略，标签顺序就很可能发生变化。下面再以一个更复杂的 800*800 大小的空露露图片为例
+可以看到三种方法都找出了 17 个连通域，并且连标签顺序都一模一样（填色相同）。不过若 Two-Pass 法中的并查集采用其它合并策略，标签顺序就很可能发生变化。下面再以一个更复杂的 `(800, 800)` 大小的空露露图片为例
 
 ![image](/connected_component_labelling/result_image.png)
 
@@ -284,12 +287,12 @@ if __name__ == '__main__':
     )
 
     # 显示Two-Pass算法的结果.
-    labelled, nlabel = two_pass(image, connectivity=8)
+    labelled, nlabel = two_pass(image, diag=True)
     axes[1, 0].imshow(labelled, cmap=cmap2, interpolation='nearest')
     axes[1, 0].set_title(f'Two-Pass ({nlabel} labels)', fontsize='large')
 
     # 显示Seed-Filling算法的结果.
-    labelled, nlabel = seed_filling(image, connectivity=8)
+    labelled, nlabel = seed_filling(image, diag=True)
     axes[1, 1].imshow(labelled, cmap=cmap2, interpolation='nearest')
     axes[1, 1].set_title(f'Seed-Filling ({nlabel} labels)', fontsize='large')
 
@@ -297,29 +300,17 @@ if __name__ == '__main__':
     plt.close(fig)
 ```
 
-最后说下速度，`scipy.ndimage.label` 比 Two-Pass 快几百倍，而 Two-Pass 只比 Seed-Filling 快一倍。处理分辨率大一点的图片时，后两者的速度有点急人。可能是因为纯 Python 实现确实太慢（毕竟完全没用上 NumPy 的向量性），或者我前面写的代码太烂。还请懂行的读者指点一下。
-
 ## 不只是邻接
 
-虽然 SciPy 和 scikit-image 中的实现要快上很多，但它们都只支持 4-邻域和 8-邻域的连通规则。若是自己写的 Python 实现的话，还可以使用别的连通规则。例如，改动一下 Seed-Filling 算法中的 `get_neighbor_indices` 函数，使之能够搜索半径 `r` 以内的特征像素
+ 虽然 `scipy.ndimage.label` 和 `skimage.measure.label` 要比手工实现更快，但它们都只支持 4 邻域和 8 邻域的连通规则，而手工实现还可以采用别的连通规则。例如，改动一下 `seed_filling` 中关于 `offsets` 的部分，使之能够表示以当前像素为原点，`r` 为半径的圆形邻域
 
 ```python
-def get_neighbor_indices(labelled, row, col, r):
-    '''找出一点在半径r范围内labelled值等于-1的点的下标.'''
-    nrow, ncol = labelled.shape
-    for i in range(-r, r + 1):
-        k = r - abs(i)
-        for j in range(-k, k + 1):
-            # 跳过这个点本身.
-            if i == 0 and j == 0:
-                continue
-            # 将下标偏移值加给row和col.
-            x = row + i
-            y = col + j
-            # 避免下标出界.
-            if x >= 0 and x < nrow and y >= 0 and y < ncol:
-                if labelled[x, y] == -1:
-                    yield x, y
+offsets = []
+for i in range(-r, r + 1):
+    k = r - abs(i)
+    for j in range(-k, k + 1):
+        offsets.append((i, j))
+offsets.remove((0, 0))  # 去掉原点.
 ```
 
 在某些情况下也许能派上用场。
