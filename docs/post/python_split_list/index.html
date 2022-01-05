@@ -21,7 +21,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<title>Python 系列：除法运算符 - 炸鸡人博客</title>
+<title>Python 系列：将列表等分为 n 份 - 炸鸡人博客</title>
 
 
 <meta name="author" content="炸鸡人" />
@@ -33,23 +33,19 @@
 <meta name="keywords" content="python" />
 
 
-<meta property="og:title" content="Python 系列：除法运算符" />
-<meta name="twitter:title" content="Python 系列：除法运算符" />
+<meta property="og:title" content="Python 系列：将列表等分为 n 份" />
+<meta name="twitter:title" content="Python 系列：将列表等分为 n 份" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://zhajiman.github.io/post/python_divide/" /><meta property="og:description" content="在 Python 3 中关于除法的运算符有三种：
+<meta property="og:url" content="https://zhajiman.github.io/post/python_split_list/" /><meta property="og:description" content="本文研究一个小问题：如何将长度为 N 的列表等分为 n 份？该问题的示意图如下
 
-/：表示精确的真除法。魔法方法为 __truediv__。
-//：表示地板除。魔法方法为 __floordiv__。
-%：表示求模。魔法方法为 __mod__。
-" />
-<meta name="twitter:description" content="在 Python 3 中关于除法的运算符有三种：
 
-/：表示精确的真除法。魔法方法为 __truediv__。
-//：表示地板除。魔法方法为 __floordiv__。
-%：表示求模。魔法方法为 __mod__。
-" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+N 除以 n 的商为 size，余数为 rest，数值满足 0 &lt;= rest &lt; n or size（除法规则请见 Python 系列：除法运算符）。当 N 是 n 的倍数时，rest = 0 ，列表正好被等分为 n 份，每份含 size 个元素；而当 N 不是 n 的倍数时，rest &gt; 0，按前面的分法会剩下 rest 个元素。对于后一种情况来说并不存在真正的等分，只能说希望尽量等分，问题的重点也落在了如何处理这 rest 个元素上。" />
+<meta name="twitter:description" content="本文研究一个小问题：如何将长度为 N 的列表等分为 n 份？该问题的示意图如下
+
+
+N 除以 n 的商为 size，余数为 rest，数值满足 0 &lt;= rest &lt; n or size（除法规则请见 Python 系列：除法运算符）。当 N 是 n 的倍数时，rest = 0 ，列表正好被等分为 n 份，每份含 size 个元素；而当 N 不是 n 的倍数时，rest &gt; 0，按前面的分法会剩下 rest 个元素。对于后一种情况来说并不存在真正的等分，只能说希望尽量等分，问题的重点也落在了如何处理这 rest 个元素上。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-10-19T00:00:00+00:00" /><meta property="article:modified_time" content="2021-10-19T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2022-01-04T00:00:00+00:00" /><meta property="article:modified_time" content="2022-01-04T00:00:00+00:00" />
 
 
 <style>
@@ -117,12 +113,12 @@
 <article>
     
     <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/python_divide/">Python 系列：除法运算符</a>
+        <a href="https://zhajiman.github.io/post/python_split_list/">Python 系列：将列表等分为 n 份</a>
     </h2>
     <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-19</span>
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-01-04</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;434 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1047 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
         
@@ -130,46 +126,84 @@
     </div>
     
     <div class="post-content markdown-body">
-        <p>在 Python 3 中关于除法的运算符有三种：</p>
-<ul>
-<li><code>/</code>：表示精确的真除法。魔法方法为 <code>__truediv__</code>。</li>
-<li><code>//</code>：表示地板除。魔法方法为 <code>__floordiv__</code>。</li>
-<li><code>%</code>：表示求模。魔法方法为 <code>__mod__</code>。</li>
-</ul>
-<p><code>/</code> 无需介绍。其中 <code>//</code> 被称为地板除是因为其结果等价于对 <code>/</code> 的结果向下取整。设操作数 <code>m</code> 和 <code>n</code> 是整数，于是有关系</p>
-<pre><code>m // n = floor(m / n)
+        <p>本文研究一个小问题：如何将长度为 <code>N</code> 的列表等分为 <code>n</code> 份？该问题的示意图如下</p>
+<p><img class="img-zoomable" src="/python_split_list/diagram1.png" alt="diagram1" />
+</p>
+<p><code>N</code> 除以 <code>n</code> 的商为 <code>size</code>，余数为 <code>rest</code>，数值满足 <code>0 &lt;= rest &lt; n or size</code>（除法规则请见 <a href="https://zhajiman.github.io/post/python_divide/" target="_blank">Python 系列：除法运算符</a>）。当 <code>N</code> 是 <code>n</code> 的倍数时，<code>rest = 0</code> ，列表正好被等分为 <code>n</code> 份，每份含 <code>size</code> 个元素；而当 <code>N</code> 不是 <code>n</code> 的倍数时，<code>rest &gt; 0</code>，按前面的分法会剩下 <code>rest</code> 个元素。对于后一种情况来说并不存在真正的等分，只能说希望尽量等分，问题的重点也落在了如何处理这 <code>rest</code> 个元素上。</p>
+<p>策略一是，若余数不为零，那么 <code>size</code> 顺势增大一位，这样一来肯定能涵盖剩下的元素。</p>
+<pre><code class="language-python">def split_list_1(lst, n):
+    size, rest = divmod(len(lst), n)
+    size = size + 1 if rest else size
+    for i in range(n):
+        start = i * size
+        end = (i + 1) * size
+        yield lst[start:end]
 </code></pre>
-<p>即便 <code>m</code> 或 <code>n</code> 是负数时，这一关系依然成立。例如</p>
-<pre><code>In : 5 // 2
-Out: 2
+<p>这里用到的一个窍门是：虽然索引超出列表下标范围时会报错，但切片并不会，只是返回的元素会变少，或干脆返回空列表。下面进行测试</p>
+<pre><code class="language-python">def test(N, n):
+    lst = list(range(N))
+    for subset in split_list(lst, n):
+        print(subset)
+</code></pre>
+<pre><code>In: test(12, 3)
+[0, 1, 2, 3]
+[4, 5, 6, 7]
+[8, 9, 10, 11]
 
-In: -5 // 2
-Out: -3
+In: test(12, 5)
+[0, 1, 2]
+[3, 4, 5]
+[6, 7, 8]
+[9, 10, 11]
+[]
+</code></pre>
+<p>显然第二个结果不太对劲，虽然的确分成了 <code>n</code> 份，但最后一组里一个元素也没有，这很难称得上是等分。余数不为零的情况下的确会有一些分组“缺斤少两”，但我们还是希望组与组之间最多相差一个元素。为了达成这种均衡（balanced）的分组，下面介绍策略二：前 <code>rest</code> 组含 <code>size + 1</code> 个元素，后 <code>n - rest</code> 组含 <code>size</code> 个元素。如下图所示</p>
+<p><img class="img-zoomable" src="/python_split_list/diagram2.png" alt="diagram2" />
+</p>
+<pre><code class="language-python">def split_list(lst, n):
+    size, rest = divmod(len(lst), n)
+    start = 0
+    for i in range(n):
+        step = size + 1 if i &lt; rest else size
+        end = start + step
+        yield lst[start:end]
+        start = end
+</code></pre>
+<pre><code>In: test(12, 3)
+[0, 1, 2, 3]
+[4, 5, 6, 7]
+[8, 9, 10, 11]
 
-In: 5 // -2
-Out: -3
+In: test(12, 5)
+[0, 1, 2]
+[3, 4, 5]
+[6, 7]
+[8, 9]
+[10, 11]
+</code></pre>
+<p>这次的结果相比策略一更加整齐。当 <code>n &gt; N</code> 时，该函数会用空列表补齐不够的分组。其实还有一个与策略二异曲同工，但仅需一行代码的算法</p>
+<pre><code class="language-python">def split_list(lst, n):
+    return (lst[i::n] for i in range(n))
+</code></pre>
+<p>理解其原理需要交换除数与被除数的位置：将列表分为 <code>size</code> 份，每份含 <code>n</code> 个元素，另外剩余 <code>rest</code> 个元素归为特殊的一组。第一次循环收集每组的第一个元素，第二次循环收集每组的第二个元素，依次类推，循环 <code>n</code> 次收集到的 <code>n</code> 个列表即为最终结果。<code>rest</code> 个元素会在前 <code>rest</code> 次循环里被收集完，所以后 <code>n - rest</code> 次循环要比前面的循环少一个元素——这与策略二的思路是一致的。测试结果为</p>
+<pre><code>In: test(12, 3)
+[0, 3, 6, 9]
+[1, 4, 7, 10]
+[2, 5, 8, 11]
 
-In: -5 // -2
-Out: 2
+In: test(12, 5)
+[0, 5, 10]
+[1, 6, 11]
+[2, 7]
+[3, 8]
+[4, 9]
 </code></pre>
-<p><code>%</code> 的结果与 <code>//</code> 的结果密切相关，它们一定满足</p>
-<pre><code>q = m // n
-r = m % n
-q * n + r = m
-</code></pre>
-<p>所以 <code>%</code> 的结果可以通过 <code>r = m - q * n</code> 计算得到。例如 <code>-5 % 2</code> 就等于 1。Python 中的 <code>divmod</code> 函数能够同时返回 <code>//</code> 和 <code>%</code> 的结果，方便我们观察结果。例如</p>
-<pre><code>In : divmod(-5, 2)
-OUt: (-3, 1)
-</code></pre>
-<p>再扩展一下，即便 <code>m</code> 或 <code>n</code> 是浮点数，结果依然遵循上面的计算流程，不过此时 <code>//</code> 和 <code>%</code> 的结果都会变成浮点型。例如</p>
-<pre><code>In : divmod(5.5, 2)
-Out: (2.0, 1.5)
-
-In: divmod(-5.5, 2)
-Out: (-3.0, 0.5)
-</code></pre>
-<p>此外可以观察到，在地板除的定义下，除数 <code>n</code> 和模 <code>r</code> 总是同号的。</p>
-<p>其它语言中 <code>/</code>、<code>//</code>（如果有的话）和 <code>%</code> 行为可能跟 Python 不同，使用时需要多加小心。</p>
+<p>每组的长度与策略二相同，但跳步索引使得组内元素并不连续，或许这就是简洁的代价吧。</p>
+<p>当然还可以直接调包。<code>more_itertools</code> 包的 <code>divide</code> 函数就可以实现该功能，源码的算法和策略二差不多，区别在于每个分组以迭代器的形式返回。此外这个包里还有按每组元素数进行分组的 <code>chunked</code> 函数，以及可以用缺测值补充长度的 <code>grouper</code> 函数，感兴趣的读者可以去自行查阅。</p>
+<h2 id="参考链接">参考链接</h2>
+<p><a href="https://stackoverflow.com/questions/24483182/python-split-list-into-n-chunks" target="_blank">Python split list into n chunks</a></p>
+<p><a href="https://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks" target="_blank">How do you split a list into evenly sized chunks?</a></p>
+<p><a href="https://more-itertools.readthedocs.io/en/latest/index.html" target="_blank">more-itertools docs</a></p>
     </div>
 </article>
 

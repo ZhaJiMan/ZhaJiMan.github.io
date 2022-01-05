@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/post/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-12-20T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-01-04T00:00:00+00:00" />
 
 
 <style>
@@ -107,6 +107,25 @@
 
 <div class="post">
     <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/python_split_list/">Python 系列：将列表等分为 n 份</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-01-04</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1047 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <p>本文研究一个小问题：如何将长度为 <code>N</code> 的列表等分为 <code>n</code> 份？该问题的示意图如下</p>
+<p><img class="img-zoomable" src="/python_split_list/diagram1.png" alt="diagram1" />
+</p>
+<p><code>N</code> 除以 <code>n</code> 的商为 <code>size</code>，余数为 <code>rest</code>，数值满足 <code>0 &lt;= rest &lt; n or size</code>（除法规则请见 <a href="https://zhajiman.github.io/post/python_divide/" target="_blank">Python 系列：除法运算符</a>）。当 <code>N</code> 是 <code>n</code> 的倍数时，<code>rest = 0</code> ，列表正好被等分为 <code>n</code> 份，每份含 <code>size</code> 个元素；而当 <code>N</code> 不是 <code>n</code> 的倍数时，<code>rest &gt; 0</code>，按前面的分法会剩下 <code>rest</code> 个元素。对于后一种情况来说并不存在真正的等分，只能说希望尽量等分，问题的重点也落在了如何处理这 <code>rest</code> 个元素上。</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
         <a href="https://zhajiman.github.io/post/blog_masochism/">写博客是一种自虐行为</a>
     </h2>
     <div class="post-item post-meta">
@@ -145,7 +164,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-12-04</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;9479 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;9456 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/satellite">satellite</a>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
     </div>
@@ -277,27 +296,6 @@
 <li><code>//</code>：表示地板除。魔法方法为 <code>__floordiv__</code>。</li>
 <li><code>%</code>：表示求模。魔法方法为 <code>__mod__</code>。</li>
 </ul>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/vim_grammar/">Vim 的语法</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-17</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3818 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/vim">vim</a>&nbsp;</span>
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <p>Vim 是一个拥有魔力的文本编辑器——这并不是比喻，而是说你在 Vim 中真的可以念咒语来操纵文本。看看我们的键盘，在 normal 模式下几乎每个键都有特定的功能，尤其是其中的数字和 26 个字母。如果把每个键都看作 Vim 这门语言中的单词，那么只要依据特定的语法，通过连续击键来遣词造句，就能施展操作文本的魔法。并且 Vim 语言的语法简单到用一句话就能描述：</p>
-<pre><code>verb + noun
-</code></pre>
-<p>下面就来简单讲讲魔法的基本法。</p>
-<p><img class="img-zoomable" src="/vim_grammar/vim_keys.png" alt="vim_keys" />
-</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-item pag-current">
@@ -543,7 +541,7 @@
     <div class="container-lg clearfix">
         <div class="col-12 footer">
             
-            <span>&copy; 2020-2021
+            <span>&copy; 2020-2022
                 <a href="https://zhajiman.github.io/">炸鸡人</a>
                  | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
                 | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"

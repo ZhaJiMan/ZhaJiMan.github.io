@@ -6,7 +6,19 @@
     <description>Recent content in python on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 04 Dec 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 04 Jan 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python 系列：将列表等分为 n 份</title>
+      <link>https://zhajiman.github.io/post/python_split_list/</link>
+      <pubDate>Tue, 04 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/python_split_list/</guid>
+      <description>&lt;p&gt;本文研究一个小问题：如何将长度为 &lt;code&gt;N&lt;/code&gt; 的列表等分为 &lt;code&gt;n&lt;/code&gt; 份？该问题的示意图如下&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/python_split_list/diagram1.png&#34; alt=&#34;diagram1&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;N&lt;/code&gt; 除以 &lt;code&gt;n&lt;/code&gt; 的商为 &lt;code&gt;size&lt;/code&gt;，余数为 &lt;code&gt;rest&lt;/code&gt;，数值满足 &lt;code&gt;0 &amp;lt;= rest &amp;lt; n or size&lt;/code&gt;（除法规则请见 &lt;a href=&#34;https://zhajiman.github.io/post/python_divide/&#34; target=&#34;_blank&#34;&gt;Python 系列：除法运算符&lt;/a&gt;）。当 &lt;code&gt;N&lt;/code&gt; 是 &lt;code&gt;n&lt;/code&gt; 的倍数时，&lt;code&gt;rest = 0&lt;/code&gt; ，列表正好被等分为 &lt;code&gt;n&lt;/code&gt; 份，每份含 &lt;code&gt;size&lt;/code&gt; 个元素；而当 &lt;code&gt;N&lt;/code&gt; 不是 &lt;code&gt;n&lt;/code&gt; 的倍数时，&lt;code&gt;rest &amp;gt; 0&lt;/code&gt;，按前面的分法会剩下 &lt;code&gt;rest&lt;/code&gt; 个元素。对于后一种情况来说并不存在真正的等分，只能说希望尽量等分，问题的重点也落在了如何处理这 &lt;code&gt;rest&lt;/code&gt; 个元素上。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>MODIS 二级气溶胶产品指北（with Python）</title>
       <link>https://zhajiman.github.io/post/guide_to_modis_aerosol_product/</link>
