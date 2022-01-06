@@ -21,9 +21,7 @@ def split_list_1(lst, n):
     size, rest = divmod(len(lst), n)
     size = size + 1 if rest else size
     for i in range(n):
-        start = i * size
-        end = (i + 1) * size
-        yield lst[start:end]
+        yield lst[i*size:(i+1)*size]
 ```
 
 这里用到的一个窍门是：虽然索引超出列表下标范围时会报错，但切片并不会，只是返回的元素会变少，或干脆返回空列表。下面进行测试
@@ -59,9 +57,9 @@ def split_list(lst, n):
     start = 0
     for i in range(n):
         step = size + 1 if i < rest else size
-        end = start + step
-        yield lst[start:end]
-        start = end
+        stop = start + step
+        yield lst[start:stop]
+        start = stop
 ```
 
 ```

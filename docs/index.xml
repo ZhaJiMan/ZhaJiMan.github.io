@@ -6,7 +6,22 @@
     <description>Recent content on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 04 Jan 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 05 Jan 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>变量命名时形容词应该放在名词前面还是后面？</title>
+      <link>https://zhajiman.github.io/post/python_position_of_adjective/</link>
+      <pubDate>Wed, 05 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/python_position_of_adjective/</guid>
+      <description>&lt;p&gt;今天改程序时脑海里突然蹦出这个问题，更宽泛地说，是修饰词或者偏正结构的先后顺序，例如&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;upper_ax&lt;/code&gt; 和 &lt;code&gt;bottom_ax&lt;/code&gt;，&lt;code&gt;ax_upper&lt;/code&gt; 和 &lt;code&gt;ax_bottom&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;start_date&lt;/code&gt; 和 &lt;code&gt;end_date&lt;/code&gt;，&lt;code&gt;date_start&lt;/code&gt; 和 &lt;code&gt;date_end&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;一旦开始疑惑，焦虑便随之而来：哪一种比较好呢？我之前的代码里好像两种写法都出现过，有没有什么现成的规范可以参考呢？越想越不痛快，所以赶紧上网找点前人经验来背书。意外的是，网上大部分文章都在讨论如何取有意义的变量名，而关于这个问题的寥寥无几，也许是因为太细节、太“语法”了？现归纳两篇我看过的帖子以供参考。&lt;/p&gt;
+&lt;p&gt;首先在 stack overflow 上找到了&lt;a href=&#34;https://stackoverflow.com/questions/36504357/should-variable-names-have-adjectives-before-or-after-the-noun&#34; target=&#34;_blank&#34;&gt;一模一样的提问&lt;/a&gt;：是用 &lt;code&gt;left_button&lt;/code&gt; 和 &lt;code&gt;right_button&lt;/code&gt;，还是 &lt;code&gt;button_left&lt;/code&gt; 和 &lt;code&gt;button_right&lt;/code&gt; 更好呢？提问者自己觉得前者符合英文语序，读起来更加自然，而后者强调了变量的重点在于按钮，而左和右是额外的补充信息。有评论指出后者在 IDE 里更方便，因为你一键入 &lt;code&gt;button&lt;/code&gt;，就会自动联想出所有带后缀的版本。这也挺符合人的联想过程，我们肯定是先想到“我要找按钮”，再明确具体要什么样的按钮。当然也有评论给出了经典的废话：与其纠结哪一种约定，任选一种并在项目里维持一致性最重要！好家伙，要是我如此豁达还会来搜这种鸡毛蒜皮的问题吗？&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Python 系列：将列表等分为 n 份</title>
       <link>https://zhajiman.github.io/post/python_split_list/</link>
