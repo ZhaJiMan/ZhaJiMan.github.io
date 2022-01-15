@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Matplotlib 系列：网格数据与 pcolor - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="matplotlib" />
+
+
+<meta property="og:title" content="Matplotlib 系列：网格数据与 pcolor" />
+<meta name="twitter:title" content="Matplotlib 系列：网格数据与 pcolor" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/matplotlib_pcolor/" /><meta property="og:description" content="前言
+Matplotlib 的 pcolor 函数能够绘制由一个个四边形（quadrilateral）单元构成的网格数据的彩色图像，相比绘制等值填色图的 contourf 函数，pcolor 对网格的要求更宽松，并且不会对空间离散的变量产生虚假的平滑，因而在科学可视化中也很常用。本文并不打算介绍该函数的种种，只想着重讨论网格数据的显示效果、shading 参数发挥的作用，以及 pcolor 和 pcolormesh 这对双胞胎间的差异。本文基于 Matplotlib 3.3.4。
+图解网格数据
+pcolor 全名 pseudo color，即伪彩色。函数签名为
+pcolor([X, Y], C, **kw)
+
+其中 X 和 Y 分别是网格的横纵坐标，C 是网格单元内变量的数值。之所以称之为“伪”，是因为 pcolor 并不像 imshow 那样直接用 RGB(A) 数组表示颜色，而是将 C 的数值归一化之后，在一个颜色查找表中查找对应的颜色，进而用颜色差异表现数值大小（原理详见 Matplotlib 系列：colormap 的设置）。C 数组的形状为 (ny, nx)，X 和 Y 的形状要比 C 大上一圈，即 (ny &#43; 1, nx &#43; 1)，ny 在前表示纵坐标会随数组的行号变动，nx 在后表示横坐标会随数组的列号变动。pcolor 对网格数据的显示效果如下图所示
+
+" />
+<meta name="twitter:description" content="前言
+Matplotlib 的 pcolor 函数能够绘制由一个个四边形（quadrilateral）单元构成的网格数据的彩色图像，相比绘制等值填色图的 contourf 函数，pcolor 对网格的要求更宽松，并且不会对空间离散的变量产生虚假的平滑，因而在科学可视化中也很常用。本文并不打算介绍该函数的种种，只想着重讨论网格数据的显示效果、shading 参数发挥的作用，以及 pcolor 和 pcolormesh 这对双胞胎间的差异。本文基于 Matplotlib 3.3.4。
+图解网格数据
+pcolor 全名 pseudo color，即伪彩色。函数签名为
+pcolor([X, Y], C, **kw)
+
+其中 X 和 Y 分别是网格的横纵坐标，C 是网格单元内变量的数值。之所以称之为“伪”，是因为 pcolor 并不像 imshow 那样直接用 RGB(A) 数组表示颜色，而是将 C 的数值归一化之后，在一个颜色查找表中查找对应的颜色，进而用颜色差异表现数值大小（原理详见 Matplotlib 系列：colormap 的设置）。C 数组的形状为 (ny, nx)，X 和 Y 的形状要比 C 大上一圈，即 (ny &#43; 1, nx &#43; 1)，ny 在前表示纵坐标会随数组的行号变动，nx 在后表示横坐标会随数组的列号变动。pcolor 对网格数据的显示效果如下图所示
+
+" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2022-01-15T00:00:00+00:00" /><meta property="article:modified_time" content="2022-01-15T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/matplotlib_pcolor/">Matplotlib 系列：网格数据与 pcolor</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-01-15</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3603 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="前言">前言</h2>
+<p>Matplotlib 的 <code>pcolor</code> 函数能够绘制由一个个四边形（quadrilateral）单元构成的网格数据的彩色图像，相比绘制等值填色图的 <code>contourf</code> 函数，<code>pcolor</code> 对网格的要求更宽松，并且不会对空间离散的变量产生虚假的平滑，因而在科学可视化中也很常用。本文并不打算介绍该函数的种种，只想着重讨论网格数据的显示效果、<code>shading</code> 参数发挥的作用，以及 <code>pcolor</code> 和 <code>pcolormesh</code> 这对双胞胎间的差异。本文基于 Matplotlib 3.3.4。</p>
+<h2 id="图解网格数据">图解网格数据</h2>
+<p><code>pcolor</code> 全名 pseudo color，即伪彩色。函数签名为</p>
+<pre><code class="language-python">pcolor([X, Y], C, **kw)
+</code></pre>
+<p>其中 <code>X</code> 和 <code>Y</code> 分别是网格的横纵坐标，<code>C</code> 是网格单元内变量的数值。之所以称之为“伪”，是因为 <code>pcolor</code> 并不像 <code>imshow</code> 那样直接用 RGB(A) 数组表示颜色，而是将 <code>C</code> 的数值归一化之后，在一个颜色查找表中查找对应的颜色，进而用颜色差异表现数值大小（原理详见 <a href="https://zhajiman.github.io/post/matplotlib_colormap/" target="_blank">Matplotlib 系列：colormap 的设置</a>）。<code>C</code> 数组的形状为 <code>(ny, nx)</code>，<code>X</code> 和 <code>Y</code> 的形状要比 <code>C</code> 大上一圈，即 <code>(ny + 1, nx + 1)</code>，<code>ny</code> 在前表示纵坐标会随数组的行号变动，<code>nx</code> 在后表示横坐标会随数组的列号变动。<code>pcolor</code> 对网格数据的显示效果如下图所示</p>
+<p><img class="img-zoomable" src="/matplotlib_pcolor/regular_and_irregular_grids.png" alt="regular_and_irregular_grids" />
+</p>
+<p>图中第一行是规则网格，即每个网格单元都是矩形（rectangle）。网格顶点用红点表示，<code>X</code> 和 <code>Y</code> 描述了顶点的横纵坐标；四个邻近的顶点围成一个矩形，<code>C</code> 描述了每个矩形内变量的值，<code>pcolor</code> 再根据这些值的大小为矩形涂上相应的颜色——这便是 <code>pcolor</code> 的作用。</p>
+<p>显然矩形的边长数总是比间隔数大一，这解释了 <code>X</code>、<code>Y</code> 和 <code>C</code> 在数组形状上的差异。并且正如前面所述，<code>X</code> 的值只会随列号变动，<code>Y</code> 的值只会随行号变动。另外必须注意，数组的起点，即行号和列号都为 0 的元素在数组的左上角，但在画出来的图中这个元素位于左下角，也就是说我们需要区分列号和纵坐标的正方向。</p>
+<p>图中第二行是不规则网格，每个网格单元都是平行四边形（parallelogram）。实际上任意四边形都行，因为数组里相邻四个元素的逻辑位置天然构成一个正方形，顶点经由 <code>X</code> 和 <code>Y</code> 的数值可以在 xy 空间映射为任意形状的四边形。这也正是 <code>pcolor</code> 强于 <code>contourf</code> 的地方，后者只能处理规则网格的数据。注意到，此时 <code>X</code> 和 <code>Y</code> 的值会同时随行号和列号变动，维度 <code>nx</code> 和 <code>ny</code> 不再单纯对应于横坐标和纵坐标。</p>
+<p><code>X</code> 和 <code>Y</code> 还可以是一维数组，此时 <code>pcolor</code> 会利用 <code>X, Y = np.meshgrid(X, Y)</code> 制作对应的规则网格。不给出 <code>X</code> 和 <code>Y</code> 时则会利用从零开始的简单计数制作网格，即</p>
+<pre><code class="language-python">X, Y = np.meshgrid(np.arange(ny + 1), np.arange(nx + 1))
+</code></pre>
+<h2 id="shading-参数">shading 参数</h2>
+<p>然而世上还有另一种极为常见的网格数据，如下图所示</p>
+<p><img class="img-zoomable" src="/matplotlib_pcolor/interpolated_grid.png" alt="interpolated_grid" />
+</p>
+<p>这里 <code>C</code> 的形状与 <code>X</code> 和 <code>Y</code> 完全相同，<code>C</code> 直接描述网格顶点处的变量。气候数值模式输出的格点化产品基本都是这种，例如全球的温压湿风等。由此带来的问题是：原先一个四边形对应一个变量值，相当于四边形中心有一个值；而现在一个四边形的四个顶点都有值，那该选哪个来代表四边形的中心呢？</p>
+<p>在 Matplotlib 3.2 及之前的版本里，<code>pcolor</code> 会偷偷抛弃 <code>C</code> 的最后一行和最后一列，即只使用 <code>C[:-1, :-1]</code>，从而将数据变成上一节的形式。这样画出来的图不仅会损失一点显示范围，还会因为强行用顶点描述四边形中心，使填色图向对角线方向偏移半个网格单元的长度。</p>
+<p>虽然听起来有些可怕，但对画图的实际影响其实不是很大，特别是当网格特别密的时候，少掉一行一列无足轻重，微小的偏移也很难看出来，不过说到底还是不太严谨。新版本的 Matplotlib 给出的解决方案是：推测出一张新的网格，其形状比 <code>C</code> 多出一行一列，并尽可能使每个数据点落在新网格单元的正中心。自 3.3 版本起，可以通过指定参数 <code>shading='nearest'</code> 开启这一功能，而原先丢掉数据的行为称作 <code>'flat'</code>。实现该功能的具体语句是（摘自 <a href="https://github.com/matplotlib/matplotlib/blob/710fce3df95e22701bd68bf6af2c8adbc9d67a79/lib/matplotlib/axes/_axes.py" target="_blank">_axes.py</a>）</p>
+<pre><code class="language-python">def _interp_grid(X):
+    # helper for below
+    if np.shape(X)[1] &gt; 1:
+        dX = np.diff(X, axis=1)/2.
+        if not (np.all(dX &gt;= 0) or np.all(dX &lt;= 0)):
+            _api.warn_external(
+                f&quot;The input coordinates to {funcname} are &quot;
+                &quot;interpreted as cell centers, but are not &quot;
+                &quot;monotonically increasing or decreasing. &quot;
+                &quot;This may lead to incorrectly calculated cell &quot;
+                &quot;edges, in which case, please supply &quot;
+                f&quot;explicit cell edges to {funcname}.&quot;)
+        X = np.hstack((X[:, [0]] - dX[:, [0]],
+                        X[:, :-1] + dX,
+                        X[:, [-1]] + dX[:, [-1]]))
+    else:
+        # This is just degenerate, but we can't reliably guess
+        # a dX if there is just one value.
+        X = np.hstack((X, X))
+    return X
+
+X = _interp_grid(X)
+Y = _interp_grid(Y)
+X = _interp_grid(X.T).T
+Y = _interp_grid(Y.T).T
+</code></pre>
+<p>函数 <code>_interp_grid</code> 的功能是：计算数组 <code>X</code> 列与列之间的差分 <code>dX</code>，取 <code>X</code> 的第一列沿列方向偏移 <code>-dX / 2</code>，再取 <code>X</code> 沿列方向偏移 <code>dX / 2</code>，把两个结果并排堆叠成新的 <code>X</code>。旧 <code>X</code> 的形状为 <code>(ny, nx)</code>，那么新 <code>X</code> 的形状为 <code>(ny, nx + 1)</code>， 同时数值上正好错开差分的一半。反复调用该函数，即可产生在行方向和列方向上都扩展了的新 <code>X</code> 和 <code>Y</code>，形状变为 <code>(ny + 1, nx + 1)</code>。比起仔细研究这个函数，还是看个例子更直观</p>
+<pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import matplotlib.lines as mlines
+
+def interp_grid(X, Y):
+    '''插值扩展网格.'''
+    X = _interp_grid(X)
+    Y = _interp_grid(Y)
+    X = _interp_grid(X.T).T
+    Y = _interp_grid(Y.T).T
+    return X, Y
+
+def polar_to_xy(r, t):
+    '''极坐标转xy.'''
+    x = r * np.cos(np.deg2rad(t))
+    y = r * np.sin(np.deg2rad(t))
+    return x, y
+
+# 生成规则网格.
+x = np.arange(4)
+y = np.arange(4)
+X1, Y1 = np.meshgrid(x, y)
+
+# 生成平行四边形网格.
+X2 = X1 + 0.2 * Y1
+Y2 = 0.2 * X1 + Y1
+
+# 利用极坐标生成不规则网格.
+r = np.linspace(2, 4, 5)
+t = np.linspace(0, 180, 5)
+T, R = np.meshgrid(t, r)
+X3, Y3 = polar_to_xy(R, T)
+
+# 收集网格.
+data = [(X1, Y1), (X2, Y2), (X3, Y3)]
+
+# 透明cmap.
+white = (0, 0, 0, 0)
+cmap = mcolors.ListedColormap([white])
+
+# 三个子图对应三组网格.
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+for (X, Y), ax in zip(data, axes):
+    # 随便生成一个C数组.
+    C = np.arange(X.size).reshape(X.shape)
+    # 画出flat的网格.
+    ax.pcolor(X, Y, C[:-1, :-1], shading='flat', cmap=cmap, ec='k', lw=1)
+    ax.scatter(X.flat, Y.flat, color='k')
+    # 画出nearest的网格.
+    ax.pcolor(X, Y, C, shading='nearest', cmap=cmap, ec='C3', lw=1)
+    X, Y = interp_grid(X, Y)
+    ax.scatter(X.flat, Y.flat, color='C3')
+
+    # 手动生成图例.
+    l1 = mlines.Line2D([], [], c='k', lw=1, marker='o', label=&quot;'flat'&quot;)
+    l2 = mlines.Line2D([], [], c='C3', lw=1, marker='o', label=&quot;'nearest'&quot;)
+    ax.legend(handles=[l1, l2], loc='upper right')
+
+    ax.set_xlabel('x', fontsize='large')
+axes[0].set_ylabel('y', fontsize='large')
+
+# 调整坐标轴.
+axes[0].set_xlim(-1.5, 4.5)
+axes[0].set_ylim(-1.5, 4.5)
+axes[1].set_xlim(-2, 5)
+axes[1].set_ylim(-2, 5)
+axes[2].set_xlim(-6, 6)
+axes[2].set_ylim(-2, 5)
+
+plt.show()
+</code></pre>
+<p><img class="img-zoomable" src="/matplotlib_pcolor/shadings_.png" alt="shadings" />
+</p>
+<p>三张图里画的都是当 <code>X</code>、<code>Y</code> 和 <code>C</code> 形状相同时，选取两种 <code>shading</code> 时的网格，区别在于第一张图画的是规则网格，而后两张画的是不规则网格。先说说第一张：</p>
+<ul>
+<li><code>shading='flat'</code>：黑点同时是网格顶点和数据点，每个矩形单元的颜色由左下角黑点的值决定。</li>
+<li><code>shading='nearest'</code>：红色网格根据黑色网格及其间距插值得到，每个黑点正好处在矩形单元的中心，矩形颜色也由这个点的值决定。</li>
+</ul>
+<p>这个推测新网格的策略在第一张和第二张图里都表现良好，但在第三张图里，生成的新网格并不能正确包裹数据点，甚至网格形态也有了不小的变化。原因在于，<code>_interp_grid</code> 函数有效的前提是，<code>X</code> 和 <code>Y</code> 在行方向的差分反映的就是纵坐标的差异，在列方向的差分反映的就是横坐标的差异。但上一节已经展示过，对于不规则网格来说，很可能横纵坐标会同时随行或列而变动，所以该函数可能产生预料之外的结果。并且相关代码里也明确表示，这种情况下会弹出 warning 信息警告用户。</p>
+<p>除了 <code>'flat'</code> 和 <code>'nearest'</code>，还可以指定 <code>shading='gouraud'</code>，表示采用计算机图形学中的 Gouraud 着色法，通过线性插值得到平滑的填色效果。不过要求 <code>X</code>、<code>Y</code> 和 <code>C</code> 的形状必须相同，同时只有 <code>pcolormesh</code> 才有这个选项。例如</p>
+<pre><code class="language-python"># 生成规则网格.
+x = np.arange(4)
+y = np.arange(4)
+X, Y = np.meshgrid(x, y)
+C = np.arange(X.size).reshape(X.shape)
+
+# 两张子图分别表示两种shading.
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+shadings = ['nearest', 'gouraud']
+for shading, ax in zip(shadings, axes):
+    im = ax.pcolormesh(X, Y, C, shading=shading)
+    ax.scatter(X.flat, Y.flat, color='C3', label='vertices')
+    ax.legend(loc='upper right')
+    ax.set_xlim(-1, 4)
+    ax.set_ylim(-1, 4)
+    ax.set_xlabel('x', fontsize='large')
+    ax.set_title(f&quot;shading='{shading}'&quot;, fontsize='large')
+axes[0].set_ylabel('y', fontsize='large')
+
+# 设置共用的colorbar.
+cbar = fig.colorbar(im, ax=axes)
+cbar.set_label('c', fontsize='large')
+
+plt.show()
+</code></pre>
+<p><img class="img-zoomable" src="/matplotlib_pcolor/gouraud.png" alt="gouraud" />
+</p>
+<p><code>'gouraud'</code> 设置下直接使用原有的网格进行填色，效果甚至比 <code>contourf</code> 还要平滑，当然对于离散的定性数据来说就不要选这个了。</p>
+<p>最后梳理一下 <code>shading</code> 参数的使用方法：</p>
+<ul>
+<li>
+<p><code>shading='flat'</code>：Matplotlib 3.4 及之前是 <code>pcolor</code> 的默认参数。当 <code>C</code> 的形状与 <code>X</code> 和 <code>Y</code> 相同时，会自动抛弃最后一行和最后一列（3.3 与 3.4 会产生 warning），而从 3.5 开始会直接报错，要求 <code>C</code> 的形状必须比 <code>X</code> 和 <code>Y</code> 小一圈。</p>
+</li>
+<li>
+<p><code>shading='nearest'</code>：Matplotlib 3.3 开始引入，要求 <code>C</code> 的形状与 <code>X</code> 和 <code>Y</code> 相同。对于不规则网格可能产生错误的效果，建议仅对规则网格使用。</p>
+</li>
+<li>
+<p><code>shading='auto'</code>：Matplotlib 3.3 开始引入，3.5 开始变为 <code>pcolor</code> 的默认参数。顾名思义会自动根据 <code>C</code> 的形状决定使用 <code>'flat'</code> 还是 <code>'nearest'</code>。</p>
+</li>
+<li>
+<p><code>shading='gouraud'</code>：<code>pcolormesh</code> 独有，要求 <code>C</code> 的形状与 <code>X</code> 和 <code>Y</code> 相同。</p>
+</li>
+</ul>
+<h2 id="pcolor-与-pcolormesh-的差别">pcolor 与 pcolormesh 的差别</h2>
+<p>Matplotlib 中有两种 <code>pcolor</code> 函数：<code>pcolor</code> 和 <code>pcolormesh</code>。前者返回 <code>PolyCollection</code> 对象，能够记录每个四边形单元的独立结构，因而支持坐标 <code>X</code> 和 <code>Y</code> 含有缺测值；后者返回 <code>QuadMesh</code> 对象，更强调网格整体，画图速度比 <code>pcolor</code> 更快，还专有 <code>'gouraud'</code> 选项，但不允许坐标含有缺测值。由于画图速度的优势，一般推荐使用 <code>pcolormesh</code>。坐标缺测的例子如下</p>
+<pre><code class="language-python"># 创建规则网格.
+x = np.arange(5)
+y = np.arange(5)
+X1, Y1 = np.meshgrid(x, y)
+
+# 复制一份有缺测的网格.
+X2, Y2 = X1.astype(float), Y1.astype(float)
+X2[2, 2] = np.nan
+Y2[2, 2] = np.nan
+
+shape = X1[:-1, :-1].shape
+size = shape[0] * shape[1]
+C = np.arange(size).reshape(shape)
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+norm = mcolors.Normalize(vmin=C.min(), vmax=C.max())
+
+# 两张子图分别画出pcolormesh和pcolor的结果.
+im = axes[0].pcolormesh(X1, Y1, C, shading='flat', ec='k', norm=norm)
+im = axes[1].pcolor(X2, Y2, C, shading='flat', ec='k', norm=norm)
+cbar = fig.colorbar(im, ax=axes)
+cbar.set_label('c', fontsize='large')
+
+# 标出顶点.
+axes[0].scatter(X1.flat, Y1.flat, color='k', label='good vertices')
+axes[1].scatter(X2.flat, Y2.flat, color='k', label='good vertices')
+axes[1].scatter(X1[2, 2], Y1[2, 2], color='m', label='nan vertices')
+
+# 设置坐标等.
+for ax in axes:
+    ax.legend(loc='upper right')
+    ax.set_xlim(-1, 5)
+    ax.set_ylim(-1, 5)
+    ax.set_xlabel('x', fontsize='large')
+axes[0].set_ylabel('y', fontsize='large')
+
+axes[0].set_title('pcolormesh', fontsize='large')
+axes[1].set_title('pcolor', fontsize='large')
+
+plt.show()
+</code></pre>
+<p><img class="img-zoomable" src="/matplotlib_pcolor/pcolor.png" alt="pcolor" />
+</p>
+<p>左图和右图绘制的是相同的数据，区别在于左图使用 <code>pcolormesh</code>，右图使用 <code>pcolor</code> 且把网格中心的顶点设为缺测。结果是右图中与紫色顶点相连的四边形全都没画出来，即便这些四边形对应的数据点都是有值的。<code>pcolor</code> 和 <code>pcolormesh</code> 都能正确处理 <code>C</code> 含缺测的情况，默认缺测位置透明，效果可见 <a href="https://zhajiman.github.io/post/numpy_missing_value/" target="_blank">NumPy 系列：缺测值处理</a> 的最后一节。</p>
+<h2 id="结语">结语</h2>
+<p>本来 Matplotlib 中的 <code>pcolor</code> 直接效仿了 MATLAB 中 <code>pcolor</code> 的行为，但近期 <code>shading='nearest'</code> 的引入使其有了更丰富的表现力。不过正如前面所展示的，推测新网格的策略对不规则网格效果欠佳，并且是否会影响下游的 Cartopy 地图包的效果也还是个未知数，也许相关的 API 日后还会再变动，烦请多加小心。</p>
+<h2 id="参考链接">参考链接</h2>
+<p><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.pcolormesh.html" target="_blank">matplotlib.pyplot.pcolormesh</a></p>
+<p><a href="https://matplotlib.org/stable/gallery/images_contours_and_fields/pcolormesh_grids.html" target="_blank">pcolormesh grids and shading</a></p>
+<p><a href="https://matplotlib.org/stable/users/release_notes.html" target="_blank">Matplotlib Release notes</a></p>
+<p><a href="https://github.com/matplotlib/matplotlib/pull/9629" target="_blank">Make pcolor(mesh) preserve all data</a></p>
+<p><a href="https://github.com/matplotlib/matplotlib/pull/16258" target="_blank">ENH: add shading=&lsquo;nearest&rsquo; and &lsquo;auto&rsquo; to pcolormesh</a></p>
+<p><a href="https://bairdlangenbrunner.github.io/python-for-climate-scientists/matplotlib/pcolormesh-grid-fix.html" target="_blank">Fixing pcolormesh offsets in cartopy</a></p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#图解网格数据">图解网格数据</a></li>
+    <li><a href="#shading-参数">shading 参数</a></li>
+    <li><a href="#pcolor-与-pcolormesh-的差别">pcolor 与 pcolormesh 的差别</a></li>
+    <li><a href="#结语">结语</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#图解网格数据">图解网格数据</a></li>
+    <li><a href="#shading-参数">shading 参数</a></li>
+    <li><a href="#pcolor-与-pcolormesh-的差别">pcolor 与 pcolormesh 的差别</a></li>
+    <li><a href="#结语">结语</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2022
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+                
+                | Visits: <span id="busuanzi_value_site_pv"></span>
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

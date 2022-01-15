@@ -2,6 +2,7 @@
 title: "写博客是一种自虐行为"
 date: 2021-12-20
 showToc: false
+draft: true
 tags:
 - nonsense
 ---

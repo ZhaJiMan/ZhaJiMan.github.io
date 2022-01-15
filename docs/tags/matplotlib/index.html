@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/matplotlib/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-12-18T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-01-15T00:00:00+00:00" />
 
 
 <style>
@@ -108,6 +108,30 @@
 </div>
 
 
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/matplotlib_pcolor/">Matplotlib 系列：网格数据与 pcolor</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-01-15</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3603 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="前言">前言</h2>
+<p>Matplotlib 的 <code>pcolor</code> 函数能够绘制由一个个四边形（quadrilateral）单元构成的网格数据的彩色图像，相比绘制等值填色图的 <code>contourf</code> 函数，<code>pcolor</code> 对网格的要求更宽松，并且不会对空间离散的变量产生虚假的平滑，因而在科学可视化中也很常用。本文并不打算介绍该函数的种种，只想着重讨论网格数据的显示效果、<code>shading</code> 参数发挥的作用，以及 <code>pcolor</code> 和 <code>pcolormesh</code> 这对双胞胎间的差异。本文基于 Matplotlib 3.3.4。</p>
+<h2 id="图解网格数据">图解网格数据</h2>
+<p><code>pcolor</code> 全名 pseudo color，即伪彩色。函数签名为</p>
+<pre><code class="language-python">pcolor([X, Y], C, **kw)
+</code></pre>
+<p>其中 <code>X</code> 和 <code>Y</code> 分别是网格的横纵坐标，<code>C</code> 是网格单元内变量的数值。之所以称之为“伪”，是因为 <code>pcolor</code> 并不像 <code>imshow</code> 那样直接用 RGB(A) 数组表示颜色，而是将 <code>C</code> 的数值归一化之后，在一个颜色查找表中查找对应的颜色，进而用颜色差异表现数值大小（原理详见 <a href="https://zhajiman.github.io/post/matplotlib_colormap/" target="_blank">Matplotlib 系列：colormap 的设置</a>）。<code>C</code> 数组的形状为 <code>(ny, nx)</code>，<code>X</code> 和 <code>Y</code> 的形状要比 <code>C</code> 大上一圈，即 <code>(ny + 1, nx + 1)</code>，<code>ny</code> 在前表示纵坐标会随数组的行号变动，<code>nx</code> 在后表示横坐标会随数组的列号变动。<code>pcolor</code> 对网格数据的显示效果如下图所示</p>
+<p><img class="img-zoomable" src="/matplotlib_pcolor/regular_and_irregular_grids.png" alt="regular_and_irregular_grids" />
+</p>
+  </div>
+</div>
 
 <div class="post">
   <h2 class="post-item post-title">
