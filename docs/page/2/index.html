@@ -132,7 +132,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-19</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;434 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;437 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
     </div>
@@ -229,7 +229,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-10</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4204 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4252 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
     </div>
@@ -246,23 +246,23 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-05</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4749 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5393 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
     </div>
     <div class="post-item post-summary markdown-body">
         <h2 id="0-前言">0. 前言</h2>
 <p>所谓 colormap（颜色表），就是将一系列颜色按给定的顺序排列在一起。其用处是，我们可以通过某种映射关系，将一系列数值映射到一张 colormap 上去，使不同大小的数值对应不同的颜色。这样一来，在绘制填色图时便能直观地用颜色来反映数值的分布。</p>
-<p>在 Matplotlib 中，数值到颜色的映射关系可以用下面这张图来表示</p>
-<p><img class="img-zoomable" src="/matplotlib_colormap/value_color_mapping.png" alt="value_color_mapping.png" />
+<p>在 Matplotlib 中，数值到颜色的映射关系可以用下面这张流程图来表示</p>
+<p><img class="img-zoomable" src="/matplotlib_colormap/flowchart.png" alt="flowchart" />
 </p>
 <p>图中分为前后两部分</p>
 <ul>
-<li>首先将数组的数值归一化（Normalization）到浮点型的 [0.0, 1.0] 范围或整型的 [0, N - 1] 范围上去。</li>
-<li>再把归一化的数据输入给 colormap，输出数组数值对应的颜色（RGBA 值）。</li>
+<li>首先将数组归一化（normalize）到浮点型的 <code>[0, 1]</code> 范围（或整型的 <code>[0, N - 1]</code> 范围）上去。</li>
+<li>再把归一化的数组输入给 colormap，查询每个数值对应的颜色。</li>
 </ul>
-<p>第二部分的映射关系基本上是固定不变的，但第一部分的映射关系可以通过 Matplotlib 的许多类来加以改变，进而实现对数色标、对称色标、离散色标等一系列可视化效果。</p>
-<p>本文将会依次介绍 <code>Colormap</code> 类、归一化会用到的类，以及实际应用的例子。代码基于 Matplotlib 3.3.4。</p>
+<p>第二部分的映射关系是固定不变的，但第一部分的映射关系可以通过归一化相关的类加以改变，进而实现对数色标、对称色标、离散色标等一系列填色效果。</p>
+<p>本文将会依次介绍 <code>Colormap</code> 类、<code>Normalize</code> 类，以及实际应用的例子。代码基于 Matplotlib 3.3.4。</p>
     </div>
 </div>
 

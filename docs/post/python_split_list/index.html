@@ -118,7 +118,7 @@ N 除以 n 的商为 size，余数为 rest，数值满足 0 &lt;= rest &lt; n or
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-01-04</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1035 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1047 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
         
@@ -143,12 +143,14 @@ N 除以 n 的商为 size，余数为 rest，数值满足 0 &lt;= rest &lt; n or
     for subset in split_list(lst, n):
         print(subset)
 </code></pre>
-<pre><code>In: test(12, 3)
+<pre><code>In : test(12, 3)
+Out:
 [0, 1, 2, 3]
 [4, 5, 6, 7]
 [8, 9, 10, 11]
 
-In: test(12, 5)
+In : test(12, 5)
+Out:
 [0, 1, 2]
 [3, 4, 5]
 [6, 7, 8]
@@ -167,12 +169,14 @@ In: test(12, 5)
         yield lst[start:stop]
         start = stop
 </code></pre>
-<pre><code>In: test(12, 3)
+<pre><code>In : test(12, 3)
+Out:
 [0, 1, 2, 3]
 [4, 5, 6, 7]
 [8, 9, 10, 11]
 
-In: test(12, 5)
+In : test(12, 5)
+Out:
 [0, 1, 2]
 [3, 4, 5]
 [6, 7]
@@ -184,12 +188,14 @@ In: test(12, 5)
     return (lst[i::n] for i in range(n))
 </code></pre>
 <p>理解其原理需要交换除数与被除数的位置：将列表分为 <code>size</code> 份，每份含 <code>n</code> 个元素，另外剩余 <code>rest</code> 个元素归为特殊的一组。第一次循环收集每组的第一个元素，第二次循环收集每组的第二个元素，依次类推，循环 <code>n</code> 次收集到的 <code>n</code> 个列表即为最终结果。<code>rest</code> 个元素会在前 <code>rest</code> 次循环里被收集完，所以后 <code>n - rest</code> 次循环要比前面的循环少一个元素——这与策略二的思路是一致的。测试结果为</p>
-<pre><code>In: test(12, 3)
+<pre><code>In : test(12, 3)
+Out:
 [0, 3, 6, 9]
 [1, 4, 7, 10]
 [2, 5, 8, 11]
 
-In: test(12, 5)
+In : test(12, 5)
+Out:
 [0, 5, 10]
 [1, 6, 11]
 [2, 7]

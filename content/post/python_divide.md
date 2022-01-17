@@ -26,10 +26,10 @@ m // n = floor(m / n)
 In : 5 // 2
 Out: 2
 
-In: -5 // 2
+In : -5 // 2
 Out: -3
 
-In: 5 // -2
+In : 5 // -2
 Out: -3
 
 In: -5 // -2
@@ -57,7 +57,7 @@ OUt: (-3, 1)
 In : divmod(5.5, 2)
 Out: (2.0, 1.5)
 
-In: divmod(-5.5, 2)
+In : divmod(-5.5, 2)
 Out: (-3.0, 0.5)
 ```
 
