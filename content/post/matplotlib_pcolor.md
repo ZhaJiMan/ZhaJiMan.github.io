@@ -62,8 +62,8 @@ def _interp_grid(X):
                 "edges, in which case, please supply "
                 f"explicit cell edges to {funcname}.")
         X = np.hstack((X[:, [0]] - dX[:, [0]],
-                        X[:, :-1] + dX,
-                        X[:, [-1]] + dX[:, [-1]]))
+                       X[:, :-1] + dX,
+                       X[:, [-1]] + dX[:, [-1]]))
     else:
         # This is just degenerate, but we can't reliably guess
         # a dX if there is just one value.

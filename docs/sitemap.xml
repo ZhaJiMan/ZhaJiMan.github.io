@@ -2,16 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://zhajiman.github.io/tags/nonsense/</loc>
+    <lastmod>2022-01-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/post/</loc>
+    <lastmod>2022-01-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/post/fried_chicken_resources/</loc>
+    <lastmod>2022-01-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/</loc>
+    <lastmod>2022-01-17T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://zhajiman.github.io/tags/matplotlib/</loc>
     <lastmod>2022-01-15T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/post/matplotlib_pcolor/</loc>
-    <lastmod>2022-01-15T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhajiman.github.io/post/</loc>
-    <lastmod>2022-01-15T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhajiman.github.io/</loc>
     <lastmod>2022-01-15T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/tags/python/</loc>
@@ -121,9 +127,6 @@
   </url><url>
     <loc>https://zhajiman.github.io/post/solid_angle/</loc>
     <lastmod>2019-10-27T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhajiman.github.io/tags/nonsense/</loc>
-    <lastmod>2019-08-22T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/post/fried_chicken_man/</loc>
     <lastmod>2019-08-22T00:00:00+00:00</lastmod>
