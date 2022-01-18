@@ -134,7 +134,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-05</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5393 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5502 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
         
@@ -163,7 +163,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as mcolors
 
-def show_cmap(cmap, norm=None, extend='neither'):
+def show_cmap(cmap, norm=None, extend=None):
     '''展示一个colormap.'''
     if norm is None:
         norm = mcolors.Normalize(vmin=0, vmax=cmap.N)
@@ -278,7 +278,7 @@ cmap = cm.get_cmap('jet', 8)
 <p>效果如下图，并且采样得到的 colormap 依旧为 <code>LinearSegmentedColormap</code>。</p>
 <p><img class="img-zoomable" src="/matplotlib_colormap/get_cmap.png" alt="get_cmap" />
 </p>
-<h3 id="14-set_underset_over-与-set_bad">1.4 set_under、set_over 与 set_bad</h3>
+<h3 id="14-set_underset_over-和-set_bad">1.4 set_under、set_over 和 set_bad</h3>
 <p>1.1 节中提到过，直接调用 <code>cmap</code> 时，若参数 <code>x</code> 超出范围，那么会映射给第一个或最后一个颜色。而 <code>cmap</code> 的 <code>set_under</code> 方法能够改变 <code>x &lt; 0</code> 时对应的颜色，<code>set_over</code> 方法能够改变 <code>x &gt; N - 1</code> 或 <code>x &gt; 1</code> 时对应的颜色。<code>set_bad</code> 则能改变缺测值对应的颜色（见 <a href="https://zhajiman.github.io/post/numpy_missing_value" target="_blank">NumPy 系列：缺测值处理</a> 最后一节）。</p>
 <p>使用 <code>fig.colorbar</code> 方法画 colorbar 时，通过 <code>extend</code> 参数可以指定是否在 colorbar 两端显示出 under 与 over 的颜色。比如</p>
 <pre><code class="language-Python">cmap = cm.get_cmap('jet', 8)
@@ -327,7 +327,7 @@ masked_array(data=[0. , 0.2, 0.4, 0.6, 0.8, 1. ],
        fill_value=1e+20)
 </code></pre>
 <p>经 <code>norm</code> 归一化后的值可以传给 colormap，进而按第一节介绍的映射规则得到画图用的颜色。即便 <code>y</code> 超出了 <code>[0, 1]</code> 的范围，也可以映射给第一个或最后一个颜色（或者 <code>set_under</code> 和 <code>set_over</code> 指定的颜色）。换句话说，<code>[vmin, vmax]</code> 范围外的 <code>x</code> 自然对应于 colormap 两端的颜色。</p>
-<p><code>clip</code> 参数为 <code>True</code> 时，能把 <code>[vmin, vmax]</code> 范围外的 <code>x</code> 映射为 0 或 1，因此使 <code>set_under</code> 与 <code>set_over</code> 的设置失效。所以一般我们不用关心这个参数，默认为 <code>False</code> 即可。</p>
+<p><code>clip</code> 参数为 <code>True</code> 时，能把 <code>[vmin, vmax]</code> 范围外的 <code>x</code> 映射为 0 或 1，因此使 <code>set_under</code> 与 <code>set_over</code> 的设置失效。一般默认为 <code>False</code> 即可。</p>
 <h3 id="22-lognorm">2.2 LogNorm</h3>
 <p><code>LogNorm</code> 的参数与 <code>Normalize</code> 相同，会先对数据求对数后再进行线性映射
 $$
@@ -364,7 +364,7 @@ $$
 <p>给出一系列边缘靠在一起的 bin（框子），原始数据落入第几个框（左闭右开区间），就对应于第几个颜色。因为这些框边缘的数值可以任意给定，所以很难用简单的函数表示。为了实现这种映射，这里引入 <code>BoundaryNorm</code> 类。其参数为</p>
 <pre><code class="language-python">BoundaryNorm(boundaries, ncolors, clip=False, extend='neither')
 </code></pre>
-<p><code>boundaries</code> 为给出的这些 bin 的边缘数值，要求单调递增；<code>ncolors</code> 是将会在 colormap 中用到的颜色数目，要求数值大于等于 <code>nbin = len(boundaries) - 1</code>。当 <code>ncolors = nbin</code> 时，映射关系为：
+<p><code>boundaries</code> 为给出的这些 bin 的边缘数值，要求单调递增；<code>ncolors</code> 指定对应的 colormap 含有的颜色数，要求数值大于等于 <code>nbin = len(boundaries) - 1</code>。当 <code>ncolors = nbin</code> 时，映射关系为
 $$
 y = \begin{cases}
 -1 &amp;\text{if} \quad x &lt; boundaries[0] \newline
@@ -372,17 +372,22 @@ i &amp;\text{if} \quad boundaries[i] \le x &lt; boundaries[i+1] \newline
 nbin &amp;\text{if} \quad x \ge boundaries[-1]
 \end{cases}
 $$
-可以看到，落入框中的 <code>x</code> 会被映射到 <code>[0, nbin - 1]</code> 区间，而没有落入框中的 <code>x</code> 会映射为 -1 或 <code>nbin</code>。</p>
-<p>当 <code>ncolors &gt; nbin</code> 时，程序会通过线性插值将 <code>x</code> 映射到 <code>[0, ncolors - 1]</code> 上。个人觉得这种情况下的映射关系不是很直观，所以公式就不列了，平时我会先把 colormap 采样到只有 <code>nbin</code> 个颜色，使每个 bin 与 colormap 的颜色一一对应。</p>
-<p><code>extend</code> 参数会为出界的部分追加 bin 的数量，同样会使映射关系变复杂，建议不要去设置它。例如</p>
+可以看到，落入框中的 <code>x</code> 会被映射到 <code>[0, nbin - 1]</code> 区间，而没有落入框中的 <code>x</code> 会映射为 -1 或 <code>nbin</code>。当 <code>ncolors &gt; nbin</code> 时，程序会通过线性插值（并取整）把上面的结果再映射到 <code>[0, ncolors - 1]</code> 区间。所以可以有两种使用方法：</p>
+<ul>
+<li><code>ncolors</code> 取 <code>cmap.N</code>，配合完整的 colormap。</li>
+<li><code>ncolors</code> 取 <code>nbin</code>，再把 colormap 采样到只含 <code>nbin</code> 个颜色。</li>
+</ul>
+<p>个人一般会选用后者，这样能让每个 bin 与 colormap 中的颜色一一对应。</p>
+<p><code>extend</code> 参数会增大 <code>nbin</code> 以改变映射结果，直观效果是使第一个和最后一个 bin 对应的颜色区别于 under 和 over 时的颜色。考虑到会使映射关系变复杂，所以我一般不会去设置，但对该效果有需求的读者可以自己试试。下面是一个简单例子</p>
 <pre><code class="language-python">bins = [0, 0.1, 0.5, 1.0, 5.0, 10.0]
 nbin = len(bins) - 1
 norm = mcolors.BoundaryNorm(bins, nbin)
+x = [-1, 0.05, 0.2, 0.6, 2, 8, 12]
 </code></pre>
-<pre><code>In : norm([0.4, 2, 8])
+<pre><code>In : norm(x)
 Out:
-masked_array(data=[1, 3, 4],
-             mask=[False, False, False],
+masked_array(data=[-1, 0, 1, 2, 3, 4, 5],
+             mask=[False, False, False, False, False, False, False],
        fill_value=999999,
             dtype=int64)
 </code></pre>
@@ -427,7 +432,7 @@ levels = np.asarray(levels)
 layers = 0.5 * (levels[1:] + levels[:-1])
 colors = cmap(norm(layers))
 </code></pre>
-<p><code>contourf</code> 默认不会填充 <code>levels</code> 范围以外的颜色，如果有这方面的需求，可以用 <code>extend</code> 参数指定是否让超出范围的数据被填上 colormap 两端的颜色（或 <code>set_under</code> 和 <code>set_over</code> 指定的颜色）。</p>
+<p><code>contourf</code> 默认不会填充 <code>levels</code> 范围以外的颜色，如果有这方面的需求，可以用 <code>extend</code> 参数指定是否让超出范围的数据被填上 colormap 两端的颜色（或 <code>set_under</code> 和 <code>set_over</code> 指定的颜色）。并且当 <code>contourf</code> 指定了 <code>extend</code> 后，就不要在 <code>colorbar</code> 里指定了，否则会产生警告乃至错误。</p>
 <p>举个同时画出等高线和填色图的例子，填色设为半透明</p>
 <pre><code class="language-python"># 生成测试数据.
 x = np.linspace(0, 10, 100)
@@ -444,7 +449,7 @@ fig, ax = plt.subplots()
 levels = np.linspace(10, 60, 6)
 im1 = ax.contourf(X, Y, Z, levels=levels, cmap=cmap, alpha=0.5)
 im2 = ax.contour(X, Y, Z, levels=levels, cmap=cmap, linewidths=2)
-cbar = fig.colorbar(im1, ax=ax)
+cbar = fig.colorbar(im1, ax=ax, ticks=levels)
 # 为等高线添加标签.
 ax.clabel(im2, colors='k')
 
@@ -474,11 +479,13 @@ cmap.set_over('purple')
 
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
+# 使用pcolormesh.
 im = axes[0].pcolormesh(X, Y, Z, cmap=cmap, norm=norm, shading='nearest')
 cbar = fig.colorbar(im, ax=axes[0], ticks=bins, extend='both')
 axes[0].set_title('pcolormesh')
 
-# 注意contourf设置extend时,colorbar就不要设置extend了.
+
+# 使用contourf.
 im = axes[1].contourf(
     X, Y, Z, levels=bins, cmap=cmap, norm=norm, extend='both'
 )
@@ -522,7 +529,7 @@ im = axes[0].contourf(
     X, Y, Z, levels=levels,
     cmap=cmap1, norm=norm1, extend='both'
 )
-cbar = fig.colorbar(im, ax=axes[0])
+cbar = fig.colorbar(im, ax=axes[0], ticks=levels[1::2])
 axes[0].set_title('TwoSlopeNorm')
 
 # BoundaryNorm的图.
@@ -689,7 +696,7 @@ plt.show()
         <li><a href="#11-listedcolormap">1.1 ListedColormap</a></li>
         <li><a href="#12-linearsegmentedcolormap">1.2 LinearSegmentedColormap</a></li>
         <li><a href="#13-get_cmap-函数">1.3 get_cmap 函数</a></li>
-        <li><a href="#14-set_underset_over-与-set_bad">1.4 set_under、set_over 与 set_bad</a></li>
+        <li><a href="#14-set_underset_over-和-set_bad">1.4 set_under、set_over 和 set_bad</a></li>
         <li><a href="#15-修改内置-colormap">1.5 修改内置 colormap</a></li>
         <li><a href="#16-拼接内置-colormap">1.6 拼接内置 colormap</a></li>
       </ul>
@@ -840,7 +847,7 @@ plt.show()
         <li><a href="#11-listedcolormap">1.1 ListedColormap</a></li>
         <li><a href="#12-linearsegmentedcolormap">1.2 LinearSegmentedColormap</a></li>
         <li><a href="#13-get_cmap-函数">1.3 get_cmap 函数</a></li>
-        <li><a href="#14-set_underset_over-与-set_bad">1.4 set_under、set_over 与 set_bad</a></li>
+        <li><a href="#14-set_underset_over-和-set_bad">1.4 set_under、set_over 和 set_bad</a></li>
         <li><a href="#15-修改内置-colormap">1.5 修改内置 colormap</a></li>
         <li><a href="#16-拼接内置-colormap">1.6 拼接内置 colormap</a></li>
       </ul>

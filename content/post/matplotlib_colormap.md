@@ -40,7 +40,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as mcolors
 
-def show_cmap(cmap, norm=None, extend='neither'):
+def show_cmap(cmap, norm=None, extend=None):
     '''展示一个colormap.'''
     if norm is None:
         norm = mcolors.Normalize(vmin=0, vmax=cmap.N)
@@ -196,7 +196,7 @@ cmap = cm.get_cmap('jet', 8)
 
 ![get_cmap](/matplotlib_colormap/get_cmap.png)
 
-### 1.4 set_under、set_over 与 set_bad
+### 1.4 set_under、set_over 和 set_bad
 
 1.1 节中提到过，直接调用 `cmap` 时，若参数 `x` 超出范围，那么会映射给第一个或最后一个颜色。而 `cmap` 的 `set_under` 方法能够改变 `x < 0` 时对应的颜色，`set_over` 方法能够改变 `x > N - 1` 或 `x > 1` 时对应的颜色。`set_bad` 则能改变缺测值对应的颜色（见 [NumPy 系列：缺测值处理](https://zhajiman.github.io/post/numpy_missing_value) 最后一节）。
 
@@ -271,7 +271,7 @@ masked_array(data=[0. , 0.2, 0.4, 0.6, 0.8, 1. ],
 
 经 `norm` 归一化后的值可以传给 colormap，进而按第一节介绍的映射规则得到画图用的颜色。即便 `y` 超出了 `[0, 1]` 的范围，也可以映射给第一个或最后一个颜色（或者 `set_under` 和 `set_over` 指定的颜色）。换句话说，`[vmin, vmax]` 范围外的 `x` 自然对应于 colormap 两端的颜色。
 
-`clip` 参数为 `True` 时，能把 `[vmin, vmax]` 范围外的 `x` 映射为 0 或 1，因此使 `set_under` 与 `set_over` 的设置失效。所以一般我们不用关心这个参数，默认为 `False` 即可。
+`clip` 参数为 `True` 时，能把 `[vmin, vmax]` 范围外的 `x` 映射为 0 或 1，因此使 `set_under` 与 `set_over` 的设置失效。一般默认为 `False` 即可。
 
 ### 2.2 LogNorm
 
@@ -325,7 +325,7 @@ $$
 BoundaryNorm(boundaries, ncolors, clip=False, extend='neither')
 ```
 
-`boundaries` 为给出的这些 bin 的边缘数值，要求单调递增；`ncolors` 是将会在 colormap 中用到的颜色数目，要求数值大于等于 `nbin = len(boundaries) - 1`。当 `ncolors = nbin` 时，映射关系为：
+`boundaries` 为给出的这些 bin 的边缘数值，要求单调递增；`ncolors` 指定对应的 colormap 含有的颜色数，要求数值大于等于 `nbin = len(boundaries) - 1`。当 `ncolors = nbin` 时，映射关系为
 $$
 y = \begin{cases}
 -1 &\text{if} \quad x < boundaries[0] \newline
@@ -333,23 +333,27 @@ i &\text{if} \quad boundaries[i] \le x < boundaries[i+1] \newline
 nbin &\text{if} \quad x \ge boundaries[-1]
 \end{cases}
 $$
-可以看到，落入框中的 `x` 会被映射到 `[0, nbin - 1]` 区间，而没有落入框中的 `x` 会映射为 -1 或 `nbin`。
+可以看到，落入框中的 `x` 会被映射到 `[0, nbin - 1]` 区间，而没有落入框中的 `x` 会映射为 -1 或 `nbin`。当 `ncolors > nbin` 时，程序会通过线性插值（并取整）把上面的结果再映射到 `[0, ncolors - 1]` 区间。所以可以有两种使用方法：
 
-当 `ncolors > nbin` 时，程序会通过线性插值将 `x` 映射到 `[0, ncolors - 1]` 上。个人觉得这种情况下的映射关系不是很直观，所以公式就不列了，平时我会先把 colormap 采样到只有 `nbin` 个颜色，使每个 bin 与 colormap 的颜色一一对应。
+- `ncolors` 取 `cmap.N`，配合完整的 colormap。
+- `ncolors` 取 `nbin`，再把 colormap 采样到只含 `nbin` 个颜色。
 
-`extend` 参数会为出界的部分追加 bin 的数量，同样会使映射关系变复杂，建议不要去设置它。例如
+个人一般会选用后者，这样能让每个 bin 与 colormap 中的颜色一一对应。
+
+`extend` 参数会增大 `nbin` 以改变映射结果，直观效果是使第一个和最后一个 bin 对应的颜色区别于 under 和 over 时的颜色。考虑到会使映射关系变复杂，所以我一般不会去设置，但对该效果有需求的读者可以自己试试。下面是一个简单例子
 
 ```python
 bins = [0, 0.1, 0.5, 1.0, 5.0, 10.0]
 nbin = len(bins) - 1
 norm = mcolors.BoundaryNorm(bins, nbin)
+x = [-1, 0.05, 0.2, 0.6, 2, 8, 12]
 ```
 
 ```
-In : norm([0.4, 2, 8])
+In : norm(x)
 Out:
-masked_array(data=[1, 3, 4],
-             mask=[False, False, False],
+masked_array(data=[-1, 0, 1, 2, 3, 4, 5],
+             mask=[False, False, False, False, False, False, False],
        fill_value=999999,
             dtype=int64)
 ```
@@ -406,7 +410,7 @@ layers = 0.5 * (levels[1:] + levels[:-1])
 colors = cmap(norm(layers))
 ```
 
-`contourf` 默认不会填充 `levels` 范围以外的颜色，如果有这方面的需求，可以用 `extend` 参数指定是否让超出范围的数据被填上 colormap 两端的颜色（或 `set_under` 和 `set_over` 指定的颜色）。
+`contourf` 默认不会填充 `levels` 范围以外的颜色，如果有这方面的需求，可以用 `extend` 参数指定是否让超出范围的数据被填上 colormap 两端的颜色（或 `set_under` 和 `set_over` 指定的颜色）。并且当 `contourf` 指定了 `extend` 后，就不要在 `colorbar` 里指定了，否则会产生警告乃至错误。
 
 举个同时画出等高线和填色图的例子，填色设为半透明
 
@@ -426,7 +430,7 @@ fig, ax = plt.subplots()
 levels = np.linspace(10, 60, 6)
 im1 = ax.contourf(X, Y, Z, levels=levels, cmap=cmap, alpha=0.5)
 im2 = ax.contour(X, Y, Z, levels=levels, cmap=cmap, linewidths=2)
-cbar = fig.colorbar(im1, ax=ax)
+cbar = fig.colorbar(im1, ax=ax, ticks=levels)
 # 为等高线添加标签.
 ax.clabel(im2, colors='k')
 
@@ -461,11 +465,13 @@ cmap.set_over('purple')
 
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
+# 使用pcolormesh.
 im = axes[0].pcolormesh(X, Y, Z, cmap=cmap, norm=norm, shading='nearest')
 cbar = fig.colorbar(im, ax=axes[0], ticks=bins, extend='both')
 axes[0].set_title('pcolormesh')
 
-# 注意contourf设置extend时,colorbar就不要设置extend了.
+
+# 使用contourf.
 im = axes[1].contourf(
     X, Y, Z, levels=bins, cmap=cmap, norm=norm, extend='both'
 )
@@ -514,7 +520,7 @@ im = axes[0].contourf(
     X, Y, Z, levels=levels,
     cmap=cmap1, norm=norm1, extend='both'
 )
-cbar = fig.colorbar(im, ax=axes[0])
+cbar = fig.colorbar(im, ax=axes[0], ticks=levels[1::2])
 axes[0].set_title('TwoSlopeNorm')
 
 # BoundaryNorm的图.
