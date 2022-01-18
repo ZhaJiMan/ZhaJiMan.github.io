@@ -188,8 +188,8 @@ $$
 $$
 当两个点特别靠近时，$\arcsin$ 后面的值接近于 0，而 $\arcsin$ 函数在这一点附近的变化率较小，所以会比直接用球面余弦公式来得更精确。不过也可以反过来推测，haversine 公式在两点相对的情况下（例如南北两极）误差会变大。下面就此进行测试，给出赤道上两点的经纬度，用这两个公式分别计算圆心角，比较它们与理论值之间的差异。</p>
 <pre><code class="language-python">import numpy as np
-import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 from scipy.ndimage import gaussian_filter1d
 
 def cosine(lon1, lat1, lon2, lat2):
@@ -249,8 +249,8 @@ if __name__ == '__main__':
     # 设置x轴.
     ax.set_xlabel('Longitude Difference (°)', fontsize='large')
     ax.set_xlim(-10, 370)
-    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(60))
-    ax.xaxis.set_minor_locator(mpl.ticker.AutoMinorLocator(2))
+    ax.xaxis.set_major_locator(mticker.MultipleLocator(60))
+    ax.xaxis.set_minor_locator(mticker.AutoMinorLocator(2))
 
     # y轴采用对数坐标.
     ax.set_ylabel('Deviation (%)', fontsize='large')

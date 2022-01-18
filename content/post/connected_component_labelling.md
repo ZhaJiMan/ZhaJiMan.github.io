@@ -246,8 +246,8 @@ def two_pass(image, diag=False):
 import numpy as np
 from PIL import Image
 from scipy import ndimage
-import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 
 from connected_components import two_pass, seed_filling
 
@@ -260,10 +260,11 @@ if __name__ == '__main__':
     image = np.where(image < 220, 1, 0)
 
     # 设置二值图像与分类图像所需的cmap.
-    cmap1 = mpl.colors.ListedColormap(['white', 'black'])
+    cmap1 = mcolors.ListedColormap(
+        ['white', 'black'])
     white = np.array([1, 1, 1])
-    cmap2 = mpl.colors.ListedColormap(
-        np.vstack([white, mpl.cm.tab20.colors])
+    cmap2 = mcolors.ListedColormap(
+        np.vstack([white, plt.cm.tab20.colors])
     )
 
     fig, axes = plt.subplots(2, 2, figsize=(10, 10))

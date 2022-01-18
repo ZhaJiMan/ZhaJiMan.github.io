@@ -94,8 +94,8 @@ $$
 
 ```python
 import numpy as np
-import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 from scipy.ndimage import gaussian_filter1d
 
 def cosine(lon1, lat1, lon2, lat2):
@@ -155,8 +155,8 @@ if __name__ == '__main__':
     # 设置x轴.
     ax.set_xlabel('Longitude Difference (°)', fontsize='large')
     ax.set_xlim(-10, 370)
-    ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(60))
-    ax.xaxis.set_minor_locator(mpl.ticker.AutoMinorLocator(2))
+    ax.xaxis.set_major_locator(mticker.MultipleLocator(60))
+    ax.xaxis.set_minor_locator(mticker.AutoMinorLocator(2))
 
     # y轴采用对数坐标.
     ax.set_ylabel('Deviation (%)', fontsize='large')

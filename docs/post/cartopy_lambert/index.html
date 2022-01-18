@@ -155,8 +155,8 @@ ax.set_extent(extent, crs=ccrs.PlateCarree())
 <p><img class="img-zoomable" src="/cartopy_lambert/set_extent.png" alt="set_extent" />
 </p>
 <p>道理上来说给出经纬度的边界，截取出来的应该是一个更小的扇形，但按 <a href="https://github.com/SciTools/cartopy/issues/697" target="_blank">issue #697</a> 的说法，<code>set_extent</code> 会选出一个刚好包住这个小扇形的矩形作为边界。这里来验证一下这个说法</p>
-<pre><code class="language-Python">import matplotlib as mpl
-rect = mpl.path.Path([
+<pre><code class="language-Python">import matplotlib.path as mpath
+rect = mpath.Path([
     [extent[0], extent[2]],
     [extent[0], extent[3]],
     [extent[1], extent[3]],

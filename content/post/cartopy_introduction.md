@@ -126,8 +126,8 @@ ax = fig.add_subplot(111, projection=proj)
 
 # 设置经纬度范围,限定为中国
 # 注意指定crs关键字,否则范围不一定完全准确
-extent = [75, 150, 15, 60]
-ax.set_extent(extent, crs=proj)
+extents = [75, 150, 15, 60]
+ax.set_extent(extents, crs=proj)
 # 添加各种特征
 ax.add_feature(cfeature.OCEAN)
 ax.add_feature(cfeature.LAND, edgecolor='black')
@@ -165,12 +165,12 @@ ax.add_feature(cfeature.OCEAN.with_scale('50m'))
 ```Python
 fig = plt.figure()
 res = ['110m', '50m', '10m']
-extent = [75, 150, 15, 60]
+extents = [75, 150, 15, 60]
 
 proj = ccrs.PlateCarree()
 for i, res in enumerate(['110m', '50m', '10m']):
     ax = fig.add_subplot(1, 3, i+1, projection=proj)
-    ax.set_extent(extent, crs=proj)
+    ax.set_extent(extents, crs=proj)
 
     ax.add_feature(cfeature.OCEAN.with_scale(res))
     ax.add_feature(cfeature.LAND.with_scale(res), edgecolor='black')
@@ -271,7 +271,7 @@ plt.show()
 
 Cartopy 中需要用 `GeoAxes` 类的 `set_xticks` 和 `set_yticks` 方法来分别设置经纬度刻度。这两个方法还可以通过 `minor` 参数，指定是否添上小刻度。
 
-`set_xticks` 中的 `crs` 关键字指的是我们给出的 ticks 是在什么坐标系统下定义的，这样好换算至 ax 所在的坐标系统，原理同上一节所述。如果不指定，就很容易出现把 ticks 画到地图外的情况。除了 `set_xticks`，`set_extent` 方法同样有 `crs` 关键字，我们需要多加注意。
+`set_xticks` 中的 `crs` 关键字指的是我们给出的刻度是在什么坐标系统下定义的，这样好换算至 ax 所在的坐标系统，原理同上一节所述。如果不指定，就很容易出现把刻度画到地图外的情况。除了 `set_xticks`，`set_extent` 方法同样有 `crs` 关键字，我们需要多加注意。
 
 接着利用 Cartopy 专门提供的 Formatter 来格式化刻度的标签，使之能有东经西经、南纬北纬的字母标识。
 
@@ -279,9 +279,9 @@ Cartopy 中需要用 `GeoAxes` 类的 `set_xticks` 和 `set_yticks` 方法来分
 
 ![tick_error](/cartopy_introduction/tick_error.png)
 
-即全球地图的最右端缺失了 0° 的标识，这是 Cartopy 内部在换算 ticks 的坐标时用到了 mod 计算而导致的，解决方法见 stack overflow 上的 [这个讨论](https://stackoverflow.com/questions/56412206/cant-show-0-tick-in-right-when-central-longitude-180)，这里就不赘述了。额外提一句，NCL 对于这种情况就能正确处理。
+即全球地图的最右端缺失了 0° 的标识，这是 Cartopy 内部在换算刻度时用到了 mod 计算而导致的，解决方法见 stack overflow 上的 [这个讨论](https://stackoverflow.com/questions/56412206/cant-show-0-tick-in-right-when-central-longitude-180)，这里就不赘述了。额外提一句，NCL 对于这种情况就能正确处理。
 
-Cartopy 还有一个很坑的地方在于，`set_extent` 与指定 ticks 的效果会互相覆盖：如果你先用前者设置好了地图的显示范围，接下来的 `set_xticks` 超出了 extent 的范围的话，最后的出图范围就会以 ticks 的范围为准。因此使用时要注意 ticks 的范围，或把 `set_extent` 操作放在最后实施。
+Cartopy 还有一个很坑的地方在于，`set_extent` 与指定刻度的效果会互相覆盖：如果你先用前者设置好了地图的显示范围，接下来的 `set_xticks` 超出了 `extents` 的范围的话，最后的出图范围就会以刻度的范围为准。因此使用时要注意刻度的范围，或把 `set_extent` 操作放在最后实施。
 
 除了利用 `set_xticks` 和 `set_yticks` 方法，还可以在画网格线的同时画出刻度。例子如下：
 
@@ -359,79 +359,77 @@ plt.show()
 # 2019-09-10
 # 绘制地图用的函数.
 #----------------------------------------------------------------------------
-import matplotlib as mpl
+import matplotlib.ticker as mticker
+import matplotlib.patches as mpatches
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-from cartopy.io.shapereader import Reader
+import cartopy.io.shapereader as shpreader
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 def add_Chinese_provinces(ax, **feature_kw):
     '''
-    给一个GeoAxes添加上中国省界的shapefile.
+    在地图上画出中国省界的shapefile.
 
     Parameters
     ----------
     ax : GeoAxes
-        要添加shapefile的地图.
+        目标地图.
 
     **feature_kw
-        绘制feature时的Matplotlib关键词参数,例如linewidth,facecolor,alpha等.
+        调用add_feature时的关键字参数.
+        例如linewidth,edgecolor和facecolor等.
     '''
-    shp_filepath = 'D:/maps/shps/bou2_4p.shp'
-    proj = ccrs.PlateCarree()
-    reader = Reader(shp_filepath)
+    reader = shpreader.Reader('D:/maps/shps/bou2_4p.shp')
     geometries = reader.geometries()
-    provinces = cfeature.ShapelyFeature(geometries, proj)
+    provinces = cfeature.ShapelyFeature(geometries, ccrs.PlateCarree())
     ax.add_feature(provinces, **feature_kw)
 
 def set_map_extent_and_ticks(
-    ax, extent, xticks, yticks, nx=0, ny=0,
+    ax, extents, xticks, yticks, nx=0, ny=0,
     xformatter=None, yformatter=None
 ):
     '''
-    为矩形投影的地图设置extent和ticks.
+    设置矩形投影的地图的经纬度范围和刻度.
 
     Parameters
     ----------
     ax : GeoAxes
-        需要被设置的地图.支持_RectangularProjection和Mercator投影.
+        目标地图.支持_RectangularProjection和Mercator投影.
 
-    extent : 4-tuple of float
-        地图的经纬度范围[lonmin, lonmax, latmin, latmax].
-        若值为None,则给出全球范围.
+    extents : 4-tuple of float or None
+        经纬度范围[lonmin, lonmax, latmin, latmax].值为None表示全球.
 
-    xticks : list of float
-        经度major ticks的位置.
+    xticks : array_like
+        经度主刻度的坐标.
 
-    yticks : list of float
-        纬度major ticks的位置.
+    yticks : array_like
+        纬度主刻度的坐标.
 
-    nx : int
-        经度的两个major ticks之间minor ticks的个数.默认没有minor ticks.
+    nx : int, optional
+        经度主刻度之间次刻度的个数.默认没有次刻度.
         当经度不是等距分布时,请不要进行设置.
 
-    ny : int
-        纬度的两个major ticks之间minor ticks的个数.默认没有minor ticks.
+    ny : int, optional
+        纬度主刻度之间次刻度的个数.默认没有次刻度.
         当纬度不是等距分布时,请不要进行设置.
 
-    xformatter : LongitudeFormatter
-        经度的major ticks的formatter.默认使用无参数的LongitudeFormatter.
+    xformatter : Formatter, optional
+        经度主刻度的Formatter.默认使用无参数的LongitudeFormatter.
 
-    yformatter : LatitudeFormatter
-        纬度的major ticks的formatter.默认使用无参数的LatitudeFormatter.
+    yformatter : Formatter, optional
+        纬度主刻度的Formatter.默认使用无参数的LatitudeFormatter.
     '''
-    # 设置ticks.
+    # 设置主刻度.
     proj = ccrs.PlateCarree()
     ax.set_xticks(xticks, crs=proj)
     ax.set_yticks(yticks, crs=proj)
-    if nx > 0:
-        xlocator = mpl.ticker.AutoMinorLocator(nx + 1)
-        ax.xaxis.set_minor_locator(xlocator)
-    if ny > 0:
-        ylocator = mpl.ticker.AutoMinorLocator(ny + 1)
-        ax.yaxis.set_minor_locator(ylocator)
+    # 设置次刻度.
+    xlocator = mticker.AutoMinorLocator(nx + 1)
+    ylocator = mticker.AutoMinorLocator(ny + 1)
+    ax.xaxis.set_minor_locator(xlocator)
+    ax.yaxis.set_minor_locator(ylocator)
 
-    # 添加经纬度标识.
+    # 设置Formatter.
     if xformatter is None:
         xformatter = LongitudeFormatter()
     if yformatter is None:
@@ -439,34 +437,37 @@ def set_map_extent_and_ticks(
     ax.xaxis.set_major_formatter(xformatter)
     ax.yaxis.set_major_formatter(yformatter)
 
-    # 最后设置extent,防止ticks超出extent的范围.
-    if extent is None:
+    # 在最后调用set_extent,防止刻度拓宽显示范围.
+    if extents is None:
         ax.set_global()
     else:
-        ax.set_extent(extent, crs=proj)
+        ax.set_extent(extents, crs=proj)
 
-def add_box_on_map(ax, extent, **plot_kw):
+def add_box_on_map(ax, extents, **rect_kw):
     '''
-    在矩形投影的GeoAxes上画出一个空心的方框.
+    在地图上画出一个方框.
 
     Parameters
     ----------
     ax : GeoAxes
-        被绘制的GeoAxes.
+        目标地图.最好为矩形投影,否则效果可能很糟.
 
-    extent : 4-tuple of float
+    extents : 4-tuple of float
         方框的经纬度范围[lonmin, lonmax, latmin, latmax].
 
-    **plot_kw
-        利用plot方法画方框时的参数,例如linewidth,color等.
+    **rect_kw
+        创建Rectangle时的关键字参数.
+        例如linewidth,edgecolor和facecolor等.
     '''
-    lonmin, lonmax, latmin, latmax = extent
-    x = [lonmin, lonmax, lonmax, lonmin, lonmin]
-    y = [latmin, latmin, latmax, latmax, latmin]
-    ax.plot(x, y, transform=ccrs.PlateCarree(), **plot_kw)
+    lonmin, lonmax, latmin, latmax = extents
+    rect = mpatches.Rectangle(
+        (lonmin, latmin), lonmax - lonmin, latmax - latmin,
+        transform=ccrs.PlateCarree(), **rect_kw
+    )
+    ax.add_patch(rect)
 ```
 
-其中 `add_Chinese_provinces` 函数用于在地图上添加中国省界的 shapefile；`set_map_extent_and_ticks` 用于设置矩形投影（例如 `PlateCarree`）地图的显示范围和刻度，代码参考了 Cartopy 和 [GeoCAT-viz](https://github.com/NCAR/geocat-viz) 的源码。接着是主程序
+其中 `add_Chinese_provinces` 函数用于在地图上画出中国省界的 shapefile；`set_map_extent_and_ticks` 用于设置矩形投影（例如 `PlateCarree`）地图的显示范围和刻度，代码参考了 Cartopy 和 [GeoCAT-viz](https://github.com/NCAR/geocat-viz) 的源码。接着是主程序
 
 ```Python
 #-------------------------------------------------------------------------
@@ -475,8 +476,9 @@ def add_box_on_map(ax, extent, **plot_kw):
 #-------------------------------------------------------------------------
 import numpy as np
 import xarray as xr
-import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
+import matplotlib.patches as mpatches
 import cartopy.crs as ccrs
 
 from map_funcs import add_Chinese_provinces, set_map_extent_and_ticks
@@ -485,9 +487,9 @@ if __name__ == '__main__':
     # 设置绘图区域.
     lonmin, lonmax = 75, 150
     latmin, latmax = 15, 60
-    extent = [lonmin, lonmax, latmin, latmax]
+    extents = [lonmin, lonmax, latmin, latmax]
 
-    # 读取extent区域内的数据.
+    # 读取extents区域内的数据.
     filename = 't_uv_rh_gp_ERA5.nc'
     with xr.open_dataset(filename) as ds:
         # ERA5文件的纬度单调递减,所以先反转过来.
@@ -507,7 +509,7 @@ if __name__ == '__main__':
     add_Chinese_provinces(ax, lw=0.3, ec='k', fc='none')
     # 设置经纬度刻度.
     set_map_extent_and_ticks(
-        ax, extent,
+        ax, extents,
         xticks=np.arange(-180, 190, 15),
         yticks=np.arange(-90, 100, 15),
         nx=1, ny=1
@@ -522,36 +524,27 @@ if __name__ == '__main__':
     )
     cbar = fig.colorbar(
         im, ax=ax, shrink=0.9, pad=0.1, orientation='horizontal',
-        format=mpl.ticker.PercentFormatter()
+        format=mticker.PercentFormatter()
     )
     cbar.ax.tick_params(labelsize='small')
 
-    # 画出风箭头.
-    # 直接使用DataArray会报错,所以转换成ndarray.
-    # regrid_shape给出地图最短的那个维度要画出的风箭头数.
-    # angles指定箭头角度的确定方式.
-    # scale_units指定箭头长度的单位.
-    # scale给出data units/arrow length units的值.scale越小,箭头越长.
-    # units指定箭头维度(长度除外)的单位.
-    # width给出箭头shaft的宽度.
+    # 画出风箭头.直接使用DataArray会报错,所以转换成ndarray.
     Q = ax.quiver(
-        ds.longitude.data, ds.latitude.data,
-        ds.u.data, ds.v.data,
-        regrid_shape=20, angles='uv',
-        scale_units='xy', scale=12,
-        units='xy', width=0.15,
-        transform=proj
+        ds.longitude.values, ds.latitude.values,
+        ds.u.values, ds.v.values,
+        scale_units='inches', scale=180, angles='uv',
+        units='inches', width=0.008, headwidth=4,
+        regrid_shape=20, transform=proj
     )
-    # 在ax右下角腾出放quiverkey的空间.
+    # 在ax右下角腾出放图例的空间.
     # zorder需大于1,以避免被之前画过的内容遮挡.
     w, h = 0.12, 0.12
-    rect = mpl.patches.Rectangle(
+    rect = mpatches.Rectangle(
         (1 - w, 0), w, h, transform=ax.transAxes,
         fc='white', ec='k', lw=0.5, zorder=1.1
     )
     ax.add_patch(rect)
-    # 添加quiverkey.
-    # U指定风箭头对应的速度.
+    # 添加风箭头的图例.
     qk = ax.quiverkey(
         Q, X=1-w/2, Y=0.7*h, U=40,
         label=f'{40} m/s', labelpos='S', labelsep=0.05,
@@ -566,6 +559,8 @@ if __name__ == '__main__':
 ```
 
 ![example](/cartopy_introduction/example.png)
+
+其中绘制风箭头的部分可以参考 [Matplotlib 系列：图解 quiver](https://zhajiman.github.io/post/matplotlib_quiver/)。
 
 ## 补充链接
 

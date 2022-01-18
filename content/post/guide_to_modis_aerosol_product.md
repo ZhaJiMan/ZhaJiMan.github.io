@@ -209,7 +209,7 @@ with ReaderMYD(filepath) as f:
     fmf = f.read_sds('Optical_Depth_Ratio_Small_Ocean_0.55micron')
 
 # 设置地图.
-extent = [100, 130, 10, 40]
+extents = [100, 130, 10, 40]
 proj = ccrs.PlateCarree()
 fig, axes = plt.subplots(
     1, 2, figsize=(10, 6), subplot_kw={'projection': proj}
@@ -217,7 +217,7 @@ fig, axes = plt.subplots(
 for ax in axes:
     ax.coastlines(resolution='10m', lw=0.3)
     set_map_extent_and_ticks(
-        ax, extent,
+        ax, extents,
         xticks=np.arange(-180, 190, 10),
         yticks=np.arange(-90, 100, 10),
         nx=1, ny=1
@@ -449,8 +449,8 @@ if __name__ == '__main__':
     aod_all = np.concatenate(aod_all)
 
     # 设定网格.
-    extent = [70, 140, 10, 60]
-    lonmin, lonmax, latmin, latmax = extent
+    extents = [70, 140, 10, 60]
+    lonmin, lonmax, latmin, latmax = extents
     dlon, dlat = 1, 1
     lon_bins = np.arange(lonmin, lonmax + 0.5 * dlon, dlon)
     lat_bins = np.arange(latmin, latmax + 0.5 * dlat, dlat)
@@ -466,7 +466,7 @@ if __name__ == '__main__':
     add_Chinese_provinces(ax, lw=0.3, ec='k', fc='none')
     ax.coastlines(resolution='10m', lw=0.3)
     set_map_extent_and_ticks(
-        ax, extent=extent,
+        ax, extents,
         xticks=np.arange(-180, 190, 10),
         yticks=np.arange(-90, 100, 10),
         nx=1, ny=1
