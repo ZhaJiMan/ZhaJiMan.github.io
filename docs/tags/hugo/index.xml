@@ -6,7 +6,18 @@
     <description>Recent content in hugo on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 03 Jul 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 28 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>解决博客 jsDelivr 资源无法访问的问题</title>
+      <link>https://zhajiman.github.io/post/jsdelivr_problem/</link>
+      <pubDate>Sat, 28 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/jsdelivr_problem/</guid>
+      <description>&lt;p&gt;前段时间重看自己的文章时发现公式渲染、图片的放大缩小和代码高亮等功能都失效了，按 F12 发现原因是引自 &lt;code&gt;cdn.jsdelivr.net&lt;/code&gt; 的字体资源、CSS 和 JS 文件都无法访问，挂梯子后页面恢复正常。&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/jsdelivr_problem/website.png&#34; alt=&#34;website&#34; /&gt;
+&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>用 Hugo 重新搭建博客</title>
       <link>https://zhajiman.github.io/post/rebuild_blog/</link>

@@ -2,16 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://zhajiman.github.io/tags/hugo/</loc>
+    <lastmod>2022-05-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/tags/net/</loc>
+    <lastmod>2022-05-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/post/</loc>
+    <lastmod>2022-05-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/</loc>
+    <lastmod>2022-05-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/post/jsdelivr_problem/</loc>
+    <lastmod>2022-05-28T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://zhajiman.github.io/tags/nonsense/</loc>
     <lastmod>2022-01-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhajiman.github.io/post/</loc>
-    <lastmod>2022-01-17T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://zhajiman.github.io/post/fried_chicken_resources/</loc>
-    <lastmod>2022-01-17T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhajiman.github.io/</loc>
     <lastmod>2022-01-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/tags/matplotlib/</loc>
@@ -90,9 +99,6 @@
     <lastmod>2021-07-05T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/tags/github/</loc>
-    <lastmod>2021-07-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhajiman.github.io/tags/hugo/</loc>
     <lastmod>2021-07-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/post/rebuild_blog/</loc>

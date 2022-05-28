@@ -61,6 +61,8 @@ tags:
 
 [The Architecture of Matplotlib](http://aosabook.org/en/matplotlib.html)：创始人关于 Matplotlib 架构的解说，不错的补充材料。
 
+[Image Processing in Python with Pillow](https://auth0.com/blog/image-processing-in-python-with-pillow/)：利用 Pillow（即 PIL）处理图片的入门教程。PIL 在裁剪、拼接和转换格式等方面比 Matplotlib 更方便。
+
 ## 气象相关
 
 [Python for Atmosphere and Ocean Scientists](https://carpentries-lab.github.io/python-aos-lesson/)：超入门教程，带你过一遍 xarray、Cartopy、Git 工具链。
@@ -81,4 +83,10 @@ tags:
 
 [摸鱼的气象](https://space.bilibili.com/9517712)：摸鱼咯在 B 站发布的手把手教学视频。
 
-[气 Py](https://space.bilibili.com/676991774)：老李的系列教学视频，同时他还搬运了很多 MetPy Mondays 的视频。
+[气 Py](https://space.bilibili.com/676991774)：老李的系列教学视频，同时他还搬运了很多 MetPy Mondays 的视频。另有配套教材 [气Py_Python气象数据处理与可视化](http://bbs.06climate.com/forum.php?mod=viewthread&tid=101507)。
+
+[气象 Python 学习馆](https://mp.weixin.qq.com/s/HbZUgM-jdTOdYuvKP2CTgA)：深雨露的公众号，制作精良，讲解细致，唯一的缺点可能是数据结构都集中在 xarray 上。
+
+[气象数据科学优质教程&项目集锦](https://www.heywhale.com/mw/project/619328ceb7de000017e4b273)：和鲸社区汇总的多作者的气象教程合集。
+
+[Python空间数据处理实战](https://blog.csdn.net/theonegis/article/details/80089375)：GIS 相关的教程，含有栅格数据和 shapefile 文件的处理。

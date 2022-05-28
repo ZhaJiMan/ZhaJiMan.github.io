@@ -145,7 +145,7 @@ plt.show()
 
 Cartopy 本身自带一些常用的地图数据，不过有些特征并没有内置，而是会在脚本运行时自动从 Natural Earth 网站上下载下来，此时命令行可能会提示一些警告信息。下载完成后，以后使用这个特征都不会再出现警告。
 
-另外存在一个非常重要的问题，**Cartopy自带的中国地图数据不符合我国的地图标准**，例如上图中缺少台湾地区，藏南区域边界有误。后面的小节还会再提到如何画出正确的中国地图。
+另外存在一个非常重要的问题，Cartopy自带的中国地图数据不符合我国的地图标准，例如上图中缺少台湾地区，藏南区域边界有误。后面的小节还会再提到如何画出正确的中国地图。
 
 ## 设置地图分辨率
 
@@ -269,11 +269,9 @@ plt.show()
 
 ![set_ticks](/cartopy_introduction/set_ticks.png)
 
-Cartopy 中需要用 `GeoAxes` 类的 `set_xticks` 和 `set_yticks` 方法来分别设置经纬度刻度。这两个方法还可以通过 `minor` 参数，指定是否添上小刻度。
+Cartopy 中需要用 `GeoAxes` 类的 `set_xticks` 和 `set_yticks` 方法来分别设置经度和纬度刻度。这两个方法还可以通过 `minor` 参数，指定是否添上小刻度。其中 `crs` 关键字指的是我们给出的刻度是在什么坐标系统下定义的，这样好换算至 ax 所在的坐标系统，原理同上一节所述。如果不指定，就很容易出现把刻度画到地图外的情况。除了 `set_xticks`，`set_extent` 方法同样有 `crs` 关键字，我们需要多加注意。
 
-`set_xticks` 中的 `crs` 关键字指的是我们给出的刻度是在什么坐标系统下定义的，这样好换算至 ax 所在的坐标系统，原理同上一节所述。如果不指定，就很容易出现把刻度画到地图外的情况。除了 `set_xticks`，`set_extent` 方法同样有 `crs` 关键字，我们需要多加注意。
-
-接着利用 Cartopy 专门提供的 Formatter 来格式化刻度的标签，使之能有东经西经、南纬北纬的字母标识。
+接着利用 Cartopy 专门提供的 Formatter：`LongitudeFormatter` 和 `LatitudeFormatter` 来格式化刻度标签，使之能有东经西经、南纬北纬的字母标识。值得一提的是，这两个类还能用在普通的 `Axes` 上（例如拿来画纬高图）。
 
 在标识刻度的过程中，有时可能会出现下图这样的问题
 
@@ -281,37 +279,34 @@ Cartopy 中需要用 `GeoAxes` 类的 `set_xticks` 和 `set_yticks` 方法来分
 
 即全球地图的最右端缺失了 0° 的标识，这是 Cartopy 内部在换算刻度时用到了 mod 计算而导致的，解决方法见 stack overflow 上的 [这个讨论](https://stackoverflow.com/questions/56412206/cant-show-0-tick-in-right-when-central-longitude-180)，这里就不赘述了。额外提一句，NCL 对于这种情况就能正确处理。
 
-Cartopy 还有一个很坑的地方在于，`set_extent` 与指定刻度的效果会互相覆盖：如果你先用前者设置好了地图的显示范围，接下来的 `set_xticks` 超出了 `extents` 的范围的话，最后的出图范围就会以刻度的范围为准。因此使用时要注意刻度的范围，或把 `set_extent` 操作放在最后实施。
+Cartopy 还有一个很坑的地方在于，`set_extent` 与指定刻度的效果会互相覆盖：如果先用前者设置好了地图的显示范围，接下来的 `set_xticks` 超出了 `extents` 的范围的话，最后的出图范围就会以刻度的范围为准。因此使用时要注意刻度的范围，或把 `set_extent` 操作放在最后实施。
 
 除了利用 `set_xticks` 和 `set_yticks` 方法，还可以在画网格线的同时画出刻度。例子如下：
 
 ```Python
-# 从Gridliner类中导入经纬度专用的Formatter
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-
 ax = plt.axes(projection=ccrs.Mercator())
 ax.coastlines()
 
+# 开启网格线
 gl = ax.gridlines(
     crs=ccrs.PlateCarree(), draw_labels=True,
-    linewidth=1, color='gray', linestyle='--'
+    linewidth=1, color='gray', linestyle='--',
+    xlocs=[-180, -45, 0, 45, 180],
+    ylocs=np.arange(-80, 81, 20)
 )
+# 隐藏上边和左边的刻度标签
 gl.top_labels = False
 gl.left_labels = False
-# 自定义给出x轴Locator的位置
-gl.xlocator = mpl.ticker.FixedLocator([-180, -45, 0, 45, 180])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-# 把一些ax.text会用到的关键字组成词典,用来调节标签
-gl.xlabel_style = {'size': 15, 'color': 'gray'}
+# 设置刻度标签的风格
 gl.xlabel_style = {'color': 'red', 'weight': 'bold'}
+gl.ylabel_style = {'size': 10, 'color': 'gray'}
 
 plt.show()
 ```
 
-![gridlines](/cartopy_introduction/gridlines.png)
+![gridline](/cartopy_introduction/gridline.png)
 
-这种方法的优点是 `Gridliner` 类的可调选项很丰富，缺点是坐标轴上会缺少刻度的突起。一个有意思的地方是，Cartopy 提供的这些 Formatter 除了给 `GeoAxes` 用，拿给普通的 `Axes` 用也是可以的。
+`gridlines` 方法可以为地图添加网格线，其中 `xlocs` 和 `ylocs` 关键字指定经纬度刻度（还可以接受 Locator），`crs` 参数指定刻度所属的坐标系统，`xformatter` 和 `yformatter` 关键字指定刻度的 Formatter——不过默认即为 `LongitudeFormatter` 和 `LatitudeFormatter`，所以这里可以省略。这种方法的优点是网格线 `gl` 所属的 `Gridliner` 类有丰富的可调选项，缺点是这些刻度并非真正意义上的刻度，而只是网格线的标签，所以坐标轴上会缺少凸出的线条。
 
 ## 绘制正确的中国地图
 
@@ -383,6 +378,7 @@ def add_Chinese_provinces(ax, **feature_kw):
     geometries = reader.geometries()
     provinces = cfeature.ShapelyFeature(geometries, ccrs.PlateCarree())
     ax.add_feature(provinces, **feature_kw)
+    reader.close()
 
 def set_map_extent_and_ticks(
     ax, extents, xticks, yticks, nx=0, ny=0,

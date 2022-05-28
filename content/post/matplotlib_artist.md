@@ -212,7 +212,7 @@ line2: Line2D(2nd plot)
 
 #### `fig.legend` 和 `ax.legend`
 
-通过 [`fig.legend` 方法](https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.legend) 可以添加图例（legend），而 `fig.legends` 就是用来装这些图例的“盒子”。你可能会说“这有什么用？我们已经有了 `ax.legend` 啊。”区别在于二者的作用域不同，`ax.legend` 只会从属于 `ax` 的 `Artist` 里收集标签（label），而 `fig.legend` 会收集 `fig` 旗下所有 `Axes` 里的标签。举个例子，当你用 `ax.twinx` 画图时，单纯调用 `ax.legend` 只会创建出两个独立的图例，这通常不是我们想要的效果，这时 `fig.lengend` 就派上用场了。
+通过 [`fig.legend` 方法](https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.legend) 可以添加图例（legend），而 `fig.legends` 就是用来装这些图例的“盒子”。你可能会说“这有什么用？我们已经有了 `ax.legend` 啊。”区别在于二者的作用域不同，`ax.legend` 只会从属于 `ax` 的 `Artist` 里收集标签（label），而 `fig.legend` 会收集 `fig` 旗下所有 `Axes` 里的标签。举个例子，当你用 `ax.twinx` 画图时，单纯调用 `ax.legend` 只会创建出两个独立的图例，这通常不是我们想要的效果，这时 `fig.legend` 就派上用场了。
 
 ```python
 x = np.linspace(0, 2*np.pi, 100)
@@ -244,7 +244,7 @@ fig
 
 ![fig_7](/matplotlib_artist/fig_7.png)
 
-这个需求可以通过不给参数直接调用 `fig.lengend` 来轻松解决（自 [2.1 版本](https://matplotlib.org/stable/users/prev_whats_new/whats_new_2.1.0.html#figure-legend-can-be-called-without-arguments) 引入[^5]）。图例的位置默认使用 `Figure` 坐标，想把图例放在绘图框里面时会不太方便，你可以指定 `bbox_transform` 关键字改用 `Axes` 坐标：
+这个需求可以通过不给参数直接调用 `fig.legend` 来轻松解决（自 [2.1 版本](https://matplotlib.org/stable/users/prev_whats_new/whats_new_2.1.0.html#figure-legend-can-be-called-without-arguments) 引入[^5]）。图例的位置默认使用 `Figure` 坐标，想把图例放在绘图框里面时会不太方便，你可以指定 `bbox_transform` 关键字改用 `Axes` 坐标：
 
 ```python
 fig.legend(loc='upper right', bbox_to_anchor=(1,1), bbox_transform=ax.transAxes, title='fig.legend\nax.transAxes')

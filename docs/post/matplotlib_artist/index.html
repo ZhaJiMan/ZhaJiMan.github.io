@@ -125,6 +125,7 @@
 <span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6701 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
         
         <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
     </div>
@@ -317,7 +318,7 @@ line2: Line2D(2nd plot)
 </table>
 <p>复数名的属性是列表，而单数名的则代表单个对象。值得注意的是属于 <code>Figure</code> 的 <code>Artist</code> 都默认使用 <code>Figure</code> 坐标，它 <a href="https://matplotlib.org/stable/tutorials/advanced/transforms_tutorial.html" target="_blank">可以通过 <code>Transforms</code></a> 转换为 <code>Axes</code> 或数据的坐标，不过这个话题就超出本文的范围了。</p>
 <h4 id="figlegend-和-axlegend"><code>fig.legend</code> 和 <code>ax.legend</code></h4>
-<p>通过 <a href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.legend" target="_blank"><code>fig.legend</code> 方法</a> 可以添加图例（legend），而 <code>fig.legends</code> 就是用来装这些图例的“盒子”。你可能会说“这有什么用？我们已经有了 <code>ax.legend</code> 啊。”区别在于二者的作用域不同，<code>ax.legend</code> 只会从属于 <code>ax</code> 的 <code>Artist</code> 里收集标签（label），而 <code>fig.legend</code> 会收集 <code>fig</code> 旗下所有 <code>Axes</code> 里的标签。举个例子，当你用 <code>ax.twinx</code> 画图时，单纯调用 <code>ax.legend</code> 只会创建出两个独立的图例，这通常不是我们想要的效果，这时 <code>fig.lengend</code> 就派上用场了。</p>
+<p>通过 <a href="https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.legend" target="_blank"><code>fig.legend</code> 方法</a> 可以添加图例（legend），而 <code>fig.legends</code> 就是用来装这些图例的“盒子”。你可能会说“这有什么用？我们已经有了 <code>ax.legend</code> 啊。”区别在于二者的作用域不同，<code>ax.legend</code> 只会从属于 <code>ax</code> 的 <code>Artist</code> 里收集标签（label），而 <code>fig.legend</code> 会收集 <code>fig</code> 旗下所有 <code>Axes</code> 里的标签。举个例子，当你用 <code>ax.twinx</code> 画图时，单纯调用 <code>ax.legend</code> 只会创建出两个独立的图例，这通常不是我们想要的效果，这时 <code>fig.legend</code> 就派上用场了。</p>
 <pre><code class="language-python">x = np.linspace(0, 2*np.pi, 100)
 
 fig = plt.figure()
@@ -343,7 +344,7 @@ fig
 </code></pre>
 <p><img class="img-zoomable" src="/matplotlib_artist/fig_7.png" alt="fig_7" />
 </p>
-<p>这个需求可以通过不给参数直接调用 <code>fig.lengend</code> 来轻松解决（自 <a href="https://matplotlib.org/stable/users/prev_whats_new/whats_new_2.1.0.html#figure-legend-can-be-called-without-arguments" target="_blank">2.1 版本</a> 引入<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup>）。图例的位置默认使用 <code>Figure</code> 坐标，想把图例放在绘图框里面时会不太方便，你可以指定 <code>bbox_transform</code> 关键字改用 <code>Axes</code> 坐标：</p>
+<p>这个需求可以通过不给参数直接调用 <code>fig.legend</code> 来轻松解决（自 <a href="https://matplotlib.org/stable/users/prev_whats_new/whats_new_2.1.0.html#figure-legend-can-be-called-without-arguments" target="_blank">2.1 版本</a> 引入<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup>）。图例的位置默认使用 <code>Figure</code> 坐标，想把图例放在绘图框里面时会不太方便，你可以指定 <code>bbox_transform</code> 关键字改用 <code>Axes</code> 坐标：</p>
 <pre><code class="language-python">fig.legend(loc='upper right', bbox_to_anchor=(1,1), bbox_transform=ax.transAxes, title='fig.legend\nax.transAxes')
 fig
 </code></pre>
@@ -876,6 +877,10 @@ xmajortick.label2On False
             </span>
             
             <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
                 <a href="/tags/nonsense/">nonsense</a>
             </span>
             
@@ -1012,6 +1017,10 @@ xmajortick.label2On False
             </span>
             
             <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
                 <a href="/tags/nonsense/">nonsense</a>
             </span>
             
@@ -1101,10 +1110,10 @@ xmajortick.label2On False
 </footer>
 
     
-<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script defer src="https://cdn.staticfile.org/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+<script defer src="https://cdn.staticfile.org/lazysizes/5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
 
 

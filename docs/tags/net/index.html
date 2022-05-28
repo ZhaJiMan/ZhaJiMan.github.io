@@ -21,7 +21,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<title>Python 系列：小心默认的可变参数 - 炸鸡人博客</title>
+<title>net - 炸鸡人博客</title>
 
 
 <meta name="author" content="炸鸡人" />
@@ -30,30 +30,14 @@
 <meta name="description" content="A minimal Hugo theme with nice theme color." />
 
 
-<meta name="keywords" content="python" />
+<link rel="alternate" type="application/rss+xml" href="https://zhajiman.github.io/tags/net/index.xml" title="炸鸡人博客" />
 
-
-<meta property="og:title" content="Python 系列：小心默认的可变参数" />
-<meta name="twitter:title" content="Python 系列：小心默认的可变参数" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://zhajiman.github.io/post/python_mutable_arguments/" /><meta property="og:description" content="之前我在 Cartopy 系列：从入门到放弃 一文中定义了这样一个函数
-def set_map_extent_and_ticks(
-    ax, extent, xticks, yticks, nx=0, ny=0,
-    xformatter=LongitudeFormatter(),
-    yformatter=LatitudeFormatter()
-):
-    ...
-" />
-<meta name="twitter:description" content="之前我在 Cartopy 系列：从入门到放弃 一文中定义了这样一个函数
-def set_map_extent_and_ticks(
-    ax, extent, xticks, yticks, nx=0, ny=0,
-    xformatter=LongitudeFormatter(),
-    yformatter=LatitudeFormatter()
-):
-    ...
-" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta property="og:title" content="net" />
+<meta name="twitter:title" content="net" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://zhajiman.github.io/tags/net/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2021-11-14T00:00:00+00:00" /><meta property="article:modified_time" content="2021-11-14T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-05-28T00:00:00+00:00" />
 
 
 <style>
@@ -118,74 +102,32 @@ def set_map_extent_and_ticks(
             
             <div class="col-12 col-md-9 float-left content">
                 
-<article>
-    
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/python_mutable_arguments/">Python 系列：小心默认的可变参数</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-11-14</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;488 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
-
-        
-        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
-    </div>
-    
-    <div class="post-content markdown-body">
-        <p>之前我在 <a href="https://zhajiman.github.io/post/cartopy_introduction/" target="_blank">Cartopy 系列：从入门到放弃</a> 一文中定义了这样一个函数</p>
-<pre><code class="language-python">def set_map_extent_and_ticks(
-    ax, extent, xticks, yticks, nx=0, ny=0,
-    xformatter=LongitudeFormatter(),
-    yformatter=LatitudeFormatter()
-):
-    ...
-</code></pre>
-<p>其功能是限制 GeoAxes 的经纬度范围，并画出经纬度刻度。其中 <code>LongitudeFormatter</code> 和 <code>LatitudeFormatter</code> 是 Cartopy 定义的两个 Formatter 类，用于格式化经纬度刻度标签。Formatter 对象因为其属性可以任意修改，所以也可以算作可变对象（<a href="https://stackoverflow.com/questions/12076445/are-user-defined-classes-mutable" target="_blank">are user defined classes mutable</a>）。<a href="https://github.com/leisurelicht/wtfpython-cn" target="_blank">What the f*ck Python!</a> 中提到过</p>
-<blockquote>
-<p>Python中函数的默认可变参数并不是每次调用该函数时都会被初始化。相反，它们会使用最近分配的值作为默认值，除非明确地将可变对象传递给函数。</p>
-</blockquote>
-<p>也就是说，多次调用 <code>set_map_extent_and_ticks</code> 时如果不指定 <code>xformatter</code> 和 <code>yformatter</code>，就会一直沿用第一次调用时创建的 Formatter 对象，这一点可以通过打印对象的 id 来验证。而 Formatter 作为一种 Matplotlib Artist，被重复使用时可能会产生错误的结果（<a href="https://qiita.com/skotaro/items/08dc0b8c5704c94eafb9" target="_blank">早く知っておきたかったmatplotlibの基礎知識、あるいは見た目の調整が捗るArtistの話</a>）。我就因为对不同投影的多个 GeoAxes 连续使用 <code>set_map_extent_and_ticks</code>，画出了错误的刻度。</p>
-<p>避免可变参数导致的错误的常见做法是将 <code>None</code> 指定为参数的默认值，在函数体内判断是否创建默认的可变对象。所以这个函数应该修改为</p>
-<pre><code class="language-python">def set_map_extent_and_ticks(
-    ax, extent, xticks, yticks, nx=0, ny=0,
-    xformatter=None, yformatter=None
-):
-    ...
-</code></pre>
-    </div>
-</article>
-
-
-
-<div class="post-comment" data-comment="utterances">
-    <span class="post-comment-notloaded">
-        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
-    </span>
-    <script>
-        function loadComment() {
-            var commentArea = document.querySelector('.post-comment');
-            var utterancesTheme = document.body.getAttribute('data-theme');
-            if (utterancesTheme === 'auto') {
-                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
-                    'github-light';
-            } else {
-                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
-            }
-            var s = document.createElement('script');
-            s.src = 'https://utteranc.es/client.js';
-            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
-            s.setAttribute('issue-term', 'pathname');
-            s.setAttribute('theme', utterancesTheme);
-            s.setAttribute('crossorigin', 'anonymous');
-            s.setAttribute('async', '');
-            document.querySelector('.post-comment').appendChild(s);
-            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
-        }
-    </script>
+<div class="page-info">
+  <span>Posts with the tag net: </span>
 </div>
+
+
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/jsdelivr_problem/">解决博客 jsDelivr 资源无法访问的问题</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-05-28</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;963 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/hugo">hugo</a>&nbsp;<a href="/tags/net">net</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <p>前段时间重看自己的文章时发现公式渲染、图片的放大缩小和代码高亮等功能都失效了，按 F12 发现原因是引自 <code>cdn.jsdelivr.net</code> 的字体资源、CSS 和 JS 文件都无法访问，挂梯子后页面恢复正常。</p>
+<p><img class="img-zoomable" src="/jsdelivr_problem/website.png" alt="website" />
+</p>
+  </div>
+</div>
+
 
 
             </div>
@@ -291,6 +233,8 @@ def set_map_extent_and_ticks(
             
         </div>
     </div>
+    
+    
     
 </aside>
 
@@ -409,8 +353,6 @@ def set_map_extent_and_ticks(
             
         </div>
     </div>
-    
-    
     
     
   </div>

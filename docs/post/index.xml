@@ -6,7 +6,18 @@
     <description>Recent content in Posts on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 17 Jan 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 28 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>解决博客 jsDelivr 资源无法访问的问题</title>
+      <link>https://zhajiman.github.io/post/jsdelivr_problem/</link>
+      <pubDate>Sat, 28 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/jsdelivr_problem/</guid>
+      <description>&lt;p&gt;前段时间重看自己的文章时发现公式渲染、图片的放大缩小和代码高亮等功能都失效了，按 F12 发现原因是引自 &lt;code&gt;cdn.jsdelivr.net&lt;/code&gt; 的字体资源、CSS 和 JS 文件都无法访问，挂梯子后页面恢复正常。&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/jsdelivr_problem/website.png&#34; alt=&#34;website&#34; /&gt;
+&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>我所整理的各种炸鸡资源</title>
       <link>https://zhajiman.github.io/post/fried_chicken_resources/</link>
@@ -23,7 +34,7 @@
       
       <guid>https://zhajiman.github.io/post/matplotlib_pcolor/</guid>
       <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
-&lt;p&gt;Matplotlib 的 &lt;code&gt;pcolor&lt;/code&gt; 函数能够绘制由一个个四边形（quadrilateral）单元构成的网格数据的彩色图像，相比绘制等值填色图的 &lt;code&gt;contourf&lt;/code&gt; 函数，&lt;code&gt;pcolor&lt;/code&gt; 对网格的要求更宽松，并且不会对空间离散的变量产生虚假的平滑，因而在科学可视化中也很常用。本文并不打算介绍该函数的种种，只想着重讨论网格数据的显示效果、&lt;code&gt;shading&lt;/code&gt; 参数发挥的作用，以及 &lt;code&gt;pcolor&lt;/code&gt; 和 &lt;code&gt;pcolormesh&lt;/code&gt; 这对双胞胎间的差异。本文基于 Matplotlib 3.3.4。&lt;/p&gt;
+&lt;p&gt;Matplotlib 的 &lt;code&gt;pcolor&lt;/code&gt; 函数能够绘制由一个个四边形（quadrilateral）单元构成的网格数据的彩色图像，相比绘制等值填色图的 &lt;code&gt;contourf&lt;/code&gt; 函数，不会产生过度的平滑效果，能忠实反映像元的数值大小，因而在科学可视化中也很常用。本文并不打算介绍该函数的种种，只想着重讨论网格数据的显示效果、&lt;code&gt;shading&lt;/code&gt; 参数发挥的作用，以及 &lt;code&gt;pcolor&lt;/code&gt; 和 &lt;code&gt;pcolormesh&lt;/code&gt; 这对双胞胎间的差异。本文基于 Matplotlib 3.3.4。&lt;/p&gt;
 &lt;h2 id=&#34;图解网格数据&#34;&gt;图解网格数据&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;pcolor&lt;/code&gt; 全名 pseudo color，即伪彩色。函数签名为&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pcolor([X, Y], C, **kw)
