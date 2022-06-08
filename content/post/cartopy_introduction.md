@@ -357,11 +357,10 @@ plt.show()
 import matplotlib.ticker as mticker
 import matplotlib.patches as mpatches
 import cartopy.crs as ccrs
-import cartopy.feature as cfeature
 import cartopy.io.shapereader as shpreader
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
-def add_Chinese_provinces(ax, **feature_kw):
+def add_Chinese_provinces(ax, **kwargs):
     '''
     在地图上画出中国省界的shapefile.
 
@@ -370,14 +369,13 @@ def add_Chinese_provinces(ax, **feature_kw):
     ax : GeoAxes
         目标地图.
 
-    **feature_kw
-        调用add_feature时的关键字参数.
-        例如linewidth,edgecolor和facecolor等.
+    **kwargs
+        绘制shape时用到的参数.例如linewidth,edgecolor和facecolor等.
     '''
+    proj = ccrs.PlateCarree()
     reader = shpreader.Reader('D:/maps/shps/bou2_4p.shp')
-    geometries = reader.geometries()
-    provinces = cfeature.ShapelyFeature(geometries, ccrs.PlateCarree())
-    ax.add_feature(provinces, **feature_kw)
+    provinces = reader.geometries()
+    ax.add_geometries(provinces, proj, **kwarg)
     reader.close()
 
 def set_map_extent_and_ticks(
