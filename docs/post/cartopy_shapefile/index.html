@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Cartopy 系列：探索 shapefile - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="cartopy, matplotlib" />
+
+
+<meta property="og:title" content="Cartopy 系列：探索 shapefile" />
+<meta name="twitter:title" content="Cartopy 系列：探索 shapefile" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/cartopy_shapefile/" /><meta property="og:description" content="前言
+Cartopy 可以通过 feature 模块向地图添加国界 BORDER 和省界 STATES，因其底层采用的 Natural Earth 地图数据并不符合我国的政治主张，所以我们经常需要自备 shapefile 文件来画中国省界，以下面的代码为例
+import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.io.shapereader as shpreader
+
+extents = [70, 140, 0, 60]
+crs = ccrs.PlateCarree()
+fig = plt.figure()
+ax = fig.add_subplot(111, projection=crs)
+ax.set_extent(extents, crs)
+
+filepath = &#39;./data/bou2_4/bou2_4p.shp&#39;
+reader = shpreader.Reader(filepath)
+geoms = reader.geometries()
+ax.add_geometries(geoms, crs, lw=0.5, fc=&#39;none&#39;)
+reader.close()
+
+plt.show()
+
+图就不放了，这段代码足以应付大部分需要画省界的情况。然而我在无脑粘贴代码的过程中逐渐产生了疑惑：为什么 shapefile 会由三个文件组成？省界是以何种形式存储在文件中？Cartopy 和 Matplotlib 又是怎样将省界画出来的？调查一番源码后总结出了这段代码底层实现的流程：
+
+利用 PyShp 包读取 shapefile 文件中的每个形状。
+利用 Shapely 包将形状转换为几何对象。
+利用 Cartopy 包将几何对象投影到地图所在的坐标系上。
+用投影后的坐标构造 Matplotlib 的 Path 对象，最后画在地图上。
+
+本文的目的即是从头到尾解说一下这段流程，希望加深对 shapefile 格式，Matplotlib 和 Cartopy 包的理解。令人意外的是，随着探索的不断深入，我发现自己自然而然地学会了如何实现省份填色、省份合并，地图白化等，以前看起来十分困难的操作。本文也会一并介绍这些应用。" />
+<meta name="twitter:description" content="前言
+Cartopy 可以通过 feature 模块向地图添加国界 BORDER 和省界 STATES，因其底层采用的 Natural Earth 地图数据并不符合我国的政治主张，所以我们经常需要自备 shapefile 文件来画中国省界，以下面的代码为例
+import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.io.shapereader as shpreader
+
+extents = [70, 140, 0, 60]
+crs = ccrs.PlateCarree()
+fig = plt.figure()
+ax = fig.add_subplot(111, projection=crs)
+ax.set_extent(extents, crs)
+
+filepath = &#39;./data/bou2_4/bou2_4p.shp&#39;
+reader = shpreader.Reader(filepath)
+geoms = reader.geometries()
+ax.add_geometries(geoms, crs, lw=0.5, fc=&#39;none&#39;)
+reader.close()
+
+plt.show()
+
+图就不放了，这段代码足以应付大部分需要画省界的情况。然而我在无脑粘贴代码的过程中逐渐产生了疑惑：为什么 shapefile 会由三个文件组成？省界是以何种形式存储在文件中？Cartopy 和 Matplotlib 又是怎样将省界画出来的？调查一番源码后总结出了这段代码底层实现的流程：
+
+利用 PyShp 包读取 shapefile 文件中的每个形状。
+利用 Shapely 包将形状转换为几何对象。
+利用 Cartopy 包将几何对象投影到地图所在的坐标系上。
+用投影后的坐标构造 Matplotlib 的 Path 对象，最后画在地图上。
+
+本文的目的即是从头到尾解说一下这段流程，希望加深对 shapefile 格式，Matplotlib 和 Cartopy 包的理解。令人意外的是，随着探索的不断深入，我发现自己自然而然地学会了如何实现省份填色、省份合并，地图白化等，以前看起来十分困难的操作。本文也会一并介绍这些应用。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2022-06-20T00:00:00+00:00" /><meta property="article:modified_time" content="2022-06-20T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/cartopy_shapefile/">Cartopy 系列：探索 shapefile</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-06-20</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;13731 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="前言">前言</h2>
+<p>Cartopy 可以通过 <code>feature</code> 模块向地图添加国界 <code>BORDER</code> 和省界 <code>STATES</code>，因其底层采用的 Natural Earth 地图数据并不符合我国的政治主张，所以我们经常需要自备 shapefile 文件来画中国省界，以下面的代码为例</p>
+<pre><code class="language-Python">import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.io.shapereader as shpreader
+
+extents = [70, 140, 0, 60]
+crs = ccrs.PlateCarree()
+fig = plt.figure()
+ax = fig.add_subplot(111, projection=crs)
+ax.set_extent(extents, crs)
+
+filepath = './data/bou2_4/bou2_4p.shp'
+reader = shpreader.Reader(filepath)
+geoms = reader.geometries()
+ax.add_geometries(geoms, crs, lw=0.5, fc='none')
+reader.close()
+
+plt.show()
+</code></pre>
+<p>图就不放了，这段代码足以应付大部分需要画省界的情况。然而我在无脑粘贴代码的过程中逐渐产生了疑惑：为什么 shapefile 会由三个文件组成？省界是以何种形式存储在文件中？Cartopy 和 Matplotlib 又是怎样将省界画出来的？调查一番源码后总结出了这段代码底层实现的流程：</p>
+<ul>
+<li>利用 PyShp 包读取 shapefile 文件中的每个形状。</li>
+<li>利用 Shapely 包将形状转换为几何对象。</li>
+<li>利用 Cartopy 包将几何对象投影到地图所在的坐标系上。</li>
+<li>用投影后的坐标构造 Matplotlib 的 Path 对象，最后画在地图上。</li>
+</ul>
+<p>本文的目的即是从头到尾解说一下这段流程，希望加深对 shapefile 格式，Matplotlib 和 Cartopy 包的理解。令人意外的是，随着探索的不断深入，我发现自己自然而然地学会了如何实现省份填色、省份合并，地图白化等，以前看起来十分困难的操作。本文也会一并介绍这些应用。</p>
+<h2 id="shapefile-简介">Shapefile 简介</h2>
+<p>首先要解答的问题是：shapefile 是什么，里面装的什么东西，并且是怎么摆放的。Shapefile 是 ESRI 公司为旗下的 GIS 软件设计的一种存储矢量地理特征（feature）的格式。地理特征由形状（shape）和属性（attribute）构成。形状是一个二维平面图形，可以概括为点（point）、线（line）和面（area）三种，一对 x 和 y 的坐标值构成点，多个点按顺序相连构成线，若一条线能首尾相连绕出一个多边形则构成面，如下图所示（引自 <a href="https://www.neonscience.org/resources/learning-hub/tutorials/dc-open-shapefiles-r" target="_blank">Vector 00: Open and Plot Shapefiles in R</a>）</p>
+<p><img class="img-zoomable" src="/cartopy_shapefile/point_line_polygon.png" alt="point_line_polygon" />
+</p>
+<p>一个形状绑定一条属性，属性由若干个字段（field）组成，每个字段含有一个值（字符串、数字等）。特征的例子包括：一个气象站点的位置需要用点来表示，对应的属性字段可以是站点的名称和编号；一条河需要用线来表示，对应的属性字段可以是河流的名称和长度；一个省需要用面来表示，对应的属性字段可以是省名、行政区号、周长和面积。一系列特征可以按顺序摆放在 shapefile 文件中，并且要求单个文件中所有特征的形状类型必须相同。于是乎，一个 shapefile 文件可以表示全国所有气象站点的位置，或者一片水系中所有河流的位置，抑或是全国省份的形状等。</p>
+<p>Shapefile 的特殊之处在于，一个完整的 shapefile 文件实际上是由同目录下一系列同名但扩展名不同的子文件组成的，其中必须有的三个是：</p>
+<ul>
+<li><code>.shp</code>：存储形状的二进制文件。其中每个形状占据的字节数是可变的。</li>
+<li><code>.shx</code>：存储 <code>.shp</code> 中每个形状从第几个字节开始的二进制文件。用于加快对 <code>.shp</code> 文件的索引操作。</li>
+<li><code>.dbf</code>：存储属性的 dBASE IV 格式文件。每条属性与 <code>.shp</code> 中的每个形状一一对应。</li>
+</ul>
+<p>可选的另有：</p>
+<ul>
+<li><code>.prj</code>：WKT 格式的坐标系信息。只有数行的文本文件。</li>
+<li><code>.cpg</code>：存有 <code>.dbf</code> 中字符编码格式的文本文件。</li>
+<li>……</li>
+</ul>
+<p>其实可选的子文件还有很多，但因为并不常见所以不再细述，详见 <a href="https://en.wikipedia.org/wiki/Shapefile" target="_blank">维基</a>。缺少 <code>.prj</code> 文件时，GIS 软件通常会将 <code>.shp</code> 中形状的坐标解读为 EPSG:4326（WGS84）坐标系中的经纬度。这解释了为什么网上下载到的 shapefile 文件通常只由三个文件组成。</p>
+<p>接下来着重介绍 <code>.shp</code> 和 <code>.dbf</code> 中的内容。<code>.shp</code> 中只含两种数据类型：32-bit 整数和 64-bit 双精度浮点数，整数主要用来表示序号和下标之类的量，而浮点数主要用来表示形状的坐标值，并且不允许出现无限（infinity）和缺测（NaN）的浮点数。<code>.shp</code> 的结构组织如下图所示</p>
+<p><img class="img-zoomable" src="/cartopy_shapefile/organization_shp.png" alt="organization_shp" />
+</p>
+<p><code>.shp</code> 文件开头前 100 个字节用来存放文件头信息（file header），后面跟着一条又一条的记录（record），每条记录又由记录头信息（record header）和记录内容（record content）组成。文件头信息中比较重要的是形状类型（shape type）和边界框（bounding box）。前文虽然说形状分为点、线、面三种，但实际上可以细分为 14 种，如下表所示</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Value</th>
+<th style="text-align:left">Shape Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">0</td>
+<td style="text-align:left">Null Shape</td>
+</tr>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left">Point</td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td style="text-align:left">PolyLine</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left">Polygon</td>
+</tr>
+<tr>
+<td style="text-align:left">8</td>
+<td style="text-align:left">MultiPoint</td>
+</tr>
+<tr>
+<td style="text-align:left">11</td>
+<td style="text-align:left">PointZ</td>
+</tr>
+<tr>
+<td style="text-align:left">13</td>
+<td style="text-align:left">PolyLineZ</td>
+</tr>
+<tr>
+<td style="text-align:left">15</td>
+<td style="text-align:left">PolygonZ</td>
+</tr>
+<tr>
+<td style="text-align:left">18</td>
+<td style="text-align:left">MultiPointZ</td>
+</tr>
+<tr>
+<td style="text-align:left">21</td>
+<td style="text-align:left">PointM</td>
+</tr>
+<tr>
+<td style="text-align:left">23</td>
+<td style="text-align:left">PolyLineM</td>
+</tr>
+<tr>
+<td style="text-align:left">25</td>
+<td style="text-align:left">PolygonM</td>
+</tr>
+<tr>
+<td style="text-align:left">28</td>
+<td style="text-align:left">MultiPointM</td>
+</tr>
+<tr>
+<td style="text-align:left">31</td>
+<td style="text-align:left">MultiPatch</td>
+</tr>
+</tbody>
+</table>
+<p>文件头信息中存储的是形状类型对应的整数代码。虽然类型看起来很多，但一般只会用到 <code>Point</code>、<code>MultiPoint</code>、<code>PolyLine</code> 和 <code>Polygon</code> 这四种，从名字上就能看出直接对应于点、线、面。其它类型的话，<code>Null Shape</code> 表示一个占位的空形状，没有坐标值；带有 <code>M</code> 后缀的类型表示除了坐标值 <code>X</code> 和 <code>Y</code> 以外，还会存储一个测量值（measurement）<code>M</code>，并且这个值允许缺测；带有 <code>Z</code> 后缀的类型在 <code>X</code>、<code>Y</code> 和 <code>M</code> 的基础上又加入了垂直方向上的坐标 <code>Z</code>；<code>MultiPatch</code> 类型甚至能表示建筑物那样的立体图形。边界框定义为能恰好框住文件中所有形状的方框，以 <code>Xmin</code>、<code>Ymin</code>、<code>Xmax</code> 和 <code>Ymax</code> 的形式存储。</p>
+<p>记录头信息存有每条记录的编号（从 1 开始）和记录内容的长度，一般用不上。重点还是在于记录内容，因为对地理特征来说最重要的形状特征就存储在记录内容里。首先，下图是 <code>Point</code> 的记录内容</p>
+<p><img class="img-zoomable" src="/cartopy_shapefile/content_Point.png" alt="content_Point" />
+</p>
+<p>记录中存有三个数值：形状类型的代码、坐标值 <code>X</code> 和 <code>Y</code>。之前说过文件中要求所有形状的类型是相同的，所以这里的代码与文件头信息中的一样都为 1。在缺少 <code>.prj</code> 文件的情况下，<code>X</code> 和 <code>Y</code> 通常用来表示经度和纬度。然后是 <code>MultiPoint</code> 的记录内容</p>
+<p><img class="img-zoomable" src="/cartopy_shapefile/content_MultiPoint.png" alt="content_MultiPoint" />
+</p>
+<p><code>MultiPoint</code> 顾名思义，即许多 <code>Point</code> 的组合，一条 <code>MultiPoint</code> 的记录表示一簇点。记录内容里的 <code>Box</code> 即刚好包住这些点的边界框，由四个浮点数组成所以占 32 个字节；<code>NumPoints</code> 表示一共有几个点；<code>Points</code> 即所有点的坐标，以 <code>[X1, Y1, X2, Y2, X3, Y3, ...]</code> 的形式排列。接着是代表线的形状 <code>PolyLine</code></p>
+<p><img class="img-zoomable" src="/cartopy_shapefile/content_PolyLine.png" alt="content_PolyLine" />
+</p>
+<p><code>PolyLine</code> 顾名思义是折线，一条折线由至少两个点依次相连而成。但实际上，一条 <code>PolyLine</code> 记录可以表示数条相互独立的折线，每条线称作一个片段（part），片段间可以相交，片段数由 <code>NumParts</code> 描述。<code>NumPoints</code> 表示这些折线的点数之和，<code>Points</code> 是所有点的坐标。为了区分出 <code>Points</code> 中的点都属于哪一片段，又引入了 <code>Parts</code> 数组，标识出每个片段的第一个点对应于 <code>Points</code> 中的第几个点（从 0 开始计数）。举个例子，片段一由两个点组成，片段二由三个点组成，那么片段一满足 <code>Parts[0] = 0</code>，片段二满足 <code>Parts[1] = 2</code>，片段三满足 <code>Parts[2] = 5</code>。最后是最复杂的代表面的 <code>Polygon</code></p>
+<p><img class="img-zoomable" src="/cartopy_shapefile/content_Polygon.png" alt="content_Polygon" />
+</p>
+<p><code>Polygon</code> 顾名思义是多边形，一个多边形由一个环（ring）绕成。所谓环即首尾闭合的折线，要求折线的第一个点与最后一个点是相同的，所以环至少由四个点组成，还要求点与点之间的线段不能发生交叉。然而，多边形是可以有洞的，以甜甜圈为例，外部的圆环与内部的圆环共同绕出了甜甜圈的区域，所以一个多边形可以由一个外环和多个内环（多个洞）组成。为了区分外环内环，人为规定外环沿顺时针方向绕行，内环沿逆时针方向绕行。跟 <code>PolyLine</code> 类似的是，一条 <code>Polygon</code> 记录也可以含有复数个多边形，所以 <code>Polygon</code> 同样存在片段的概念，不过一个片段对应一个环，而非一个片段对应一个独立的多边形。</p>
+<p><code>NumParts</code> 即环的个数，<code>NumPoints</code> 是所有环的点数，<code>Points</code> 是依次排列的所有环的坐标，<code>Parts</code> 则标识每个环的第一个点对应于 <code>Points</code> 中的第几个点。值得注意的是，shapefile 并不关心环的顺序，你可以把所有外环的坐标排列在一起，再把所有内环的坐标坐标排列在一起，某种意义上来说 shapefile 只记录有没有洞，而并不关心洞到底开在哪个多边形上。下面这个带洞正方形的例子应该能形象说明 <code>Polygon</code> 的记录内容</p>
+<p><img class="img-zoomable" src="/cartopy_shapefile/diagram_polygon.png" alt="diagram_polygon" />
+</p>
+<p>顺带一提，因为 <code>MutliPoint</code>、<code>PolyLine</code> 和 <code>Polygon</code> 的记录内容可以含有任意个点，所以记录的长度是不定的。<code>.shx</code> 文件的意义便是通过存储这些记录的起始点相对于文件开头的字节偏移量，帮助 GIS 软件快速定位 <code>.shp</code> 中每条记录的位置。</p>
+<p>介绍完 <code>.shp</code>，接下来介绍存储属性的 <code>.dbf</code>。<code>.dbf</code> 基于 dBASE IV，是一种互联网早期的数据库格式，这里不打算细讲其规范（我也偷懒没看），只是简单演示一下如何快速查看其内容。以 <code>bou2_4p.dbf</code> 为例， 据说这是国家地理信息系统很久以前公开发布的文件，如今已无官方下载渠道，但可以在网上简单下载到，例如在 GitHub 上一搜就是一把。<code>bou2_4p</code> 中 <code>bou</code> 表示边界（boundary），数字 1 ~ 4 代表国家、省、市、县的四级行政划分，这里的 2 就表示省界，<code>4</code> 表示比例为 400 万分之一，<code>p</code> 猜测是多边形的意思（参考 <a href="http://bbs.06climate.com/forum.php?mod=viewthread&amp;tid=89856" target="_blank">中国地图GIS的官方数据（shp文件）</a>）。<code>.dbf</code> 文件直接拖入 Excel 便能打开，内容如下图所示</p>
+<p><img class="img-zoomable" src="/cartopy_shapefile/dbf_in_excel.png" alt="dbf_in_excel" />
+</p>
+<p>这样看来，所谓 <code>.dbf</code> 不过就是一张二维表格而已。图中 7 列代表 7 个字段，最后两列较为重要：行政区划代码（adcode）和对应的省份名。每条记录对应 <code>.shp</code> 中的一个形状，图中辽宁省的记录出现了十几次，是因为辽宁省含有许多海岛，每个海岛作为单独的一个形状被记录到了 <code>.shp</code> 和 <code>.dbf</code> 中。继续拖动鼠标滚轮会发现沿海省份都是这个样子。之前提到过，一条 <code>Polygon</code> 记录中可以存储复数个多边形，所以也有些 shapefile 会把本土和海岛合并成单条记录。继续查看表格会看到香港特别行政区上面有一条区划代码为 0，名称空着的记录，在 QGIS 中打开后发现原来这是表示香港行政区划的记录，所以多边形覆盖到了海面上，如下图所示</p>
+<p><img class="img-zoomable" src="/cartopy_shapefile/hongkong.png" alt="hongkong" />
+</p>
+<p>把表格看完后你应该会发现，这里面居然没有澳门特别行政区（820000）。澳门回归是在 1999 年 12 月 20 日，而表中区划代码的字段名 <code>ADCODE99</code> 中刚好有一个 <code>99</code>，让人不禁怀疑这个 shapefile 怕不是用的 99 年初的数据。总之，提前用 Excel 查看一下 <code>.dbf</code> 中的内容，有助于我们理解 shapefile 中存储的内容，便于之后进行更复杂的操作。</p>
+<p>最后提一下 shapefile 作为一种地理矢量特征存储格式的优缺点：</p>
+<ul>
+<li>优点：文件结构简单，读取后画图速度快，应用非常广泛。</li>
+<li>缺点：不含几何拓扑信息，子文件太多，dBASE 格式限制较多。</li>
+</ul>
+<p>本节的内容基本摘自 ESRI 关于 shapefile 的 <a href="https://support.esri.com/en/white-paper/279" target="_blank">技术文档</a>，非常推荐想深入了解 shapefile 格式的同学读读这个文档。dBASE 格式的规范见 <a href="https://www.clicketyclick.dk/databases/xbase/format/index.html" target="_blank">Xbase File Format Description</a>。</p>
+<h2 id="用-pyshp-读写-shapefile">用 PyShp 读写 shapefile</h2>
+<p>前面属于是纸上谈兵环节，本节就来用 Python 实际操作一下 shapefile。目前主流的能读写 shapefile 的包有四个：PyShp、GDAL、Fiona 和 GeoPandas。其中 PyShp 是纯 Python 实现，没有任何依赖；GDAL 中的 OGR 能够进行矢量数据的 IO 操作，因为底层是 C++ 所以速度更快；Fiona 对 OGR 的 API 做了 Python 风格的封装；而 GeoPandas 又对 Fiona 进行了封装。因为 GDAL 太难装了，并且 Cartopy 也默认使用 PyShp，所以这里基于 PyShp 进行演示，版本为 2.3.0。</p>
+<p>PyShp 在程序中的名字就叫 <code>shapefile</code>，用 <code>Reader</code> 类表示文件，用 <code>Shape</code> 类表示形状，用 <code>Record</code> 类表示属性，用 <code>ShapeRecord</code> 类表示同时含有形状和属性的一条记录。下面以 <code>bou2_4p.shp</code> 文件为例</p>
+<pre><code class="language-Python">import shapefile
+
+# 文件名可以不加后缀.
+# 默认用UTF-8解码属性, 而bou2_4p的编码是GBK.
+reader = shapefile.Reader('bou2_4p', encoding='gbk')
+
+# 打印文件头信息.
+print(reader.numRecords, reader.numShapes)
+print(reader.shapeType, reader.shapeTypeName)
+print(reader.bbox)
+</code></pre>
+<p>输出为</p>
+<pre><code>925 925
+5 POLYGON
+[73.44696044921875, 6.318641185760498, 135.08583068847656, 53.557926177978516]
+</code></pre>
+<p>即该文件含 925 条多边形（类型代码为 5）的记录，边界框围绕中国。</p>
+<p>读取形状</p>
+<pre><code class="language-Python"># 读取第一个形状.
+shape = reader.shape(0)
+
+# 获取含所有形状的序列.
+shapes = reader.shapes()
+shape = shapes[0]
+
+# 迭代器版本的shapes.
+for shape in reader.iterShapes():
+    pass
+
+# 打印形状的头信息.
+print(shape.oid)
+print(shape.bbox)
+print(shape.shapeType, shape.shapeTypeName)
+
+# 打印形状内容.
+print(shape.parts)
+print(shape.points)
+</code></pre>
+<p>输出为</p>
+<pre><code>924
+[114.2989273071289, 22.175479888916016, 114.30238342285156, 22.17897605895996]
+5 POLYGON
+
+[0]
+[(114.2989273071289, 22.17812156677246),
+ (114.3006362915039, 22.17891502380371),
+ (114.30207061767578, 22.17897605895996),
+ (114.30238342285156, 22.178001403808594),
+ (114.30198669433594, 22.176328659057617),
+ (114.3009033203125, 22.175479888916016),
+ (114.2995376586914, 22.176170349121094),
+ (114.2990493774414, 22.177350997924805),
+ (114.2989273071289, 22.17812156677246)]
+</code></pre>
+<p><code>oid</code> 为 924 即最后一个形状。<code>parts</code> 为 <code>[0]</code> 表示这个多边形仅由一个环组成。<code>points</code> 是 <code>(x, y)</code> 点对构成的列表，可以看到起点和终点是同一个点，并且绕行方向为顺时针，说明是外环。</p>
+<p>读取属性的方法类似</p>
+<pre><code class="language-Python"># 读取第一条属性.
+record = reader.record(0)
+
+# 获取含所有属性的序列.
+records = reader.records()
+record = records[0]
+
+# 迭代器版本的records.
+for record in reader.iterRecords():
+    pass
+
+# 打印属性字段和数值.
+print(reader.fields)
+print(record.as_dict())
+</code></pre>
+<p>输出为</p>
+<pre><code>[('DeletionFlag', 'C', 1, 0),
+ ['AREA', 'N', 12, 3],
+ ['PERIMETER', 'N', 12, 3],
+ ['BOU2_4M_', 'N', 11, 0],
+ ['BOU2_4M_ID', 'N', 11, 0],
+ ['ADCODE93', 'N', 6, 0],
+ ['ADCODE99', 'N', 6, 0],
+ ['NAME', 'C', 34, 0]]
+ 
+{'AREA': 0.0,
+ 'PERIMETER': 0.011,
+ 'BOU2_4M_': 926,
+ 'BOU2_4M_ID': 3115,
+ 'ADCODE93': 810000,
+ 'ADCODE99': 810000,
+ 'NAME': '香港特别行政区'}
+</code></pre>
+<p>为了解读输出内容，需要了解一下 PyShp 中字段的表示。字段由四个元素的序列描述，元素依次为：</p>
+<ul>
+<li>Field name：字符串表示的字段名。</li>
+<li>Field type：字段类型，可以细分为：
+<ul>
+<li><code>'C'</code>：字符型。</li>
+<li><code>'N'</code>：数值型，因为实际上保存为字符所以整数或浮点数都行。</li>
+<li><code>'F'</code>：浮点型，同 <code>'N'</code>。</li>
+<li><code>'L'</code>：逻辑型，用来表示真假值。</li>
+<li><code>'D'</code>：日期型。</li>
+<li><code>'M'</code>：备忘录型，在 shapefile 中用不到。</li>
+</ul>
+</li>
+<li>Field length：表示字段数值的字符的长度。</li>
+<li>Decimal length：<code>'N'</code> 或 <code>'F'</code> 型中小数部分的位数。</li>
+</ul>
+<p>所以行政区划代码的字段表示为 <code>['ADCODE99', 'N', 6, 0]</code>，即一个六位整数；而省名的字段表示为 <code>['NAME', 'C', 34, 0]</code>，即最长 34 个字符的字符串。然而测试后发现 field length 实际上表示字节数，对于 GBK 或 UTF-8 编码来说并不等同于字符数。值得注意的是，字段中有一个奇怪的 <code>DeletionFlag</code>，表示一条记录已经被删除但还未从文件中移除。这个字段几乎没有用处，只是在创建 shapefile 时会自动生成，所以我们直接忽略即可。具体某个字段的值可以以属性或字典的风格来提取：<code>record['NAME']</code> 和 <code>record.NAME</code>。而上面的代码中则是通过 <code>record.as_dict()</code> 以字典的形式直接显示出所有字段的值。</p>
+<p>除了 <code>Shape</code> 和 <code>Record</code>，还可以通过 <code>shapeRecord</code> 同时获取形状和属性，同样有 <code>shapeRecord</code>、<code>shapeRecords</code> 和 <code>iterShapeRecords</code> 三种方法。下面是一个筛选河北省记录的例子</p>
+<pre><code class="language-Python">shapeRecs = []
+for shapeRec in reader.iterShapeRecords():
+    if shapeRec.record['NAME'] == '河北省':
+        shapeRecs.append(shapeRec)
+print(len(shapeRecs))
+</code></pre>
+<p>输出为 9，即 <code>bou2_4p</code> 中有 9 条河北省相关的记录。</p>
+<p>接着简单演示一下如何用 PyShp 创建新文件</p>
+<pre><code class="language-Python">import numpy as np
+
+def make_circle(xc, yc, r, npt=100):
+    '''创建一个逆时针绕行的圆.'''
+    theta = np.linspace(0, 2 * np.pi, npt)
+    x = r * np.cos(theta) + xc
+    y = r * np.sin(theta) + yc
+    xy = np.column_stack((x, y))
+
+    return xy
+
+# 需要将数组转为列表.
+ring = make_circle(1, 1, 1).tolist()[::-1]
+hole = make_circle(1, 1, 0.5).tolist()
+# 如果首尾不相连, PyShp会在末尾自动补上起点.
+rect = [[3, 0], [3, 2], [5, 2], [5, 0], [3, 0]]
+
+# 采用默认的UTF-8编码.
+writer = shapefile.Writer('donut')
+# 仅设置名称字段, 并且采用默认的字段长度.
+writer.field('name', 'C')
+
+# 写入甜甜圈形状.
+writer.poly([ring, hole])
+writer.record('donut')
+
+# 写入方框形状.
+writer.poly([rect])
+writer.record('rectangle')
+
+writer.close()
+</code></pre>
+<p>PyShp 用 <code>Writer</code> 类创建文件对象，用 <code>field</code> 方法逐个设置字段，参数就是前文提到的四个元素。再用 <code>null</code>、<code>point</code>、<code>multipoint</code>、<code>line</code> 和 <code>poly</code> 等方法写入形状，同时每个形状必须对应一条 <code>record</code> 方法写入的记录。结果是生成了 <code>donut.shp</code>、<code>donut.shx</code> 和 <code>donut.dbf</code> 三个文件，含有甜甜圈和矩形两个记录。用 GIS 软件打开便能直接验证新建的文件是否正确，不过下节将会介绍如何用 Matplotlib 来绘制其形状。</p>
+<p>本节只是一个简单的介绍，PyShp 相关的更多操作请参考其 <a href="https://github.com/GeospatialPython/pyshp" target="_blank">主页</a>。</p>
+<h2 id="用-matplotlib-绘制-shapefile">用 Matplotlib 绘制 shapefile</h2>
+<p>对于 <code>Point</code> 类型的 shapefile，可以有</p>
+<pre><code class="language-Python"># 这里的x和y是标量.
+for shape in reader.iterShapes():
+    x, y = shape.points[0]
+    ax.scatter(x, y)
+</code></pre>
+<p>对于 <code>MultiPoint</code> 类型的 shapefile，可以有</p>
+<pre><code class="language-Python"># 这里的x和y是数组.
+for shape in reader.iterShapes():
+    x, y = zip(*shape.points)
+    ax.scatter(x, y)
+</code></pre>
+<p>对于 <code>PolyLine</code> 类型的 shapefile，需要根据 <code>parts</code> 里存储的下标，将 <code>points</code> 划分为相互独立的折线</p>
+<pre><code class="language-Python">for shape in reader.iterShapes():
+    for i, start in enumerate(shape.parts):
+        try:
+            end = shape.parts[i + 1]
+        except IndexError:
+            end = None
+        x, y = zip(*shape.points[start:end])
+        ax.plot(x, y)
+</code></pre>
+<p>对于 <code>Polygon</code> 类型，固然可以用 <code>ax.plot</code> 方法用线表示多边形的环，但如果想实现颜色填充的效果的话，需要引入 <code>matplotlib.path</code> 模块中的 <code>Path</code> 类。<code>Path</code> 直译为路径，由一系列顶点（vertices）和控制顶点处连线的代码（code）构成。<code>Path</code> 本身并非 <code>Aritist</code> 对象，但将 <code>Path</code> 转为 <code>PathPatch</code> 或 <code>PathCollection</code> 对象后便可以画在 <code>Axes</code> 上，路径连线的粗细和颜色，路径环绕出的区域内的填色等要素都可以进行设置。Matplotlib 中用来画方框、椭圆、多边形等图形的 <code>Patch</code> 类便是基于 <code>Path</code> 实现。有人可能会问，那为什么不直接使用 <code>matplotlib.patches.Polygon</code> 来画 shapefile 呢？这是因为这个类不能区分出多边形中的洞，而底层的 <code>Path</code> 却可以。</p>
+<p>下面是 <code>Path</code> 相关的控制代码，以类属性的形式引用</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Code</th>
+<th style="text-align:left">Vertices</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">MOVETO</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">结束上一条折线，提起画笔从当前顶点开始画。</td>
+</tr>
+<tr>
+<td style="text-align:left">LINETO</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">从上一个顶点画直线到当前顶点。</td>
+</tr>
+<tr>
+<td style="text-align:left">STOP</td>
+<td style="text-align:left">1 (ignored)</td>
+<td style="text-align:left">忽略当前顶点，连线停留在上一个顶点。</td>
+</tr>
+<tr>
+<td style="text-align:left">CLOSEPOLY</td>
+<td style="text-align:left">1 (ignored)</td>
+<td style="text-align:left">忽略当前顶点，从上一个顶点画直线到当前折线的起点以实现闭合。</td>
+</tr>
+</tbody>
+</table>
+<p>除此之外还有指定二次贝塞尔曲线的 <code>CURVE3</code> 和三次贝塞尔曲线的 <code>CURVE4</code>，不过因为和本文的主题无关，所以这里省略掉了。类似 shapefile 的 <code>PolyLine</code>，一条路径可以由多条折线构成，只要用控制代码标识出折线的分组即可。当折线首尾相连成环，或者每条折线的最后一个顶点都设置成 <code>CLOSEPOLY</code> 时，即可用路径来描述多边形。Shapefile 中要求多边形的外环沿顺时针方向，内环沿逆时针方向，而路径只需要内环和外环的绕行方向不同即可（参考 <a href="https://matplotlib.org/stable/gallery/shapes_and_collections/donut.html" target="_blank">Matplotlib 的甜甜圈示例</a>）。以一个镂空的正方形为例，路径需要描述两段方向相反的环</p>
+<pre><code class="language-Python">from matplotlib.path import Path
+
+verts = [
+    (0, 0), (0, 3), (3, 3), (3, 0), (0, 0),  # 顺时针外环.
+    (1, 1), (2, 1), (2, 2), (1, 2), (1, 1)   # 逆时针内环.
+]
+codes = [
+    Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY,
+    Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO, Path.CLOSEPOLY
+]
+path = Path(verts, codes)
+</code></pre>
+<p>最后以上一节的 <code>donut.shp</code> 文件为例</p>
+<pre><code class="language-Python">import shapefile
+import matplotlib.pyplot as plt
+import matplotlib.path as mpath
+import matplotlib.patches as mpatches
+
+def ring_codes(n):
+    '''为长度为n的环生成codes.'''
+    codes = [mpath.Path.LINETO] * n
+    codes[0] = mpath.Path.MOVETO
+    codes[-1] = mpath.Path.CLOSEPOLY
+
+    return codes
+
+def polygon_to_path(shape):
+    '''将Polygon类型的Shape转换为Path.'''
+    if shape.shapeTypeName != 'POLYGON':
+        raise ValueError('输入不是多边形')
+
+    verts = shape.points
+    codes = []
+    for i, start in enumerate(shape.parts):
+        try:
+            end = shape.parts[i + 1]
+        except IndexError:
+            end = len(verts)
+        codes += ring_codes(end - start)
+    path = mpath.Path(verts, codes)
+
+    return path
+
+# 将Shape全部转换为Path.
+paths = []
+with shapefile.Reader('donut') as reader:
+    for shape in reader.iterShapes():
+        paths.append(polygon_to_path(shape))
+
+# 将Path转为Patch后画在Axes上.
+fig, ax = plt.subplots()
+for i, path in enumerate(paths):
+    color = plt.cm.tab10(i)
+    patch = mpatches.PathPatch(path, fc=color, ec='k', lw=1)
+    ax.add_patch(patch)
+
+# 将Axes的横纵坐标比例设为1:1
+ax.set_aspect('equal')
+# 添加patch时Axes不会自动调节显示范围.
+ax.autoscale_view()
+
+plt.show()
+</code></pre>
+<p><img class="img-zoomable" src="/cartopy_shapefile/donut.png" alt="donut" />
+</p>
+<p>同理 <code>bou2_4p</code> 也能用同样的方法画出。可能有人会问，既然能直接用 Matplotlib 画，为什么还需要 Cartopy 呢？理由是 Cartopy 提供的方法能简化读取和绘制 shapefile 的过程，不需要像上面那样对 <code>points</code> 手动进行分割，并且能自动处理投影坐标系间的变换。不过为此需要先引入 <code>GeoJSON</code> 格式和 Shapely 包。</p>
+<h2 id="geojson-简介">GeoJSON 简介</h2>
+<p>Shapely 包提供了对几何对象进行计算的功能，例如求两条线段的交点、判断点是否在多边形内、合并两个多边形得到一个大多边形，以及求两个多边形重叠的部分等。所以将 PyShp 包读取到的 <code>shape</code> 对象转为 Shapely 包中的几何对象（geometry），有助于进行后续的处理。但在转换过程中需要以 GeoJSON 作为中间格式，所以这一节先简单介绍一下 GeoJSON。并且 GeoJSON 在 WebGIS 领域（例如高德地图那种）非常流行，以后很可能会在工作中遇到，多了解一点也没有坏处。下文基于 2015 年的 <a href="https://www.rfc-editor.org/rfc/rfc7946" target="_blank">RFC 7946 规范</a>。</p>
+<p>GeoJSON 也是一种常见的存储地理空间数据的格式，通过一系列格式上的约定得以用 JSON 表现特征、形状和属性信息。GeoJSON 中的对象相当于 Python 的字典，有一个名为 <code>type</code> 的键，其字符串值表示对象类型。特征在 GeoJSON 中以 <code>Feature</code> 对象表示，一系列特征排列在数组中便构成了 <code>FeatureCollection</code> 对象。<code>Feature</code> 中含有的 <code>geometry</code> 对应于几何（形状）对象，<code>properties</code> 以字典形式存储属性字段及其数值。</p>
+<p>GeoJSON 定义的几何对象与 shapefile 相似，点、线、面分别用 <code>Point</code>、<code>LineString</code> 和 <code>Polygon</code> 对象表示。几何对象含有一个 <code>coordinates</code> 数组，存放所有点的坐标值，这与 shapefile 形状的 <code>Points</code> 数组完全一致。GeoJSON 明确使用 <code>MultiPoint</code>、<code>MultiLineString</code> 和 <code>MultiPolygon</code> 表示多个点、多条折线和多个多边形，对应的 <code>coordinates</code> 数组中嵌套存放多个形状的坐标值。因此 GeoJSON 不需要 shapefile 中表示下标的 <code>Parts</code> 数组，处理起来更简单。另外 GeoJSON 还提供一种 <code>GeometryCollection</code> 几何对象，可以存放不同类型的几何对象，但用的要相对少些。</p>
+<p>首尾相连的折线称作线性环（linear ring），<code>Polygon</code> 便是由一个或多个线性环组成，但线性环本身并不算正式定义的几何对象。GeoJSON 中的多边形同样有内外环之分，区别在于 shapefile 要求外环顺时针绕行，内环逆时针绕行，且 <code>Points</code> 中内外环的摆放顺序随意；而 GeoJSON 中要求外环逆时针绕行，内环顺时针绕行，且 <code>coordiantes</code> 中第一个子数组是外环的坐标对序列，后面的子数组才对应于内环。换句话说，GeoJSON 会记录洞和多边形的归属信息，这有助于我们后面使用 Shapely 创建多边形对象。不过 GeoJSON 为了保证对老规范的兼容性，允许内外环的绕行方向不合法，毕竟还可以利用 <code>coordinates</code> 中成员的位置来确定。下面是各种几何对象的文本表示</p>
+<pre><code class="language-Javascript">// 点(0, 0).
+{
+    &quot;type&quot;: &quot;Point&quot;,
+    &quot;coordinates&quot;: [0.0, 0.0]
+}
+
+// 点(0, 0)和(1, 1).
+{
+    &quot;type&quot;: &quot;MultiPoint&quot;,
+    &quot;coordinates&quot;: [
+        [0.0, 0.0],
+        [1.0, 1.0]
+    ]
+}
+
+// 点(0, 0)到(1, 1)的连线.
+{
+    &quot;type&quot;: &quot;LineString&quot;,
+    &quot;coordinates&quot;: [
+        [0.0, 0.0],
+        [1.0, 1.0]
+    ]
+}
+
+// 加上(2, 2)到(3, 3)的连线.
+{
+    &quot;type&quot;: &quot;MultiLineString&quot;,
+    &quot;coordinates&quot;: [
+        [
+            [0.0, 0.0],
+            [1.0, 1.0]
+        ],
+        [
+            [2.0, 2.0],
+            [3.0, 3.0]
+        ]
+    ]
+}
+
+// 带洞的正方形.
+{
+    &quot;type&quot;: &quot;Polygon&quot;,
+    &quot;coordinates&quot;: [
+        [
+            [0.0, 0.0],
+            [3.0, 0.0],
+            [3.0, 3.0],
+            [0.0, 3.0],
+            [0.0, 0.0]
+        ],
+        [
+            [1.0, 1.0],
+            [1.0, 2.0],
+            [2.0, 2.0],
+            [2.0, 1.0],
+            [1.0, 1.0]
+        ]
+    ]
+}
+
+// 在右边再加一个正方形.
+{
+    &quot;type&quot;: &quot;MultiPolygon&quot;,
+    &quot;coordinates&quot;: [
+        [
+            [
+                [0.0, 0.0],
+                [3.0, 0.0],
+                [3.0, 3.0],
+                [0.0, 3.0],
+                [0.0, 0.0]
+            ],
+            [
+                [1.0, 1.0],
+                [1.0, 2.0],
+                [2.0, 2.0],
+                [2.0, 1.0],
+                [1.0, 1.0]
+            ]
+        ],
+        [
+            [
+                [5.0, 0.0],
+                [8.0, 0.0],
+                [8.0, 3.0],
+                [5.0, 3.0],
+                [5.0, 0.0]
+            ]
+        ]
+    ]
+}
+</code></pre>
+<p>这里再啰嗦点，用表格总结一下 shapefile 和 GeoJSON 的概念对应关系</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">shapefile</th>
+<th style="text-align:left">GeoJSON</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">shape</td>
+<td style="text-align:left">geometry</td>
+</tr>
+<tr>
+<td style="text-align:left">attributes</td>
+<td style="text-align:left">properties</td>
+</tr>
+<tr>
+<td style="text-align:left">Points</td>
+<td style="text-align:left">coordinates</td>
+</tr>
+<tr>
+<td style="text-align:left">Point</td>
+<td style="text-align:left">Point</td>
+</tr>
+<tr>
+<td style="text-align:left">MultiPoint</td>
+<td style="text-align:left">MultiPoint</td>
+</tr>
+<tr>
+<td style="text-align:left">PolyLine</td>
+<td style="text-align:left">LineString or MultiLineString</td>
+</tr>
+<tr>
+<td style="text-align:left">Polygon</td>
+<td style="text-align:left">Polygon or MultiPolygon</td>
+</tr>
+</tbody>
+</table>
+<p>PyShp 通过 <code>__geo_interface__</code> 接口实现了 shapefile 到 GeoJSON 的格式转换：</p>
+<ul>
+<li><code>reader.__geo_interface__</code> 返回 <code>FeatureCollection</code>。</li>
+<li><code>shapeRec.__geo_interface__</code> 返回 <code>Feature</code>。</li>
+<li><code>shape.__geo_interface__</code> 返回几何对象。</li>
+</ul>
+<p>稍微提一下这个接口对于多边形的处理：首先根据绕行方向将所有环分为外环和内环两种，然后为每个内环找到唯一的父亲外环，如果找不到则删除孤儿内环。因为使用的纯 Python 算法较为简单，所以并不能保证转换结果严格正确，甚至还可能转换失败，不过足够一般使用。PyShp 2.2 中还会额外把环的绕行方向颠倒过来，以符合 GeoJSON 新规范的要求，不过这一行为在 2.3 中又取消掉了（见 <a href="https://github.com/SciTools/cartopy/issues/2012" target="_blank">cartopy issue#2012</a>）。下面将 <code>bou2_4p.shp</code> 文件转为 GeoJSON 格式</p>
+<pre><code class="language-Python">import json
+
+with shapefile.Reader('./data/bou2_4/bou2_4p.shp', encoding='gbk') as reader:
+    geoj = reader.__geo_interface__
+
+# 中文Windows环境下, open默认采用GBK编码.
+with open('./data/bou2_4/bou2_4p.json', 'w', encoding='utf-8') as f:
+    json.dump(geoj, f, indent=4, ensure_ascii=False)
+</code></pre>
+<p>生成的 GeoJSON 文件的结构可以用下图直观展示</p>
+<p><img class="img-zoomable" src="/cartopy_shapefile/structure_geojson.png" alt="structure_geojson" />
+</p>
+<p>图中只展示了北京市 <code>Feature</code> 里的详细内容，并且略去了 <code>coordinates</code> 中的数值。</p>
+<p>最后提一下 GeoJSON 相对于 shapefile 的优点：</p>
+<ul>
+<li>以文本而非二进制形式存储，可读性更强。</li>
+<li>引入了 <code>MultiLineString</code> 和 <code>MultiPolygon</code> 几何对象，便于程序解析坐标。</li>
+<li>记录了多边形内外环的从属关系，便于后续用 Shapely 包处理。</li>
+<li>GeoJSON 仅由单个 JSON 文件组成。</li>
+</ul>
+<h2 id="用-shapely-操作多边形">用 Shapely 操作多边形</h2>
+<p>Shapely 是一个基于 GEOS 库的计算几何包，能够对平面直角坐标系中的几何对象进行操作。Shapely 真要细讲的话需要新开一篇文章，这里只能快速展示与主题相关的部分。Shapely 主要实现了以下几种几何对象：<code>Point</code>、<code>LineString</code>、<code>LinearRing</code> 和 <code>Polygon</code>，同时还有 <code>MultiPoint</code>、<code>MultiLineString</code> 和 <code>MultiPolygon</code>。可见与 GeoJSON 的规范高度一致。<code>shapely.geometry.shape</code> 函数能够将 GeoJSON 的几何对象，或者实现了 <code>__geo_interface__</code> 接口的对象（例如 PyShp 的 <code>shape</code> 对象）自动转换为 Shapely 中的几何对象。依旧以 <code>bou2_4p.shp</code> 文件为例</p>
+<pre><code class="language-Python">import shapely.geometry as sgeom
+from shapely.ops import unary_union
+
+# 提取出京津冀的形状.
+# 其中河北省由多个多边形组成.
+hebei = []
+with shapefile.Reader('./data/bou2_4/bou2_4p.shp', encoding='gbk') as reader:
+    for shapeRec in reader.iterShapeRecords():
+        name = shapeRec.record['NAME']
+        if name == '北京市':
+            beijing = sgeom.shape(shapeRec.shape)
+        elif name == '天津市':
+            tianjin = sgeom.shape(shapeRec.shape)
+        elif name == '河北省':
+            hebei.append(sgeom.shape(shapeRec.shape))
+
+# 含Polygon的列表构造MultiPolygon
+hebei = sgeom.MultiPolygon(hebei)
+
+# 合并三个几何对象.
+jingjinji = unary_union([beijing, tianjin, hebei])
+</code></pre>
+<p><code>Polygon</code> 对象由外环 <code>Polygon.exterior</code> 和多个内环 <code>Polygon.interiors</code> 组成，其中 <code>exterior</code> 是 <code>LinearRing</code> 对象，而 <code>interiors</code> 是一系列 <code>LinearRing</code> 构成的序列。环的坐标通过 <code>LinearRing.coords</code> 属性访问，<code>coords</code> 同样也是一种序列，可以通过 <code>list(coords)</code> 或 <code>coords[:]</code> 转换为熟悉的 xy 坐标列表的形式。多个 <code>Polygon</code> 对象可以构造 <code>MultiPolygon</code> 对象，其成员通过 <code>MultiPolygon.geoms</code> 属性访问，环及其坐标的获取则通过 <code>geoms[0].exterior</code> 和 <code>geoms[0].exterior.coords</code> 实现。</p>
+<p>因为 <code>bou2_4p.shp</code> 中北京市和天津市都只由单个多边形表示，而河北省由 9 个多边形构成，所以代码中用 <code>MultiPolygon</code> 表示河北省。<code>Polygon.union</code> 或 <code>MultiPolygon.union</code> 方法可以用来合并两个多边形，但运算效率不是很高。所以这里使用更高效的 <code>shapely.ops.unary_union</code> 函数进行合并操作，得到京津冀地区的形状（含海岛）。当然没图说个锤子，下面改写前文的 <code>polygon_to_path</code> 函数，用 <code>Matplotlib</code> 绘制 Shapely 的多边形</p>
+<pre><code class="language-Python">def polygon_to_path(polygon):
+    '''将Polygon或MultiPolygon转为Path.'''
+    if hasattr(polygon, 'geoms'):
+        polygons = polygon.geoms
+    else:
+        polygons = [polygon]
+
+    # 空多边形需要占位.
+    if polygon.is_empty:
+        return mpath.Path([(0, 0)])
+
+    # 用多边形含有的所有环的顶点构造Path.
+    vertices, codes = [], []
+    for polygon in polygons:
+        for ring in [polygon.exterior] + polygon.interiors[:]:
+            vertices += ring.coords[:]
+            codes += ring_codes(len(ring.coords))
+    path = mpath.Path(vertices, codes)
+
+    return path
+</code></pre>
+<p>画图部分为</p>
+<pre><code class="language-Python">fig, axes = plt.subplots(1, 2)
+
+# 第一张子图分别画京津冀三地.
+for i, geom in enumerate([beijing, tianjin, hebei]):
+    color = plt.cm.tab10(i)
+    path = polygon_to_path(geom)
+    patch = mpatches.PathPatch(path, fc=color, ec='k', lw=1)
+    axes[0].add_patch(patch)
+axes[0].set_title('Before Union')
+
+# 第二张子图画合并后的京津冀.
+path = polygon_to_path(jingjinji)
+patch = mpatches.PathPatch(path, fc='lightgrey', ec='k', lw=1)
+axes[1].add_patch(patch)
+axes[1].set_title('After Union')
+
+# 调整比例和显示范围.
+for ax in axes:
+    ax.set_aspect('equal')
+    ax.autoscale_view()
+
+plt.show()
+</code></pre>
+<p><img class="img-zoomable" src="/cartopy_shapefile/jingjinji.png" alt="jingjinji" />
+</p>
+<p>可以看到第二张图中三个地区间的边界在合并后消失了。</p>
+<p>上面的演示只是 Shapely 丰富功能中的冰山一角，想了解更多用法请参阅官网的 <a href="https://shapely.readthedocs.io/en/stable/manual.html" target="_blank">User Manual</a>。</p>
+<h2 id="用-cartopy-绘制-shapefile">用 Cartopy 绘制 shapefile</h2>
+<p>如果把本文的目的，即理解 Cartopy 是怎么画省界的，比作打 Boss 的话，那么前面对各种格式和包的学习就相当于是疯狂练级，现在终于到了能数值碾压 Boss 的阶段。重新回顾一下本文开头的代码（基于 Cartopy 0.20.3），首先是读取 shapefile 文件的部分</p>
+<pre><code class="language-Python">import cartopy.io.shapereader as shpreader
+
+filepath = './data/bou2_4/bou2_4p.shp'
+reader = shpreader.Reader(filepath)
+geoms = reader.geometries()
+</code></pre>
+<p><code>cartopy.io.shapereader</code> 模块提供了读取 shapefile 的 <code>Reader</code> 类，其定义为</p>
+<pre><code class="language-Python">if _HAS_FIONA:
+    Reader = FionaReader
+else:
+    Reader = BasicReader
+</code></pre>
+<p>即 Python 环境里如果安装了 Fiona 包就以 Fiona 为后端，通过 <code>FionaReader</code> 进行读取；否则以 PyShp 为后端，通过 <code>BasicReader</code> 进行读取。因为 Cartopy 在安装时肯定会依赖 PyShp，所以这里就以 <code>BasicReader</code> 为例继续讲解。其类定义为</p>
+<pre><code class="language-Python">class BasicReader:
+    def __init__(self, filename):
+        # Validate the filename/shapefile
+        self._reader = reader = shapefile.Reader(filename)
+        if reader.shp is None or reader.shx is None or reader.dbf is None:
+            raise ValueError(&quot;Incomplete shapefile definition &quot;
+                             &quot;in '%s'.&quot; % filename)
+
+        self._fields = self._reader.fields
+
+    def close(self):
+        return self._reader.close()
+
+    def __len__(self):
+        return len(self._reader)
+
+    def geometries(self):
+        '''Return an iterator of shapely geometries from the shapefile.'''
+        for shape in self._reader.iterShapes():
+            # Skip the shape that can not be represented as geometry.
+            if shape.shapeType != shapefile.NULL:
+                yield sgeom.shape(shape)
+
+    def records(self):
+        '''Return an iterator of :class:`~Record` instances.'''
+        # Ignore the &quot;DeletionFlag&quot; field which always comes first
+        fields = self._reader.fields[1:]
+        for shape_record in self._reader.iterShapeRecords():
+            attributes = shape_record.record.as_dict()
+            yield Record(shape_record.shape, attributes, fields)
+</code></pre>
+<p>可以看出 <code>BasicReader</code> 是对 PyShp 的 <code>Reader</code> 类的包装和简化。<code>geometries</code> 方法与 <code>iterShapes</code> 方法类似，都是返回惰性的迭代器，区别在于 Cartopy 返回的是 Shapely 中的几何对象。<code>records</code> 方法与 <code>iterShapeRecords</code> 类似，返回的是同时含有形状和属性的记录。<code>Record.geometry</code> 表示 Shapely 几何对象，<code>Record.attributes</code> 以字典表示属性。不过 <code>BasicReader</code> 的一个问题是，没有选择字符编码的参数，所以若 shapefile 中的属性采用的是非 UTF-8 的编码（例如 GBK）时，调用 <code>records</code> 方法就会报错。解决方法是修改 Cartopy 的源码，添上 <code>encoding</code> 参数。</p>
+<p>本节开始不再使用 <code>bou2_4p.shp</code>，而是采用 <a href="https://github.com/GaryBikini/ChinaAdminDivisonSHP" target="_blank">ChinaAdminDivisonSHP</a> 项目提供的省界文件，数据来源是高德 Web 服务 API 中的行政区域查询。相比 <code>bou2_4p</code> 来说符合最新的行政区划，省界轮廓更加精细，并且一个省仅对应一条记录，即省的形状用 <code>MultiPolygon</code> 表示。另外这一文件用的是 UTF-8 编码，Cartopy 读取时不会有编码问题。下面是 Cartopy 版筛选河北省记录的例子</p>
+<pre><code class="language-Python">filepath = './data/ChinaAdminDivisonSHP/2. Province/province'
+reader = shpreader.BasicReader(filepath)
+for record in reader.records():
+    if record.attributes['pr_name'] == '河北省':
+        break
+</code></pre>
+<p>接下来要解说的是这一句</p>
+<pre><code class="language-Python">ax.add_geometries(geoms, crs, lw=0.5, fc='none')
+</code></pre>
+<p><code>add_geometries</code> 顾名思义是往 <code>GeoAxes</code> 上添加几何形状，函数签名为</p>
+<pre><code class="language-Python">add_geometries(self, geoms, crs, **kwargs)
+</code></pre>
+<p><code>geoms</code> 是 Shapely 几何对象的序列，不过事实证明迭代器也行。<code>crs</code> 指定几何对象所处的坐标系，考虑到 shapefile 文件的投影多为等经纬度投影，指定 <code>crs=ccrs.PlateCarree()</code> 即可。<code>kwargs</code> 是传给 <code>matplotlib.collections.PathCollection</code> 的参数，用来指定画路径的效果，例如 <code>facecolor</code>、<code>edgecolor</code>、<code>linewidth</code> 和 <code>alpha</code> 等。<code>PathCollection</code> 的作用是把一系列路径对象聚合成单个 <code>Artist</code>，相比逐个绘制 <code>PathPatch</code> 来说效率更高。<code>add_geometries</code> 的源码涉及多个模块，下面仅展示精简后的核心部分</p>
+<pre><code class="language-Python">from matplotlib.collections import PathCollection
+import cartopy.feature as cfeature
+import cartopy.mpl.patch as cpatch
+
+def add_geometries(ax, geoms, crs, **kwargs):
+    '''Add the given shapely geometries (in the given crs) to the axes.'''
+    # 只选取落入地图显示范围中的几何对象进行绘制.
+    feature = cfeature.ShapelyFeature(geoms, crs, **kwargs)
+    extent = ax.get_extent(crs)
+    geoms = feature.intersecting_geometries(extent)
+
+    paths = []
+    for geom in geoms:
+        # 将几何对象投影到地图坐标系中.
+        if ax.projection != crs:
+            geom = ax.projection.project_geometry(geom, crs)
+        paths.extend(cpatch.geos_to_path(geom))
+
+    # 构造Collection对象并绘制.
+    transform = ax.projection._as_mpl_transform(ax)
+    c = PathCollection(paths, transform=transform, **kwargs)
+    ax.add_collection(c)
+</code></pre>
+<p>首先是将几何对象的序列转为 <code>ShapelyFeature</code> 对象，利用其 <code>intersecting_geometries</code> 方法过滤掉没有落入地图显示范围内的几何对象，这样在画图时就能略去看不到的部分，避免浪费时间。然后代表地图投影坐标系统的 <code>ax.projection</code> 有一个 <code>project_geometry</code> 方法，能够将输入的几何对象从 <code>crs</code> 坐标系变换到 <code>ax.projection</code> 坐标系，返回新的几何对象。<code>geos_to_path</code> 函数与前文我们实现的 <code>polygon_to_path</code> 函数功能一样（返回结果略有差别），是把几何对象转为 Matplotlib 的路径对象，以便之后画图。这里 <code>_as_mpl_transform</code> 的作用说实话我没看太懂，看有没有读者能解释一下。最后是构造 <code>PathCollection</code>，并把准备好的 <code>kwargs</code> 画图参数也输入进去，然后添加到 <code>GeoAxes</code> 上。</p>
+<p>然而 <code>add_geometries</code> 也存在一些问题：</p>
+<ul>
+<li>是 <code>GeoAxes</code> 专属的方法，普通的 <code>Axes</code> 没有。</li>
+<li><code>geoms</code> 可以是点或线几何，但点画出来看不到，线最好设置 <code>fc='none'</code>。</li>
+<li>若 <code>kwargs</code> 中的 <code>facecolor</code> 是一个颜色列表，那么上色顺序会跟 <code>geoms</code> 的顺序不符。</li>
+<li>没有返回值，不方便作为 <code>mappable</code> 对象传给 colorbar。</li>
+</ul>
+<p>为了改进这些问题，下面手工实现一个版本</p>
+<pre><code class="language-Python">def add_polygons(ax, polygons, **kwargs):
+    '''将多边形添加到Axes上. GeoAxes可以通过transform参数指定投影.'''
+    paths = [polygon_to_path(polygon) for polygon in polygons]
+    pc = PathCollection(paths, **kwargs)
+    ax.add_collection(pc)
+
+    return pc
+</code></pre>
+<p>函数改名为 <code>add_polygons</code>，强调是专门用来画多边形的。点可以用 <code>ax.scatter</code> 画，线可以用 <code>ax.plot</code> 画，并不是非得用 <code>Path</code>。代码中为了简单去掉了 <code>intersecting_geometries</code> 的功能，甚至还去掉了 <code>project_geometry</code> 的部分，因为我发现在 <code>**kwargs</code> 中传入 <code>transform=crs</code> 便能正确处理投影变换。也正是因为去掉了这两部分，现在 <code>ax</code> 可以是普通的 <code>Axes</code>。最后增加了返回值 <code>pc</code>，方便传给 colorbar。下面利用该函数画省界试试</p>
+<pre><code class="language-Python">filepath = './data/ChinaAdminDivisonSHP/2. Province/province'
+reader = shpreader.BasicReader(filepath)
+provinces = reader.geometries()
+
+crs = ccrs.PlateCarree()
+fig = plt.figure()
+ax = fig.add_subplot(111, projection=crs)
+ax.set_extent([70, 140, 10, 60], crs)
+
+add_polygons(
+    ax, provinces, fc='lightgrey', ec='k', lw=0.5,
+    transform=crs
+)
+
+plt.show()
+</code></pre>
+<p><img class="img-zoomable" src="/cartopy_shapefile/provinces.png" alt="provinces" />
+</p>
+<h2 id="简单应用">简单应用</h2>
+<p>首先准备一个名为 <code>shapetools.py</code> 的文件，写入将会用到的函数</p>
+<pre><code class="language-Python">import numpy as np
+import shapely.geometry as sgeom
+import shapely.ops as sops
+import matplotlib.path as mpath
+from matplotlib.collections import PathCollection
+
+def ring_codes(n):
+    '''为长度为n的环生成codes.'''
+    codes = [mpath.Path.LINETO] * n
+    codes[0] = mpath.Path.MOVETO
+    codes[-1] = mpath.Path.CLOSEPOLY
+
+    return codes
+
+def polygon_to_path(polygon):
+    '''将Polygon或MultiPolygon转为Path.'''
+    if hasattr(polygon, 'geoms'):
+        polygons = polygon.geoms
+    else:
+        polygons = [polygon]
+
+    # 空多边形需要占位.
+    if polygon.is_empty:
+        return mpath.Path([(0, 0)])
+
+    # 用多边形含有的所有环的顶点构造Path.
+    vertices, codes = [], []
+    for polygon in polygons:
+        for ring in [polygon.exterior] + polygon.interiors[:]:
+            vertices += ring.coords[:]
+            codes += ring_codes(len(ring.coords))
+    path = mpath.Path(vertices, codes)
+
+    return path
+
+def polygon_to_mask(polygon, x, y, fast=False):
+    '''生成落入多边形的点的掩膜数组.'''
+    x = np.asarray(x)
+    y = np.asarray(y)
+    mask = np.zeros(x.shape, dtype=bool)
+
+    # 判断每个点是否落入polygon, 不包含边界.
+    for index in np.ndindex(x.shape):
+        point = sgeom.Point(x[index], y[index])
+        if polygon.contains(point):
+            mask[index] = True
+
+    return mask
+
+def add_polygons(ax, polygons, **kwargs):
+    '''将多边形添加到Axes上. GeoAxes可以通过transform参数指定投影.'''
+    paths = [polygon_to_path(polygon) for polygon in polygons]
+    pc = PathCollection(paths, **kwargs)
+    ax.add_collection(pc)
+
+    return pc
+
+def fast_transform(geom, crs_src, crs_tgt):
+    '''快速变换几何对象. 不保证结果的有效性.'''
+    def func(x, y):
+        # 对多边形来说变换结果含NaN时可能报错.
+        x, y = np.array(x), np.array(y)
+        result = crs_tgt.transform_points(crs_src, x, y)
+        return result[:, 0], result[:, 1]
+
+    # 考虑空对象和坐标系相同的情况.
+    geom_type = type(geom)
+    if geom.is_empty:
+        return geom_type()
+    elif crs_src == crs_tgt:
+        return geom_type(geom)
+    else:
+        return sops.transform(func, geom)
+
+def clip_by_polygon(artist, polygon, crs=None, fast=False):
+    '''利用多边形裁剪画图结果. crs指定多边形的坐标系统, fast设置快速变换.'''
+    ax = artist.axes
+    if crs is not None:
+        proj = ax.projection
+        if fast:
+            polygon = fast_transform(polygon, crs, proj)
+        else:
+            polygon = proj.project_geometry(polygon, crs)
+
+    # 适用于contour, pcolor和quiver的结果.
+    path = polygon_to_path(polygon)
+    if hasattr(artist, 'collections'):
+        for collection in artist.collections:
+            collection.set_clip_path(path, ax.transData)
+    else:
+        artist.set_clip_path(path, ax.transData)
+</code></pre>
+<p>其中 <code>ring_codes</code>、<code>polygon_to_path</code> 和 <code>add_polygons</code> 在前文已经介绍过，不再赘述。<code>polygon_to_mask</code> 的功能是为落入多边形内部的网格点生成掩膜（mask）数组，我在网上看到有用 <code>Path.contain_points</code> 方法实现的（<a href="http://bbs.06climate.com/forum.php?mod=viewthread&amp;tid=95590" target="_blank">Python截取不规则区域内格点</a>），不过我测试后发现这一方法会把落入洞里的点也算在多边形内，所以还是选择了效率更低的 <code>Polygon.contains</code> 方法。不过当多边形的点数很多精度很高时，这个函数的速度会相当感人。</p>
+<p><code>clip_by_polygon</code> 的功能是对填色图、风矢量等画图结果进行白化。所谓白化，按网上的说法就是以国界、省界等形状为轮廓，将填色图中处于轮廓外面的部分设成白色，仅在轮廓内部显示绘图结果。显然用前面的 <code>polygon_to_mask</code> 函数生成的掩膜数组，将多边形外的数据点设为 NaN 便能实现白化效果。缺点是当网格分辨率较粗时，填色图的边缘会出现明显的锯齿效果。另一种白化思路是利用 <code>Matplotlib</code> 中的 <code>Artist.set_clip_path</code> 方法，以一个 <code>Path</code> 或 <code>Patch</code> 对象作为轮廓，裁剪掉 <code>Artist</code> 在轮廓外面的部分。优点是白化效果平滑，缺点是这仅仅是一种视觉效果上的修改，对数据处理没有什么帮助。网上非常流行的 maskout 包（实际上是一个模块）便是采用的这一方案（<a href="http://bbs.06climate.com/forum.php?mod=viewthread&amp;tid=42437" target="_blank">Python完美白化</a>、<a href="http://bbs.06climate.com/forum.php?mod=viewthread&amp;tid=96578" target="_blank">提高白化效率</a>）。然而 maskout 的问题在于把 shapefile 文件的读取放在了 <code>shp2clip</code> 函数里面，并且假定读者的文件的字段排列与原作者的文件相同，如果不同，那你就要手动修改 <code>shp2clip</code> 函数内的语句。并且下一次换用另一种 shapefile 文件时就又需要修改。而 <code>clip_by_polygon</code> 函数只关心裁剪的部分，不涉及 shapefile 文件的读取，并且加入了坐标变换的功能。</p>
+<p>具体到代码上，上一节提到过 <code>add_geometries</code> 中是用 <code>project_geometry</code> 方法对几何对象进行坐标变换的，这一方法能正确处理变换失败和跨边界的情况，例如：若变换结果出现了 NaN，直接将该多边形设为空多边形；若目标坐标系中几何对象跨越了左右边界，那么会将几何对象切分成由左右两部分构成的 <code>MultiPolygon</code>，以得到正确的画图效果。然而也正是因为 <code>project_geometry</code> 要进行如此复杂的操作，其速度有时会很慢。所以 <code>clip_by_polygon</code> 提供一个 <code>fast</code> 开关，可以选用简单的 <code>crs.transform_points</code> 方法进行坐标变换，速度会更快，代价是复杂情况下可能得到错误的结果。<code>pcolor</code>、<code>pcolormesh</code> 和 <code>quiver</code> 方法返回的对象都是 <code>matplotlib.collections.Collection</code> 的子类，可以直接剪切；<code>contourf</code> 返回的结果是每一级的等值线（用 <code>PathCollection</code> 表示）构成的列表，保存在 <code>collections</code> 属性中，所以需要迭代其成员进行剪切。</p>
+<p>下面以 2020 年 6 月 21 日 12 时（CST）的 ERA5 地表 2 米温度场和 10 米风场数据来演示</p>
+<pre><code class="language-Python">import os
+
+import numpy as np
+import xarray as xr
+from shapely.ops import unary_union
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import matplotlib.patches as mpatches
+import cartopy.crs as ccrs
+import cartopy.io.shapereader as shpreader
+
+import shapetools
+
+extents_map = [78, 128, 15, 55]
+extents_data = [60, 150, 0, 60]
+lonmin, lonmax, latmin, latmax = extents_data
+
+# 文件路径.
+filepath_ERA5 = './data/ERA5/era5.tuv.20200621.nc'
+filepath_shp = './data/ChinaAdminDivisonSHP/2. Province/province'
+filepath_mask = './data/masks.npy'
+
+# 读取并裁剪数据.
+ds = xr.load_dataset(filepath_ERA5)
+ds = ds.sortby('latitude').sel(
+    time='2020-06-21 04:00',
+    longitude=slice(lonmin, lonmax),
+    latitude=slice(latmin, latmax)
+)
+t2m = ds.t2m.values
+u10 = ds.u10.values
+v10 = ds.v10.values
+lon, lat = np.meshgrid(ds.longitude, ds.latitude)
+# 开尔文转摄氏度.
+ds['t2m'] -= 273.15
+
+# 读取省界.
+reader = shpreader.BasicReader(filepath_shp)
+provinces = list(reader.geometries())
+nprovince = len(provinces)
+reader.close()
+# 合成国界.
+country = unary_union(provinces)
+
+# 制作每个省的掩膜数组, 分辨率依照ERA5数据.
+# 结果保存为文件, 避免反复运行程序耗时过长.
+if not os.path.exists(filepath_mask):
+    masks = []
+    for province in provinces:
+        mask = shapetools.polygon_to_mask(province, lon, lat)
+        masks.append(mask)
+    masks = np.stack(masks, axis=0)
+    np.save(filepath_mask, masks)
+
+# 制作国界的掩膜数组.
+# 直接用国界制作耗时过长, 所以用省界的结果合成.
+masks_province = np.load(filepath_mask)
+mask_country = masks_province.any(axis=0)
+
+# 应用掩膜数组.
+t2m_masked = np.where(mask_country, t2m, np.nan)
+u10_masked = np.where(mask_country, u10, np.nan)
+v10_masked = np.where(mask_country, v10, np.nan)
+
+# 计算每个省的平均气温.
+avgs = np.full(nprovince, np.nan)
+for i in range(nprovince):
+    mask_province = masks_province[i]
+    if mask_province.any():
+        avgs[i] = t2m[mask_province].mean()
+
+# 设置投影.
+crs_map = ccrs.LambertConformal(
+    central_longitude=105, standard_parallels=(25, 47)
+)
+crs_data = ccrs.PlateCarree()
+
+kwargs = {'projection': crs_map}
+fig, axes = plt.subplots(1, 3, figsize=(12, 6), subplot_kw=kwargs)
+fig.subplots_adjust(wspace=0.1)
+for ax in axes.flat:
+    ax.set_extent(extents_map, crs_data)
+
+# 准备cmap和norm.
+cmap = plt.cm.plasma
+vmin, vmax = -10, 35
+norm = mcolors.Normalize(vmin, vmax)
+levels = np.linspace(vmin, vmax, 10)
+
+def add_quiverkey(ax, Q, U):
+    '''添加风箭头图例.'''
+    w, h = 0.15, 0.12
+    rect = mpatches.Rectangle(
+        (1 - w, 0), w, h, transform=ax.transAxes,
+        fc='white', ec='k', lw=0.5
+    )
+    ax.add_patch(rect)
+    qk = ax.quiverkey(
+        Q, X=1-w/2, Y=0.7*h, U=U,
+        label=f'{U} m/s', labelpos='S', labelsep=0.05,
+        fontproperties={'size': 'x-small'}
+    )
+
+# 子图1绘制省平均气温.
+ax = axes[0]
+pc = shapetools.add_polygons(
+    ax, provinces, ec='k', lw=0.2,
+    cmap=cmap, norm=norm, array=avgs,
+    transform=crs_data
+)
+cbar = fig.colorbar(
+    pc, ax=ax, ticks=levels, orientation='horizontal',
+    pad=0.05, aspect=30, extend='both'
+)
+cbar.set_label('Temperature (℃)', fontsize='small')
+cbar.ax.tick_params(labelsize='small')
+ax.set_title('Averaged by Provinces', fontsize='medium')
+
+# 子图2绘制掩膜后的气温场和风场.
+ax = axes[1]
+ax.add_geometries(provinces, crs_data, fc='none', ec='k', lw=0.2)
+im = ax.contourf(
+    lon, lat, t2m_masked, levels, cmap=cmap,
+    extend='both', transform=crs_data
+)
+cbar = fig.colorbar(
+    im, ax=ax, ticks=levels, orientation='horizontal',
+    pad=0.05, aspect=30, extend='both'
+)
+cbar.set_label('Temperature (℃)', fontsize='small')
+cbar.ax.tick_params(labelsize='small')
+Q = ax.quiver(
+    lon, lat, u10_masked, v10_masked,
+    regrid_shape=25, transform=crs_data
+)
+add_quiverkey(ax, Q, U=10)
+ax.set_title('Masked by Country', fontsize='medium')
+
+# 子图3绘制气温场和风场后再剪切.
+ax = axes[2]
+ax.add_geometries(provinces, crs_data, fc='none', ec='k', lw=0.2)
+im = ax.contourf(
+    lon, lat, t2m, levels, cmap=cmap,
+    extend='both', transform=crs_data
+)
+cbar = fig.colorbar(
+    im, ax=ax, ticks=levels, orientation='horizontal',
+    pad=0.05, aspect=30, extend='both'
+)
+cbar.set_label('Temperature (℃)', fontsize='small')
+cbar.ax.tick_params(labelsize='small')
+Q = ax.quiver(
+    lon, lat, u10, v10,
+    regrid_shape=25, transform=crs_data
+)
+add_quiverkey(ax, Q, U=10)
+shapetools.clip_by_polygon(im, country, crs=crs_data, fast=True)
+shapetools.clip_by_polygon(Q, country, crs=crs_data, fast=True)
+ax.set_title('Clipped by Country', fontsize='medium')
+
+fig.savefig('applications.png', dpi=300, bbox_inches='tight')
+plt.close(fig)
+</code></pre>
+<p><img class="img-zoomable" src="/cartopy_shapefile/applications.png" alt="applications" />
+</p>
+<p>读者可以点击图片放大看看，第二张子图中填色图与国界间会有些参差不齐的空白，第三张子图中填色图则是严丝合缝地与国界贴在一起。这个程序初次运行时可能会花很长时间，一是因为 <code>polygon_to_mask</code> 函数效率太低，不过多次运行时会利用保存好的掩膜文件；二是因为在 Lambert 投影的地图上画什么都很慢。感兴趣的读者可以试试运行 <code>polygon_to_mask(country, lon, lat)</code>，应该会慢到无法接受，所以程序中使用了投机取巧的手法。貌似 salem 包中的 <code>roi</code> 方法能更为快速地进行掩膜操作（<a href="https://mp.weixin.qq.com/s?__biz=MzA3MDQ1NDA4Mw==&amp;mid=2247485322&amp;idx=1&amp;sn=25a3a7c9455da919a8e428cd6a099264&amp;chksm=9f3dd9a6a84a50b01e112bb07c718fe041cfde1a539a0f7a4619cd90c62694d8fa45b31c3282&amp;scene=21" target="_blank">python绘图 | salem一招解决所有可视化中的掩膜(Mask)问题</a>），我并没有真用过就不多说了。</p>
+<h2 id="结语">结语</h2>
+<p>本文稍微梳理了一下用 Matplotlib 和 Cartopy 绘制 shapefile 时所需的前置知识和工具链，虽然不了解这些也能用网上现成的代码完成简单的绘图，但只有理解了整个过程，才能使我们在设计复杂图形和 debug 时游刃有余（精美图像一例：<a href="http://neichin.github.io/personalweb/writing/Cartopy-shapefile/" target="_blank">Plotting continents&hellip; shapefiles and tif images with Cartopy</a>）。当然对于赶时间的读者，我推荐安装 cnmaps 包</p>
+<pre><code>conda install -c conda-forge cnmaps
+</code></pre>
+<p>然后一行代码画国界、省界、市区县，都不用自己准备 shapefile</p>
+<pre><code class="language-Python">from cnmaps import get_adm_maps, draw_maps
+
+draw_maps(get_adm_maps(level='国'))
+draw_maps(get_adm_maps(level='省'))
+draw_maps(get_adm_maps(level='市'))
+</code></pre>
+<p>同样一行代码白化填色图、伪彩图</p>
+<pre><code class="language-Python">from cnmaps import clip_pcolormesh_by_map, clip_pcolormesh_by_map
+
+clip_contours_by_map(cs, map_polygon)
+clip_pcolormesh_by_map(mesh, map_polygon)
+</code></pre>
+<p><img class="img-zoomable" src="/cartopy_shapefile/cnmaps.png" alt="cnmaps" />
+</p>
+<p>更多用法详见 <a href="https://cnmaps-doc.readthedocs.io/zh_CN/latest/index.html" target="_blank">cnmaps使用指南</a>。本文内容较多，可能在一些地方存在错误，还请读者批评指正。另外如果本文中麻烦的 Python 操作可以用 ArcGIS 或 QGIS 等软件一键解决，也请多多介绍。</p>
+<h2 id="参考链接">参考链接</h2>
+<p><a href="https://en.wikipedia.org/wiki/Shapefile" target="_blank">Wikipedia: Shapefile</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/141554586" target="_blank">GeoJson规范（RFC 7946）全文翻译</a></p>
+<p><a href="https://gist.github.com/sgillies/2217756" target="_blank">A Python Protocol for Geospatial Data</a></p>
+<p><a href="https://matplotlib.org/stable/api/collections_api.html" target="_blank">matplotlib.collections</a></p>
+<p><a href="https://scitools.org.uk/cartopy/docs/latest/reference/index.html" target="_blank">Cartopy API reference</a></p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzIxODQxODQ4NQ==&amp;mid=2247484487&amp;idx=1&amp;sn=e654ab7eeeb41a15f816b52b391e93cb&amp;chksm=97eb981da09c110ba06115ed93a4a4450bbe84f8b57b90a9819b6b06f801b533c1b002f14223&amp;scene=21" target="_blank">气象绘图加强版（十二）——白化杂谈</a></p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#shapefile-简介">Shapefile 简介</a></li>
+    <li><a href="#用-pyshp-读写-shapefile">用 PyShp 读写 shapefile</a></li>
+    <li><a href="#用-matplotlib-绘制-shapefile">用 Matplotlib 绘制 shapefile</a></li>
+    <li><a href="#geojson-简介">GeoJSON 简介</a></li>
+    <li><a href="#用-shapely-操作多边形">用 Shapely 操作多边形</a></li>
+    <li><a href="#用-cartopy-绘制-shapefile">用 Cartopy 绘制 shapefile</a></li>
+    <li><a href="#简单应用">简单应用</a></li>
+    <li><a href="#结语">结语</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#shapefile-简介">Shapefile 简介</a></li>
+    <li><a href="#用-pyshp-读写-shapefile">用 PyShp 读写 shapefile</a></li>
+    <li><a href="#用-matplotlib-绘制-shapefile">用 Matplotlib 绘制 shapefile</a></li>
+    <li><a href="#geojson-简介">GeoJSON 简介</a></li>
+    <li><a href="#用-shapely-操作多边形">用 Shapely 操作多边形</a></li>
+    <li><a href="#用-cartopy-绘制-shapefile">用 Cartopy 绘制 shapefile</a></li>
+    <li><a href="#简单应用">简单应用</a></li>
+    <li><a href="#结语">结语</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2022
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+                
+                | Visits: <span id="busuanzi_value_site_pv"></span>
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.staticfile.org/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+<script defer src="https://cdn.staticfile.org/lazysizes/5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

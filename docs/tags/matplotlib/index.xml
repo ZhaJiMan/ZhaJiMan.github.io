@@ -6,7 +6,43 @@
     <description>Recent content in matplotlib on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 15 Jan 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/matplotlib/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 20 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/matplotlib/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cartopy 系列：探索 shapefile</title>
+      <link>https://zhajiman.github.io/post/cartopy_shapefile/</link>
+      <pubDate>Mon, 20 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/cartopy_shapefile/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;Cartopy 可以通过 &lt;code&gt;feature&lt;/code&gt; 模块向地图添加国界 &lt;code&gt;BORDER&lt;/code&gt; 和省界 &lt;code&gt;STATES&lt;/code&gt;，因其底层采用的 Natural Earth 地图数据并不符合我国的政治主张，所以我们经常需要自备 shapefile 文件来画中国省界，以下面的代码为例&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.io.shapereader as shpreader
+
+extents = [70, 140, 0, 60]
+crs = ccrs.PlateCarree()
+fig = plt.figure()
+ax = fig.add_subplot(111, projection=crs)
+ax.set_extent(extents, crs)
+
+filepath = &#39;./data/bou2_4/bou2_4p.shp&#39;
+reader = shpreader.Reader(filepath)
+geoms = reader.geometries()
+ax.add_geometries(geoms, crs, lw=0.5, fc=&#39;none&#39;)
+reader.close()
+
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;图就不放了，这段代码足以应付大部分需要画省界的情况。然而我在无脑粘贴代码的过程中逐渐产生了疑惑：为什么 shapefile 会由三个文件组成？省界是以何种形式存储在文件中？Cartopy 和 Matplotlib 又是怎样将省界画出来的？调查一番源码后总结出了这段代码底层实现的流程：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;利用 PyShp 包读取 shapefile 文件中的每个形状。&lt;/li&gt;
+&lt;li&gt;利用 Shapely 包将形状转换为几何对象。&lt;/li&gt;
+&lt;li&gt;利用 Cartopy 包将几何对象投影到地图所在的坐标系上。&lt;/li&gt;
+&lt;li&gt;用投影后的坐标构造 Matplotlib 的 Path 对象，最后画在地图上。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;本文的目的即是从头到尾解说一下这段流程，希望加深对 shapefile 格式，Matplotlib 和 Cartopy 包的理解。令人意外的是，随着探索的不断深入，我发现自己自然而然地学会了如何实现省份填色、省份合并，地图白化等，以前看起来十分困难的操作。本文也会一并介绍这些应用。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Matplotlib 系列：网格数据与 pcolor</title>
       <link>https://zhajiman.github.io/post/matplotlib_pcolor/</link>

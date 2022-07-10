@@ -375,7 +375,7 @@ def add_Chinese_provinces(ax, **kwargs):
     proj = ccrs.PlateCarree()
     reader = shpreader.Reader('D:/maps/shps/bou2_4p.shp')
     provinces = reader.geometries()
-    ax.add_geometries(provinces, proj, **kwarg)
+    ax.add_geometries(provinces, proj, **kwargs)
     reader.close()
 
 def set_map_extent_and_ticks(
