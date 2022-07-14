@@ -822,6 +822,7 @@ plt.show()
 import numpy as np
 import shapely.geometry as sgeom
 import shapely.ops as sops
+from shapely.prepared import prep
 import matplotlib.path as mpath
 from matplotlib.collections import PathCollection
 
@@ -854,16 +855,17 @@ def polygon_to_path(polygon):
 
     return path
 
-def polygon_to_mask(polygon, x, y, fast=False):
+def polygon_to_mask(polygon, x, y):
     '''生成落入多边形的点的掩膜数组.'''
     x = np.asarray(x)
     y = np.asarray(y)
     mask = np.zeros(x.shape, dtype=bool)
 
     # 判断每个点是否落入polygon, 不包含边界.
+    prepared = prep(polygon)
     for index in np.ndindex(x.shape):
         point = sgeom.Point(x[index], y[index])
-        if polygon.contains(point):
+        if prepared.contains(point):
             mask[index] = True
 
     return mask
@@ -912,7 +914,7 @@ def clip_by_polygon(artist, polygon, crs=None, fast=False):
         artist.set_clip_path(path, ax.transData)
 ```
 
-其中 `ring_codes`、`polygon_to_path` 和 `add_polygons` 在前文已经介绍过，不再赘述。`polygon_to_mask` 的功能是为落入多边形内部的网格点生成掩膜（mask）数组，我在网上看到有用 `Path.contain_points` 方法实现的（[Python截取不规则区域内格点](http://bbs.06climate.com/forum.php?mod=viewthread&tid=95590)），不过我测试后发现这一方法会把落入洞里的点也算在多边形内，所以还是选择了效率更低的 `Polygon.contains` 方法。不过当多边形的点数很多精度很高时，这个函数的速度会相当感人。
+其中 `ring_codes`、`polygon_to_path` 和 `add_polygons` 在前文已经介绍过，不再赘述。`polygon_to_mask` 的功能是为落入多边形内部的网格点生成掩膜（mask）数组，我在网上看到有用 `Path.contain_points` 方法实现的（[Python截取不规则区域内格点](http://bbs.06climate.com/forum.php?mod=viewthread&tid=95590)），不过我测试后发现这一方法会把落入洞里的点也算在多边形内，并且使用 Shapely 的 `prepared` 模块会快得多。类似的选择还有 salem 包中的 `roi` 方法（[python绘图 | salem一招解决所有可视化中的掩膜(Mask)问题](https://mp.weixin.qq.com/s?__biz=MzA3MDQ1NDA4Mw==&mid=2247485322&idx=1&sn=25a3a7c9455da919a8e428cd6a099264&chksm=9f3dd9a6a84a50b01e112bb07c718fe041cfde1a539a0f7a4619cd90c62694d8fa45b31c3282&scene=21)） 和 rasterio 包的 `mask` 模块（[Masking a raster using a shapefile](https://rasterio.readthedocs.io/en/latest/topics/masking-by-shapefile.html)）等。
 
 `clip_by_polygon` 的功能是对填色图、风矢量等画图结果进行白化。所谓白化，按网上的说法就是以国界、省界等形状为轮廓，将填色图中处于轮廓外面的部分设成白色，仅在轮廓内部显示绘图结果。显然用前面的 `polygon_to_mask` 函数生成的掩膜数组，将多边形外的数据点设为 NaN 便能实现白化效果。缺点是当网格分辨率较粗时，填色图的边缘会出现明显的锯齿效果。另一种白化思路是利用 `Matplotlib` 中的 `Artist.set_clip_path` 方法，以一个 `Path` 或 `Patch` 对象作为轮廓，裁剪掉 `Artist` 在轮廓外面的部分。优点是白化效果平滑，缺点是这仅仅是一种视觉效果上的修改，对数据处理没有什么帮助。网上非常流行的 maskout 包（实际上是一个模块）便是采用的这一方案（[Python完美白化](http://bbs.06climate.com/forum.php?mod=viewthread&tid=42437)、[提高白化效率](http://bbs.06climate.com/forum.php?mod=viewthread&tid=96578)）。然而 maskout 的问题在于把 shapefile 文件的读取放在了 `shp2clip` 函数里面，并且假定读者的文件的字段排列与原作者的文件相同，如果不同，那你就要手动修改 `shp2clip` 函数内的语句。并且下一次换用另一种 shapefile 文件时就又需要修改。而 `clip_by_polygon` 函数只关心裁剪的部分，不涉及 shapefile 文件的读取，并且加入了坐标变换的功能。
 
@@ -921,8 +923,6 @@ def clip_by_polygon(artist, polygon, crs=None, fast=False):
 下面以 2020 年 6 月 21 日 12 时（CST）的 ERA5 地表 2 米温度场和 10 米风场数据来演示
 
 ```Python
-import os
-
 import numpy as np
 import xarray as xr
 from shapely.ops import unary_union
@@ -941,7 +941,6 @@ lonmin, lonmax, latmin, latmax = extents_data
 # 文件路径.
 filepath_ERA5 = './data/ERA5/era5.tuv.20200621.nc'
 filepath_shp = './data/ChinaAdminDivisonSHP/2. Province/province'
-filepath_mask = './data/masks.npy'
 
 # 读取并裁剪数据.
 ds = xr.load_dataset(filepath_ERA5)
@@ -960,25 +959,16 @@ ds['t2m'] -= 273.15
 # 读取省界.
 reader = shpreader.BasicReader(filepath_shp)
 provinces = list(reader.geometries())
-nprovince = len(provinces)
 reader.close()
 # 合成国界.
 country = unary_union(provinces)
 
-# 制作每个省的掩膜数组, 分辨率依照ERA5数据.
-# 结果保存为文件, 避免反复运行程序耗时过长.
-if not os.path.exists(filepath_mask):
-    masks = []
-    for province in provinces:
-        mask = shapetools.polygon_to_mask(province, lon, lat)
-        masks.append(mask)
-    masks = np.stack(masks, axis=0)
-    np.save(filepath_mask, masks)
-
-# 制作国界的掩膜数组.
-# 直接用国界制作耗时过长, 所以用省界的结果合成.
-masks_province = np.load(filepath_mask)
-mask_country = masks_province.any(axis=0)
+# 制作国界和省界的掩膜数组, 分辨率依照ERA5数据.
+masks_province = []
+for province in provinces:
+    mask_province = shapetools.polygon_to_mask(province, lon, lat)
+    masks_province.append(mask_province)
+mask_country = np.any(masks_province, axis=0)
 
 # 应用掩膜数组.
 t2m_masked = np.where(mask_country, t2m, np.nan)
@@ -986,9 +976,8 @@ u10_masked = np.where(mask_country, u10, np.nan)
 v10_masked = np.where(mask_country, v10, np.nan)
 
 # 计算每个省的平均气温.
-avgs = np.full(nprovince, np.nan)
-for i in range(nprovince):
-    mask_province = masks_province[i]
+avgs = np.full(len(provinces), np.nan)
+for i, mask_province in enumerate(masks_province):
     if mask_province.any():
         avgs[i] = t2m[mask_province].mean()
 
@@ -1087,7 +1076,7 @@ plt.close(fig)
 
 ![applications](/cartopy_shapefile/applications.png)
 
-读者可以点击图片放大看看，第二张子图中填色图与国界间会有些参差不齐的空白，第三张子图中填色图则是严丝合缝地与国界贴在一起。这个程序初次运行时可能会花很长时间，一是因为 `polygon_to_mask` 函数效率太低，不过多次运行时会利用保存好的掩膜文件；二是因为在 Lambert 投影的地图上画什么都很慢。感兴趣的读者可以试试运行 `polygon_to_mask(country, lon, lat)`，应该会慢到无法接受，所以程序中使用了投机取巧的手法。貌似 salem 包中的 `roi` 方法能更为快速地进行掩膜操作（[python绘图 | salem一招解决所有可视化中的掩膜(Mask)问题](https://mp.weixin.qq.com/s?__biz=MzA3MDQ1NDA4Mw==&mid=2247485322&idx=1&sn=25a3a7c9455da919a8e428cd6a099264&chksm=9f3dd9a6a84a50b01e112bb07c718fe041cfde1a539a0f7a4619cd90c62694d8fa45b31c3282&scene=21)），我并没有真用过就不多说了。
+读者可以点击图片放大看看，第二张子图中填色图与国界间会有些参差不齐的空白，第三张子图中填色图则是严丝合缝地与国界贴在一起。本来可以用 `polygon_to_mask(country, lon, lat)` 直接获取国界的掩膜，但因为已经有了省界的掩膜，利用 `np.any` 可以计算出国界掩膜，从而节省时间。读者仔细看可能会发现，第三张图中 colorbar 的 25 刻度附近似乎有一些微小的彩色斑点，越看越像南海群岛……没错，其实是对 `GeoAxes` 的元素使用 `set_clip_path` 后，画框（`spines`）外的元素又会莫名其妙出现，这可能是 Cartopy 现阶段的 bug，解决办法可以参考 [填色图contour.set_clip_path超出边界](https://mp.weixin.qq.com/s/9K-ReadS3Dk0CCyRWxYUMg)。这里对出图效果影响不大，我就偷懒不改进了。
 
 ## 结语
 
@@ -1131,5 +1120,9 @@ clip_pcolormesh_by_map(mesh, map_polygon)
 [matplotlib.collections](https://matplotlib.org/stable/api/collections_api.html)
 
 [Cartopy API reference](https://scitools.org.uk/cartopy/docs/latest/reference/index.html)
+
+[PythonでのShapefile（.shp）操作まとめ](https://qiita.com/c60evaporator/items/78b4148bac6afa4844f9)
+
+[Raster mask on regular grid from shapely Polygon](https://gist.github.com/perrette/a78f99b76aed54b6babf3597e0b331f8)
 
 [气象绘图加强版（十二）——白化杂谈](https://mp.weixin.qq.com/s?__biz=MzIxODQxODQ4NQ==&mid=2247484487&idx=1&sn=e654ab7eeeb41a15f816b52b391e93cb&chksm=97eb981da09c110ba06115ed93a4a4450bbe84f8b57b90a9819b6b06f801b533c1b002f14223&scene=21)
