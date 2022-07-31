@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-06-20T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-07-31T00:00:00+00:00" />
 
 
 <style>
@@ -107,14 +107,42 @@
 
 <div class="post">
     <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/cartopy_polygon_to_mask/">Cartopy 系列：利用多边形生成掩膜数组</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-07-31</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2290 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/shapely">shapely</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <p>二维平面上一系列点的坐标由 <code>x</code> 和 <code>y</code> 数组描述，同时准备一个形状相同的 <code>mask</code> 数组。若第 <code>i</code> 个点落入了平面上一个多边形的内部，则令 <code>mask[i] = True</code>；若在多边形外，则令 <code>mask[i] = False</code>。由此得到的 <code>mask</code> 数组即掩膜（mask）数组，它可以作为布尔索引分出多边形内外的点</p>
+<pre><code class="language-Python">x_in, y_in = x[mask], y[mask]
+x_out, y_out = x[mask], y[mask]
+</code></pre>
+<p>它可以作为掩膜，掩盖多边形范围外的值——即把外面的值设为 NaN，以便进行后续的计算</p>
+<pre><code class="language-Python">z[~mask] = np.nan
+z_mean = np.nanmean(z)
+</code></pre>
+<p>下图展示了两个应用：左小图的多边形是一个中心带洞的正方形，给定一系列散点的坐标，计算出掩膜后可以把多边形内的散点画成红色，多边形外的散点画成蓝色；右小图的多边形是中国全域，给定 <code>(50, 50)</code> 形状的经纬度网格，计算出掩膜后用橙色画出掩膜为 <code>True</code> 的部分，这张掩膜之后可以用来处理网格上的其它变量。</p>
+<p><img class="img-zoomable" src="/cartopy_polygon_to_mask/diagram.png" alt="diagram" />
+</p>
+<p>本文的目的是介绍如何用 Python 制作掩膜数组，并尽量优化其运行时间。从 shapefile 中读取中国国界并转化为 Shapely 中的多边形对象等操作，已经在博文 <a href="https://zhajiman.github.io/post/cartopy_shapefile/" target="_blank">Cartopy 系列：探索 shapefile</a> 中详细介绍过了，本文是对其的一个补充。</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
         <a href="https://zhajiman.github.io/post/cartopy_shapefile/">Cartopy 系列：探索 shapefile</a>
     </h2>
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-06-20</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;13769 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;13788 words</span>
 
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/shapely">shapely</a>&nbsp;</span>
 
     </div>
     <div class="post-item post-summary markdown-body">
@@ -306,28 +334,6 @@ plt.show()
         <p>简单汇总罗列一下我在网上找到的还不错的 Python 相关资源，包括语言本身以及各种常用库的教程，当然触手可及的官方文档就不收纳了。通通都是免费资源（付费的咱也看不到），分享给有需要的读者。不过互联网资源并非恒久不灭，说不定哪天域名就失效了，或是原作者突然隐藏文章，且看且珍惜吧。</p>
     </div>
 </div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/matplotlib_artist/">Matplotlib 中的 Artist——你在浪费时间瞎百度之前应该知道的东西</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-11-23</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6701 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <blockquote>
-<p>这是 <a href="https://sites.google.com/view/kotarosaito/" target="_blank">@skotaro</a> 在 2018 年发布的一篇关于 Matplotlib Artist 的通俗易懂的介绍，很适合作为官方教程的前置读物，故翻译于此，原文标题是 <a href="https://dev.to/skotaro/artist-in-matplotlib---something-i-wanted-to-know-before-spending-tremendous-hours-on-googling-how-tos--31oo" target="_blank">&ldquo;Artist&rdquo; in Matplotlib - something I wanted to know before spending tremendous hours on googling how-tos.</a>。文中绝大部分链接都重定向到了最新版本的 Matplotlib 文档，还请读者注意。</p>
-</blockquote>
-<p><img class="img-zoomable" src="/matplotlib_artist/fig_0.jpg" alt="fig_0" />
-</p>
-<p>毫无疑问 Python 里的 matplotlib 是个非常棒的可视化工具，但在 matplotlib 中慢慢调细节也是件很烦人的事。你很容易浪费好几个小时去找修改图里细节的方法，有时你连那个细节的名字也不知道的话，搜索起来会更加困难。就算你在 Stack Overflow 上找到了相关的提示，也可能再花几个小时根据需求来修改它。不过，只要了解了 matplotlib 图的具体组成，以及你可以对组件执行的操作，就能避开这些徒劳无益的工作。我想，我跟你们中的大多数人一样，做图时遇到的困难都是靠读 Stack Overflow 上那些 matplotlib 高手们的答案来解决的。最近我发现 <a href="https://matplotlib.org/stable/tutorials/intermediate/artists.html" target="_blank">官方的 <code>Artist</code> 对象教程</a> 信息很丰富，有助于我们理解 matplotlib 的画图过程并节省调图时间<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。本文里我会分享一些关于 matplotlib 里 <code>Artist</code> 对象的基本知识，以避免浪费数小时调图的情况出现。</p>
-    </div>
-</div>
 <div class="pagination"><div class="pag-item pag-current">
     <a href="/">1</a>
   </div><div class="pag-item">
@@ -422,6 +428,10 @@ plt.show()
             
             <span>
                 <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>
@@ -542,6 +552,10 @@ plt.show()
             
             <span>
                 <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>

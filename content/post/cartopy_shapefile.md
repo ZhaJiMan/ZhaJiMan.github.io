@@ -5,6 +5,7 @@ showToc: true
 tags:
 - cartopy
 - matplotlib
+- shapely
 ---
 
 ## 前言
@@ -234,7 +235,7 @@ print(record.as_dict())
  ['ADCODE93', 'N', 6, 0],
  ['ADCODE99', 'N', 6, 0],
  ['NAME', 'C', 34, 0]]
- 
+
 {'AREA': 0.0,
  'PERIMETER': 0.011,
  'BOU2_4M_': 926,
@@ -914,7 +915,7 @@ def clip_by_polygon(artist, polygon, crs=None, fast=False):
         artist.set_clip_path(path, ax.transData)
 ```
 
-其中 `ring_codes`、`polygon_to_path` 和 `add_polygons` 在前文已经介绍过，不再赘述。`polygon_to_mask` 的功能是为落入多边形内部的网格点生成掩膜（mask）数组，我在网上看到有用 `Path.contain_points` 方法实现的（[Python截取不规则区域内格点](http://bbs.06climate.com/forum.php?mod=viewthread&tid=95590)），不过我测试后发现这一方法会把落入洞里的点也算在多边形内，并且使用 Shapely 的 `prepared` 模块会快得多。类似的选择还有 salem 包中的 `roi` 方法（[python绘图 | salem一招解决所有可视化中的掩膜(Mask)问题](https://mp.weixin.qq.com/s?__biz=MzA3MDQ1NDA4Mw==&mid=2247485322&idx=1&sn=25a3a7c9455da919a8e428cd6a099264&chksm=9f3dd9a6a84a50b01e112bb07c718fe041cfde1a539a0f7a4619cd90c62694d8fa45b31c3282&scene=21)） 和 rasterio 包的 `mask` 模块（[Masking a raster using a shapefile](https://rasterio.readthedocs.io/en/latest/topics/masking-by-shapefile.html)）等。
+其中 `ring_codes`、`polygon_to_path` 和 `add_polygons` 在前文已经介绍过，不再赘述。`polygon_to_mask` 的功能是为落入多边形内部的网格点生成掩膜（mask）数组，我在网上看到有用 `Path.contain_points` 方法实现的（[Python截取不规则区域内格点](http://bbs.06climate.com/forum.php?mod=viewthread&tid=95590)），不过我测试后发现这一方法会把落入洞里的点也算在多边形内，并且使用 Shapely 的 `prepared` 模块会快得多（参考 [Cartopy 系列：利用多边形生成掩膜数组](https://zhajiman.github.io/post/cartopy_polygon_to_mask/)）。类似的选择还有 salem 包中的 `roi` 方法（[python绘图 | salem一招解决所有可视化中的掩膜(Mask)问题](https://mp.weixin.qq.com/s?__biz=MzA3MDQ1NDA4Mw==&mid=2247485322&idx=1&sn=25a3a7c9455da919a8e428cd6a099264&chksm=9f3dd9a6a84a50b01e112bb07c718fe041cfde1a539a0f7a4619cd90c62694d8fa45b31c3282&scene=21)） 和 rasterio 包的 `mask` 模块（[Masking a raster using a shapefile](https://rasterio.readthedocs.io/en/latest/topics/masking-by-shapefile.html)）等。
 
 `clip_by_polygon` 的功能是对填色图、风矢量等画图结果进行白化。所谓白化，按网上的说法就是以国界、省界等形状为轮廓，将填色图中处于轮廓外面的部分设成白色，仅在轮廓内部显示绘图结果。显然用前面的 `polygon_to_mask` 函数生成的掩膜数组，将多边形外的数据点设为 NaN 便能实现白化效果。缺点是当网格分辨率较粗时，填色图的边缘会出现明显的锯齿效果。另一种白化思路是利用 `Matplotlib` 中的 `Artist.set_clip_path` 方法，以一个 `Path` 或 `Patch` 对象作为轮廓，裁剪掉 `Artist` 在轮廓外面的部分。优点是白化效果平滑，缺点是这仅仅是一种视觉效果上的修改，对数据处理没有什么帮助。网上非常流行的 maskout 包（实际上是一个模块）便是采用的这一方案（[Python完美白化](http://bbs.06climate.com/forum.php?mod=viewthread&tid=42437)、[提高白化效率](http://bbs.06climate.com/forum.php?mod=viewthread&tid=96578)）。然而 maskout 的问题在于把 shapefile 文件的读取放在了 `shp2clip` 函数里面，并且假定读者的文件的字段排列与原作者的文件相同，如果不同，那你就要手动修改 `shp2clip` 函数内的语句。并且下一次换用另一种 shapefile 文件时就又需要修改。而 `clip_by_polygon` 函数只关心裁剪的部分，不涉及 shapefile 文件的读取，并且加入了坐标变换的功能。
 

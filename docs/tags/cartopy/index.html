@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/cartopy/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-06-20T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-07-31T00:00:00+00:00" />
 
 
 <style>
@@ -111,14 +111,42 @@
 
 <div class="post">
   <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/cartopy_polygon_to_mask/">Cartopy 系列：利用多边形生成掩膜数组</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-07-31</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2290 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/shapely">shapely</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <p>二维平面上一系列点的坐标由 <code>x</code> 和 <code>y</code> 数组描述，同时准备一个形状相同的 <code>mask</code> 数组。若第 <code>i</code> 个点落入了平面上一个多边形的内部，则令 <code>mask[i] = True</code>；若在多边形外，则令 <code>mask[i] = False</code>。由此得到的 <code>mask</code> 数组即掩膜（mask）数组，它可以作为布尔索引分出多边形内外的点</p>
+<pre><code class="language-Python">x_in, y_in = x[mask], y[mask]
+x_out, y_out = x[mask], y[mask]
+</code></pre>
+<p>它可以作为掩膜，掩盖多边形范围外的值——即把外面的值设为 NaN，以便进行后续的计算</p>
+<pre><code class="language-Python">z[~mask] = np.nan
+z_mean = np.nanmean(z)
+</code></pre>
+<p>下图展示了两个应用：左小图的多边形是一个中心带洞的正方形，给定一系列散点的坐标，计算出掩膜后可以把多边形内的散点画成红色，多边形外的散点画成蓝色；右小图的多边形是中国全域，给定 <code>(50, 50)</code> 形状的经纬度网格，计算出掩膜后用橙色画出掩膜为 <code>True</code> 的部分，这张掩膜之后可以用来处理网格上的其它变量。</p>
+<p><img class="img-zoomable" src="/cartopy_polygon_to_mask/diagram.png" alt="diagram" />
+</p>
+<p>本文的目的是介绍如何用 Python 制作掩膜数组，并尽量优化其运行时间。从 shapefile 中读取中国国界并转化为 Shapely 中的多边形对象等操作，已经在博文 <a href="https://zhajiman.github.io/post/cartopy_shapefile/" target="_blank">Cartopy 系列：探索 shapefile</a> 中详细介绍过了，本文是对其的一个补充。</p>
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
     <a href="https://zhajiman.github.io/post/cartopy_shapefile/">Cartopy 系列：探索 shapefile</a>
   </h2>
   <div class="post-item post-meta">
     <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-06-20</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;13769 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;13788 words</span>
 
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/shapely">shapely</a>&nbsp;</span>
 
   </div>
   <div class="post-item post-summary markdown-body">
@@ -326,6 +354,10 @@ plt.show()
             </span>
             
             <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
                 <a href="/tags/vim/">vim</a>
             </span>
             
@@ -443,6 +475,10 @@ plt.show()
             
             <span>
                 <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>

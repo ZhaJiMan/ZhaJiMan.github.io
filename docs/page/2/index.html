@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-06-20T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-07-31T00:00:00+00:00" />
 
 
 <style>
@@ -104,6 +104,28 @@
                 
 
 
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/matplotlib_artist/">Matplotlib 中的 Artist——你在浪费时间瞎百度之前应该知道的东西</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-11-23</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6701 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <blockquote>
+<p>这是 <a href="https://sites.google.com/view/kotarosaito/" target="_blank">@skotaro</a> 在 2018 年发布的一篇关于 Matplotlib Artist 的通俗易懂的介绍，很适合作为官方教程的前置读物，故翻译于此，原文标题是 <a href="https://dev.to/skotaro/artist-in-matplotlib---something-i-wanted-to-know-before-spending-tremendous-hours-on-googling-how-tos--31oo" target="_blank">&ldquo;Artist&rdquo; in Matplotlib - something I wanted to know before spending tremendous hours on googling how-tos.</a>。文中绝大部分链接都重定向到了最新版本的 Matplotlib 文档，还请读者注意。</p>
+</blockquote>
+<p><img class="img-zoomable" src="/matplotlib_artist/fig_0.jpg" alt="fig_0" />
+</p>
+<p>毫无疑问 Python 里的 matplotlib 是个非常棒的可视化工具，但在 matplotlib 中慢慢调细节也是件很烦人的事。你很容易浪费好几个小时去找修改图里细节的方法，有时你连那个细节的名字也不知道的话，搜索起来会更加困难。就算你在 Stack Overflow 上找到了相关的提示，也可能再花几个小时根据需求来修改它。不过，只要了解了 matplotlib 图的具体组成，以及你可以对组件执行的操作，就能避开这些徒劳无益的工作。我想，我跟你们中的大多数人一样，做图时遇到的困难都是靠读 Stack Overflow 上那些 matplotlib 高手们的答案来解决的。最近我发现 <a href="https://matplotlib.org/stable/tutorials/intermediate/artists.html" target="_blank">官方的 <code>Artist</code> 对象教程</a> 信息很丰富，有助于我们理解 matplotlib 的画图过程并节省调图时间<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。本文里我会分享一些关于 matplotlib 里 <code>Artist</code> 对象的基本知识，以避免浪费数小时调图的情况出现。</p>
+    </div>
+</div>
 
 <div class="post">
     <h2 class="post-item post-title">
@@ -293,34 +315,6 @@
 <p>承接 <a href="https://zhajiman.github.io/post/matplotlib_colormap/" target="_blank">Matplotlib 系列：colormap 的设置</a> 一文，这次介绍 colorbar。所谓 colorbar 即主图旁一个长条状的小图，能够辅助表示主图中 colormap 的颜色组成和颜色与数值的对应关系。本文将会依次介绍 colorbar 的基本用法、如何设置刻度，以及怎么为组图添加 colorbar。代码基于 Matplotlib 3.3.4。</p>
     </div>
 </div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/matplotlib_colormap/">Matplotlib 系列：colormap 的设置</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-05</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5502 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="0-前言">0. 前言</h2>
-<p>所谓 colormap（颜色表），就是将一系列颜色按给定的顺序排列在一起。其用处是，我们可以通过某种映射关系，将一系列数值映射到一张 colormap 上去，使不同大小的数值对应不同的颜色。这样一来，在绘制填色图时便能直观地用颜色来反映数值的分布。</p>
-<p>在 Matplotlib 中，数值到颜色的映射关系可以用下面这张流程图来表示</p>
-<p><img class="img-zoomable" src="/matplotlib_colormap/flowchart.png" alt="flowchart" />
-</p>
-<p>图中分为前后两部分</p>
-<ul>
-<li>首先将数组归一化（normalize）到浮点型的 <code>[0, 1]</code> 范围（或整型的 <code>[0, N - 1]</code> 范围）上去。</li>
-<li>再把归一化的数组输入给 colormap，查询每个数值对应的颜色。</li>
-</ul>
-<p>第二部分的映射关系是固定不变的，但第一部分的映射关系可以通过归一化相关的类加以改变，进而实现对数色标、对称色标、离散色标等一系列填色效果。</p>
-<p>本文将会依次介绍 <code>Colormap</code> 类、<code>Normalize</code> 类，以及实际应用的例子。代码基于 Matplotlib 3.3.4。</p>
-    </div>
-</div>
 <div class="pagination"><div class="pag-first">
     <a href="/"><i class="iconfont icon-caret-back-circle-sharp"></i></a>
   </div><div class="pag-previous">
@@ -419,6 +413,10 @@
             
             <span>
                 <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>
@@ -539,6 +537,10 @@
             
             <span>
                 <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>

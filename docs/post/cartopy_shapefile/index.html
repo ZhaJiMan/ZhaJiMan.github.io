@@ -30,7 +30,7 @@
 <meta name="description" content="A minimal Hugo theme with nice theme color." />
 
 
-<meta name="keywords" content="cartopy, matplotlib" />
+<meta name="keywords" content="cartopy, matplotlib, shapely" />
 
 
 <meta property="og:title" content="Cartopy 系列：探索 shapefile" />
@@ -166,9 +166,9 @@ plt.show()
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-06-20</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;13769 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;13788 words</span>
 
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/shapely">shapely</a>&nbsp;</span>
 
         
         <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
@@ -405,7 +405,7 @@ print(record.as_dict())
  ['ADCODE93', 'N', 6, 0],
  ['ADCODE99', 'N', 6, 0],
  ['NAME', 'C', 34, 0]]
- 
+
 {'AREA': 0.0,
  'PERIMETER': 0.011,
  'BOU2_4M_': 926,
@@ -1051,7 +1051,7 @@ def clip_by_polygon(artist, polygon, crs=None, fast=False):
     else:
         artist.set_clip_path(path, ax.transData)
 </code></pre>
-<p>其中 <code>ring_codes</code>、<code>polygon_to_path</code> 和 <code>add_polygons</code> 在前文已经介绍过，不再赘述。<code>polygon_to_mask</code> 的功能是为落入多边形内部的网格点生成掩膜（mask）数组，我在网上看到有用 <code>Path.contain_points</code> 方法实现的（<a href="http://bbs.06climate.com/forum.php?mod=viewthread&amp;tid=95590" target="_blank">Python截取不规则区域内格点</a>），不过我测试后发现这一方法会把落入洞里的点也算在多边形内，并且使用 Shapely 的 <code>prepared</code> 模块会快得多。类似的选择还有 salem 包中的 <code>roi</code> 方法（<a href="https://mp.weixin.qq.com/s?__biz=MzA3MDQ1NDA4Mw==&amp;mid=2247485322&amp;idx=1&amp;sn=25a3a7c9455da919a8e428cd6a099264&amp;chksm=9f3dd9a6a84a50b01e112bb07c718fe041cfde1a539a0f7a4619cd90c62694d8fa45b31c3282&amp;scene=21" target="_blank">python绘图 | salem一招解决所有可视化中的掩膜(Mask)问题</a>） 和 rasterio 包的 <code>mask</code> 模块（<a href="https://rasterio.readthedocs.io/en/latest/topics/masking-by-shapefile.html" target="_blank">Masking a raster using a shapefile</a>）等。</p>
+<p>其中 <code>ring_codes</code>、<code>polygon_to_path</code> 和 <code>add_polygons</code> 在前文已经介绍过，不再赘述。<code>polygon_to_mask</code> 的功能是为落入多边形内部的网格点生成掩膜（mask）数组，我在网上看到有用 <code>Path.contain_points</code> 方法实现的（<a href="http://bbs.06climate.com/forum.php?mod=viewthread&amp;tid=95590" target="_blank">Python截取不规则区域内格点</a>），不过我测试后发现这一方法会把落入洞里的点也算在多边形内，并且使用 Shapely 的 <code>prepared</code> 模块会快得多（参考 <a href="https://zhajiman.github.io/post/cartopy_polygon_to_mask/" target="_blank">Cartopy 系列：利用多边形生成掩膜数组</a>）。类似的选择还有 salem 包中的 <code>roi</code> 方法（<a href="https://mp.weixin.qq.com/s?__biz=MzA3MDQ1NDA4Mw==&amp;mid=2247485322&amp;idx=1&amp;sn=25a3a7c9455da919a8e428cd6a099264&amp;chksm=9f3dd9a6a84a50b01e112bb07c718fe041cfde1a539a0f7a4619cd90c62694d8fa45b31c3282&amp;scene=21" target="_blank">python绘图 | salem一招解决所有可视化中的掩膜(Mask)问题</a>） 和 rasterio 包的 <code>mask</code> 模块（<a href="https://rasterio.readthedocs.io/en/latest/topics/masking-by-shapefile.html" target="_blank">Masking a raster using a shapefile</a>）等。</p>
 <p><code>clip_by_polygon</code> 的功能是对填色图、风矢量等画图结果进行白化。所谓白化，按网上的说法就是以国界、省界等形状为轮廓，将填色图中处于轮廓外面的部分设成白色，仅在轮廓内部显示绘图结果。显然用前面的 <code>polygon_to_mask</code> 函数生成的掩膜数组，将多边形外的数据点设为 NaN 便能实现白化效果。缺点是当网格分辨率较粗时，填色图的边缘会出现明显的锯齿效果。另一种白化思路是利用 <code>Matplotlib</code> 中的 <code>Artist.set_clip_path</code> 方法，以一个 <code>Path</code> 或 <code>Patch</code> 对象作为轮廓，裁剪掉 <code>Artist</code> 在轮廓外面的部分。优点是白化效果平滑，缺点是这仅仅是一种视觉效果上的修改，对数据处理没有什么帮助。网上非常流行的 maskout 包（实际上是一个模块）便是采用的这一方案（<a href="http://bbs.06climate.com/forum.php?mod=viewthread&amp;tid=42437" target="_blank">Python完美白化</a>、<a href="http://bbs.06climate.com/forum.php?mod=viewthread&amp;tid=96578" target="_blank">提高白化效率</a>）。然而 maskout 的问题在于把 shapefile 文件的读取放在了 <code>shp2clip</code> 函数里面，并且假定读者的文件的字段排列与原作者的文件相同，如果不同，那你就要手动修改 <code>shp2clip</code> 函数内的语句。并且下一次换用另一种 shapefile 文件时就又需要修改。而 <code>clip_by_polygon</code> 函数只关心裁剪的部分，不涉及 shapefile 文件的读取，并且加入了坐标变换的功能。</p>
 <p>具体到代码上，上一节提到过 <code>add_geometries</code> 中是用 <code>project_geometry</code> 方法对几何对象进行坐标变换的，这一方法能正确处理变换失败和跨边界的情况，例如：若变换结果出现了 NaN，直接将该多边形设为空多边形；若目标坐标系中几何对象跨越了左右边界，那么会将几何对象切分成由左右两部分构成的 <code>MultiPolygon</code>，以得到正确的画图效果。然而也正是因为 <code>project_geometry</code> 要进行如此复杂的操作，其速度有时会很慢。所以 <code>clip_by_polygon</code> 提供一个 <code>fast</code> 开关，可以选用简单的 <code>crs.transform_points</code> 方法进行坐标变换，速度会更快，代价是复杂情况下可能得到错误的结果。<code>pcolor</code>、<code>pcolormesh</code> 和 <code>quiver</code> 方法返回的对象都是 <code>matplotlib.collections.Collection</code> 的子类，可以直接剪切；<code>contourf</code> 返回的结果是每一级的等值线（用 <code>PathCollection</code> 表示）构成的列表，保存在 <code>collections</code> 属性中，所以需要迭代其成员进行剪切。</p>
 <p>下面以 2020 年 6 月 21 日 12 时（CST）的 ERA5 地表 2 米温度场和 10 米风场数据来演示</p>
@@ -1356,6 +1356,10 @@ clip_pcolormesh_by_map(mesh, map_polygon)
             </span>
             
             <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
                 <a href="/tags/vim/">vim</a>
             </span>
             
@@ -1485,6 +1489,10 @@ clip_pcolormesh_by_map(mesh, map_polygon)
             
             <span>
                 <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>

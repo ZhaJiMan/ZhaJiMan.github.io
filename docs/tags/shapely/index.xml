@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>shapely on 炸鸡人博客</title>
+    <link>https://zhajiman.github.io/tags/shapely/</link>
+    <description>Recent content in shapely on 炸鸡人博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 31 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/shapely/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cartopy 系列：利用多边形生成掩膜数组</title>
+      <link>https://zhajiman.github.io/post/cartopy_polygon_to_mask/</link>
+      <pubDate>Sun, 31 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/cartopy_polygon_to_mask/</guid>
+      <description>&lt;p&gt;二维平面上一系列点的坐标由 &lt;code&gt;x&lt;/code&gt; 和 &lt;code&gt;y&lt;/code&gt; 数组描述，同时准备一个形状相同的 &lt;code&gt;mask&lt;/code&gt; 数组。若第 &lt;code&gt;i&lt;/code&gt; 个点落入了平面上一个多边形的内部，则令 &lt;code&gt;mask[i] = True&lt;/code&gt;；若在多边形外，则令 &lt;code&gt;mask[i] = False&lt;/code&gt;。由此得到的 &lt;code&gt;mask&lt;/code&gt; 数组即掩膜（mask）数组，它可以作为布尔索引分出多边形内外的点&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;x_in, y_in = x[mask], y[mask]
+x_out, y_out = x[mask], y[mask]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;它可以作为掩膜，掩盖多边形范围外的值——即把外面的值设为 NaN，以便进行后续的计算&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;z[~mask] = np.nan
+z_mean = np.nanmean(z)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;下图展示了两个应用：左小图的多边形是一个中心带洞的正方形，给定一系列散点的坐标，计算出掩膜后可以把多边形内的散点画成红色，多边形外的散点画成蓝色；右小图的多边形是中国全域，给定 &lt;code&gt;(50, 50)&lt;/code&gt; 形状的经纬度网格，计算出掩膜后用橙色画出掩膜为 &lt;code&gt;True&lt;/code&gt; 的部分，这张掩膜之后可以用来处理网格上的其它变量。&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/cartopy_polygon_to_mask/diagram.png&#34; alt=&#34;diagram&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;本文的目的是介绍如何用 Python 制作掩膜数组，并尽量优化其运行时间。从 shapefile 中读取中国国界并转化为 Shapely 中的多边形对象等操作，已经在博文 &lt;a href=&#34;https://zhajiman.github.io/post/cartopy_shapefile/&#34; target=&#34;_blank&#34;&gt;Cartopy 系列：探索 shapefile&lt;/a&gt; 中详细介绍过了，本文是对其的一个补充。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Cartopy 系列：探索 shapefile</title>
+      <link>https://zhajiman.github.io/post/cartopy_shapefile/</link>
+      <pubDate>Mon, 20 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/cartopy_shapefile/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;Cartopy 可以通过 &lt;code&gt;feature&lt;/code&gt; 模块向地图添加国界 &lt;code&gt;BORDER&lt;/code&gt; 和省界 &lt;code&gt;STATES&lt;/code&gt;，因其底层采用的 Natural Earth 地图数据并不符合我国的政治主张，所以我们经常需要自备 shapefile 文件来画中国省界，以下面的代码为例&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.io.shapereader as shpreader
+
+extents = [70, 140, 0, 60]
+crs = ccrs.PlateCarree()
+fig = plt.figure()
+ax = fig.add_subplot(111, projection=crs)
+ax.set_extent(extents, crs)
+
+filepath = &#39;./data/bou2_4/bou2_4p.shp&#39;
+reader = shpreader.Reader(filepath)
+geoms = reader.geometries()
+ax.add_geometries(geoms, crs, lw=0.5, fc=&#39;none&#39;)
+reader.close()
+
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;图就不放了，这段代码足以应付大部分需要画省界的情况。然而我在无脑粘贴代码的过程中逐渐产生了疑惑：为什么 shapefile 会由三个文件组成？省界是以何种形式存储在文件中？Cartopy 和 Matplotlib 又是怎样将省界画出来的？调查一番源码后总结出了这段代码底层实现的流程：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;利用 PyShp 包读取 shapefile 文件中的每个形状。&lt;/li&gt;
+&lt;li&gt;利用 Shapely 包将形状转换为几何对象。&lt;/li&gt;
+&lt;li&gt;利用 Cartopy 包将几何对象投影到地图所在的坐标系上。&lt;/li&gt;
+&lt;li&gt;用投影后的坐标构造 Matplotlib 的 Path 对象，最后画在地图上。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;本文的目的即是从头到尾解说一下这段流程，希望加深对 shapefile 格式，Matplotlib 和 Cartopy 包的理解。令人意外的是，随着探索的不断深入，我发现自己自然而然地学会了如何实现省份填色、省份合并，地图白化等，以前看起来十分困难的操作。本文也会一并介绍这些应用。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

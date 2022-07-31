@@ -6,7 +6,27 @@
     <description>Recent content on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 20 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 31 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cartopy 系列：利用多边形生成掩膜数组</title>
+      <link>https://zhajiman.github.io/post/cartopy_polygon_to_mask/</link>
+      <pubDate>Sun, 31 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/cartopy_polygon_to_mask/</guid>
+      <description>&lt;p&gt;二维平面上一系列点的坐标由 &lt;code&gt;x&lt;/code&gt; 和 &lt;code&gt;y&lt;/code&gt; 数组描述，同时准备一个形状相同的 &lt;code&gt;mask&lt;/code&gt; 数组。若第 &lt;code&gt;i&lt;/code&gt; 个点落入了平面上一个多边形的内部，则令 &lt;code&gt;mask[i] = True&lt;/code&gt;；若在多边形外，则令 &lt;code&gt;mask[i] = False&lt;/code&gt;。由此得到的 &lt;code&gt;mask&lt;/code&gt; 数组即掩膜（mask）数组，它可以作为布尔索引分出多边形内外的点&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;x_in, y_in = x[mask], y[mask]
+x_out, y_out = x[mask], y[mask]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;它可以作为掩膜，掩盖多边形范围外的值——即把外面的值设为 NaN，以便进行后续的计算&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;z[~mask] = np.nan
+z_mean = np.nanmean(z)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;下图展示了两个应用：左小图的多边形是一个中心带洞的正方形，给定一系列散点的坐标，计算出掩膜后可以把多边形内的散点画成红色，多边形外的散点画成蓝色；右小图的多边形是中国全域，给定 &lt;code&gt;(50, 50)&lt;/code&gt; 形状的经纬度网格，计算出掩膜后用橙色画出掩膜为 &lt;code&gt;True&lt;/code&gt; 的部分，这张掩膜之后可以用来处理网格上的其它变量。&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/cartopy_polygon_to_mask/diagram.png&#34; alt=&#34;diagram&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;本文的目的是介绍如何用 Python 制作掩膜数组，并尽量优化其运行时间。从 shapefile 中读取中国国界并转化为 Shapely 中的多边形对象等操作，已经在博文 &lt;a href=&#34;https://zhajiman.github.io/post/cartopy_shapefile/&#34; target=&#34;_blank&#34;&gt;Cartopy 系列：探索 shapefile&lt;/a&gt; 中详细介绍过了，本文是对其的一个补充。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Cartopy 系列：探索 shapefile</title>
       <link>https://zhajiman.github.io/post/cartopy_shapefile/</link>
