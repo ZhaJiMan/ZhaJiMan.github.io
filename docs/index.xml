@@ -6,7 +6,17 @@
     <description>Recent content on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 31 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 03 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python 系列：测量程序的运行时间</title>
+      <link>https://zhajiman.github.io/post/python_measure_time/</link>
+      <pubDate>Wed, 03 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/python_measure_time/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;说到测量程序的运行时间这件事，我最早的做法是在桌上摆个手机，打开秒表应用，右手在命令行里敲回车的同时左手启动秒表，看屏幕上程序跑完后再马上按停秒表，最后在纸上记下时间。后来我在 Linux 上学会了在命令开头添加一个 &lt;code&gt;time&lt;/code&gt;，终于摆脱了手动计时的原始操作。这次就想总结一下迄今为止我用过的那些测量时间的工具/代码。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Cartopy 系列：利用多边形生成掩膜数组</title>
       <link>https://zhajiman.github.io/post/cartopy_polygon_to_mask/</link>
