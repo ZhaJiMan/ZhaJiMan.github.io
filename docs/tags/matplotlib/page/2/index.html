@@ -21,7 +21,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<title>shapely - 炸鸡人博客</title>
+<title>matplotlib - 炸鸡人博客</title>
 
 
 <meta name="author" content="炸鸡人" />
@@ -30,14 +30,14 @@
 <meta name="description" content="A minimal Hugo theme with nice theme color." />
 
 
-<link rel="alternate" type="application/rss+xml" href="https://zhajiman.github.io/tags/shapely/index.xml" title="炸鸡人博客" />
+<link rel="alternate" type="application/rss+xml" href="https://zhajiman.github.io/tags/matplotlib/index.xml" title="炸鸡人博客" />
 
-<meta property="og:title" content="shapely" />
-<meta name="twitter:title" content="shapely" />
+<meta property="og:title" content="matplotlib" />
+<meta name="twitter:title" content="matplotlib" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://zhajiman.github.io/tags/shapely/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta property="og:url" content="https://zhajiman.github.io/tags/matplotlib/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-07-31T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-09-17T00:00:00+00:00" />
 
 
 <style>
@@ -104,85 +104,43 @@
                 
 
 <div class="page-info">
-  <span>Posts with the tag shapely: </span>
+  <span>Posts with the tag matplotlib: </span>
 </div>
 
 
 
 <div class="post">
   <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/cartopy_polygon_to_mask/">Cartopy 系列：利用多边形生成掩膜数组</a>
+    <a href="https://zhajiman.github.io/post/cartopy_introduction/">Cartopy 系列：从入门到放弃</a>
   </h2>
   <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-07-31</span>
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-23</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2290 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6176 words</span>
 
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/shapely">shapely</a>&nbsp;</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
   </div>
   <div class="post-item post-summary markdown-body">
-    <p>二维平面上一系列点的坐标由 <code>x</code> 和 <code>y</code> 数组描述，同时准备一个形状相同的 <code>mask</code> 数组。若第 <code>i</code> 个点落入了平面上一个多边形的内部，则令 <code>mask[i] = True</code>；若在多边形外，则令 <code>mask[i] = False</code>。由此得到的 <code>mask</code> 数组即掩膜（mask）数组，它可以作为布尔索引分出多边形内外的点</p>
-<pre><code class="language-Python">x_in, y_in = x[mask], y[mask]
-x_out, y_out = x[mask], y[mask]
-</code></pre>
-<p>它可以作为掩膜，掩盖多边形范围外的值——即把外面的值设为 NaN，以便进行后续的计算</p>
-<pre><code class="language-Python">z[~mask] = np.nan
-z_mean = np.nanmean(z)
-</code></pre>
-<p>下图展示了两个应用：左小图的多边形是一个中心带洞的正方形，给定一系列散点的坐标，计算出掩膜后可以把多边形内的散点画成红色，多边形外的散点画成蓝色；右小图的多边形是中国全域，给定 <code>(50, 50)</code> 形状的经纬度网格，计算出掩膜后用橙色画出掩膜为 <code>True</code> 的部分，这张掩膜之后可以用来处理网格上的其它变量。</p>
-<p><img class="img-zoomable" src="/cartopy_polygon_to_mask/diagram.png" alt="diagram" />
+    <h2 id="简介">简介</h2>
+<p>常用的地图可视化的编程工具有 MATLAB、IDL、GrADS、GMT、NCL 等。我之前一直使用的是脚本语言 NCL，易用性不错，画地图的效果也很好。然而 2019 年初，NCAR 宣布 NCL 将停止更新，并会在日后转为 Python 的绘图包。于是我开始考虑转投 Python，同时觉得在 Python 环境下如果还是用 PyNGL 那一套语法的话，未免有些换汤不换药。因此我选择用 Python 环境下专有的 Cartopy 包来画地图。</p>
+<p><img class="img-zoomable" src="/cartopy_introduction/cartopy_log.png" alt="cartopy_log" />
 </p>
-<p>本文的目的是介绍如何用 Python 制作掩膜数组，并尽量优化其运行时间。从 shapefile 中读取中国国界并转化为 Shapely 中的多边形对象等操作，已经在博文 <a href="https://zhajiman.github.io/post/cartopy_shapefile/" target="_blank">Cartopy 系列：探索 shapefile</a> 中详细介绍过了，本文是对其的一个补充。</p>
-  </div>
-</div>
-
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/cartopy_shapefile/">Cartopy 系列：探索 shapefile</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-06-20</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;12991 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/shapely">shapely</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <h2 id="前言">前言</h2>
-<p>Cartopy 可以通过 <code>feature</code> 模块向地图添加国界 <code>BORDER</code> 和省界 <code>STATES</code>，因其底层采用的 Natural Earth 地图数据并不符合我国的政治主张，所以我们经常需要自备 shapefile 文件来画中国省界，以下面的代码为例</p>
-<pre><code class="language-Python">import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
-import cartopy.io.shapereader as shpreader
-
-extents = [70, 140, 0, 60]
-crs = ccrs.PlateCarree()
-fig = plt.figure()
-ax = fig.add_subplot(111, projection=crs)
-ax.set_extent(extents, crs)
-
-filepath = './data/bou2_4/bou2_4p.shp'
-reader = shpreader.Reader(filepath)
-geoms = reader.geometries()
-ax.add_geometries(geoms, crs, lw=0.5, fc='none')
-reader.close()
-
-plt.show()
-</code></pre>
-<p>图就不放了，这段代码足以应付大部分需要画省界的情况。然而我在无脑粘贴代码的过程中逐渐产生了疑惑：为什么 shapefile 会由三个文件组成？省界是以何种形式存储在文件中？Cartopy 和 Matplotlib 又是怎样将省界画出来的？调查一番源码后总结出了这段代码底层实现的流程：</p>
-<ul>
-<li>利用 PyShp 包读取 shapefile 文件中的每个形状。</li>
-<li>利用 Shapely 包将形状转换为几何对象。</li>
-<li>利用 Cartopy 包将几何对象投影到地图所在的坐标系上。</li>
-<li>用投影后的坐标构造 Matplotlib 的 Path 对象，最后画在地图上。</li>
-</ul>
-<p>本文的目的即是从头到尾解说一下这段流程，希望加深对 shapefile 格式，Matplotlib 和 Cartopy 包的理解。令人意外的是，随着探索的不断深入，我发现自己自然而然地学会了如何实现省份填色、省份合并，地图白化等，以前看起来十分困难的操作。本文也会一并介绍这些应用。</p>
+<p>此前 Python 最常用的地图包是 Basemap，然而它将于 2020 年被弃用，官方推荐使用 Cartopy 包作为替代。Cartopy 是英国气象局开发的地图绘图包，实现了 Basemap 的大部分功能，还可以通过 Matplotlib 的 API 实现丰富的自定义效果。</p>
+<p>本文将会从一个 NCL 转 Python 的入门者的角度，介绍如何安装 Cartopy，如何绘制地图，并实现一些常用的效果。代码基于 0.18.0 版本的 Cartopy。</p>
   </div>
 </div>
 
 
-
+<div class="pagination"><div class="pag-first">
+    <a href="/tags/matplotlib/"><i class="iconfont icon-caret-back-circle-sharp"></i></a>
+  </div><div class="pag-previous">
+    <a href="/tags/matplotlib/"><i class="iconfont icon-chevron-back-circle-sharp"></i></a>
+  </div><div class="pag-item">
+    <a href="/tags/matplotlib/">1</a>
+  </div><div class="pag-item pag-current">
+    <a href="/tags/matplotlib/page/2/">2</a>
+  </div></div>
             </div>
             <aside class="col-12 col-md-3 float-left sidebar">
     

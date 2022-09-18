@@ -6,7 +6,22 @@
     <description>Recent content on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 03 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 17 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>编写科研作图代码有更好的方法</title>
+      <link>https://zhajiman.github.io/post/matplotlib_better_code/</link>
+      <pubDate>Sat, 17 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/matplotlib_better_code/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;这是物理海洋学家 Ken Hughes 在 2021 年发表的博客文章，原文标题为 &lt;a href=&#34;https://brushingupscience.com/2021/11/02/a-better-way-to-code-up-scientific-figures/&#34; target=&#34;_blank&#34;&gt;A better way to code up scientific figures&lt;/a&gt;。以 Matplotlib 和 Matlab 为例，强调了模块化思想对于科研作图代码的帮助。我很少看到关于作图方法论的文章，所以翻译出来交流学习。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;我画一张出版级别的科研配图一般需要写 100 - 200 行代码，这个长度有点点危险，因为很容易写出能正常运行但又一团糟的东西。如果代码片段都很短还可以从头重写，但如果代码有上千行，提前做好规划会更明智一些。不过在这两种极端情况之间潜藏着另一种吸引人的做法：写出一段当时感觉无比连贯，但以后会让你吃苦头的脚本。&lt;/p&gt;
+&lt;p&gt;假设你想画一张中等复杂度的图片，类似下面这张：&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/matplotlib_better_code/data_overview-1.png&#34; alt=&#34;data_overview-1&#34; /&gt;
+&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Python 系列：测量程序的运行时间</title>
       <link>https://zhajiman.github.io/post/python_measure_time/</link>

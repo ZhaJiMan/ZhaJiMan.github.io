@@ -114,7 +114,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-08-03</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6675 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6672 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
 
@@ -185,9 +185,9 @@ if __name__ == '__main__':
 <p>在 Linux 的 Bash 中通过在命令前加上 <code>time</code>，即可在命令执行结束后打印出三种耗时</p>
 <pre><code>(base) laptop@zhajiman:/code$ time python test.py
 
-real	0m22.993s
-user	0m19.905s
-sys		0m0.096s
+real    0m22.993s
+user    0m19.905s
+sys     0m0.096s
 </code></pre>
 <p>其中 <code>real</code> 指总耗时（墙上时钟经过的时间，即 wall time），<code>user</code> 指用户态代码耗费的 CPU 时间，<code>sys</code> 指系统态代码耗费的 CPU 时间。一般看 <code>real</code> 的数值即可，关于三种时间的解释可见 <a href="https://blog.csdn.net/z_ssyy/article/details/123069566" target="_blank">linux time命令详解与坑</a>。</p>
 <h3 id="windows-的-measure-command">Windows 的 Measure-Command</h3>
@@ -242,7 +242,7 @@ In [4]: %timeit contain(hebei, 115, 40)
 <pre><code>In [5]: %timeit -n 1 -r 1 main()
 15.4 s ± 0 ns per loop (mean ± std. dev. of 1 run, 1 loop each)
 </code></pre>
-<p>无论是 <code>%time</code> 还是 <code>%timeit</code> 都有一个缺陷：只能在 IPython 顶层的命名空间中使用。例如我想测试 <code>contain(hebei, x, y)</code> 对于单点的速度，因为变量 <code>hebei</code> 在函数 <code>main</code> 的命名空间里，而外部没有，所以我在使用 <code>%timeit</code> 前又在全局新建了 <code>hebei</code> 变量。我还试过设置断点通过 ipdb 跳到函数内，结果发现此时 <code>%timeit</code> 用不了，不知道读者有没有比较好的解决方法。</p>
+<p>无论是 <code>%time</code> 还是 <code>%timeit</code> 都有一个缺陷：只能在 IPython 顶层的作用域中使用。例如我想测试 <code>contain(hebei, x, y)</code> 对于单点的速度，因为变量 <code>hebei</code> 在函数 <code>main</code> 的作用域里，而外部没有，所以我在使用 <code>%timeit</code> 前又在全局新建了 <code>hebei</code> 变量。我还试过设置断点通过 ipdb 跳到函数内，结果发现此时 <code>%timeit</code> 用不了，不知道读者有没有比较好的解决方法。</p>
 <h2 id="标准库的-time-模块">标准库的 time 模块</h2>
 <h3 id="time-和-perf_counter-函数">time 和 perf_counter 函数</h3>
 <p>time 模块的一个主要功能就是获取当前时间，所以只要在想计时的代码块开头获取一次时间，再在结尾获取一次，最后计算二者的差值就能得到代码块的耗时。例如</p>
@@ -574,7 +574,7 @@ if __name__ == '__main__':
 </code></pre>
 <p>不过自己写的版本有个毛病，反复调用被装饰的函数会重写结果文件，导致无法测量累积用时。</p>
 <h3 id="kernprof">kernprof</h3>
-<p>kernprof 是 line_profiler 附带的一个脚本，作用是简化调用 <code>LineProfiler</code> 的流程，自动输出结果文件。在命令行里用它代替 Python 命令执行脚本时，会先构造一个名为 <code>profile</code> 的 <code>LineProfiler</code> 对象，并将其注入脚本的命名空间。这样一来脚本开头无需添加 <code>import</code> 语句就能直接引用 <code>profile</code> 变量，接着用它装饰目标函数即可。这也是 line_profiler 文档的推荐用法。例如在脚本中加上一行</p>
+<p>kernprof 是 line_profiler 附带的一个脚本，作用是简化调用 <code>LineProfiler</code> 的流程，自动输出结果文件。在命令行里用它代替 Python 命令执行脚本时，会先构造一个名为 <code>profile</code> 的 <code>LineProfiler</code> 对象，并将其注入脚本的作用域。这样一来脚本开头无需添加 <code>import</code> 语句就能直接引用 <code>profile</code> 变量，接着用它装饰目标函数即可。这也是 line_profiler 文档的推荐用法。例如在脚本中加上一行</p>
 <pre><code class="language-Python">@profile
 def main():
     &lt;函数体省略&gt;

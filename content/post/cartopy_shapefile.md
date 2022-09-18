@@ -778,7 +778,7 @@ def add_geometries(ax, geoms, crs, **kwargs):
 
 - 是 `GeoAxes` 专属的方法，普通的 `Axes` 没有。
 - `geoms` 可以是点或线几何，但点画出来看不到，线最好设置 `fc='none'`。
-- 若 `kwargs` 中的 `facecolor` 是一个颜色列表，那么上色顺序会跟 `geoms` 的顺序不符。
+- `geoms` 中如果有几何对象被过滤掉了，那么上色顺序会跟 `facecolors` 或 `array` 参数的顺序不符。
 - 没有返回值，不方便作为 `mappable` 对象传给 colorbar。
 
 为了改进这些问题，下面手工实现一个版本
@@ -817,134 +817,63 @@ plt.show()
 
 ## 简单应用
 
-首先准备一个名为 `shapetools.py` 的文件，写入将会用到的函数
+为落入多边形的网格点生成掩膜（mask）数组，之后掩膜数组可以用来将多边形外的数据点设为缺测
 
 ```Python
-import numpy as np
-import shapely.geometry as sgeom
-import shapely.ops as sops
-from shapely.prepared import prep
-import matplotlib.path as mpath
-from matplotlib.collections import PathCollection
+from shapely.vectorized import contains
 
-def ring_codes(n):
-    '''为长度为n的环生成codes.'''
-    codes = [mpath.Path.LINETO] * n
-    codes[0] = mpath.Path.MOVETO
-    codes[-1] = mpath.Path.CLOSEPOLY
+mask = contains(polygon, lon, lat)
+data[~mask] = np.nan
+```
 
-    return codes
+最直接的思路当然是为每个网格点构造 `Point` 对象，然后利用 `Polygon.contains(Point)` 来判断点是否落入多边形内，但这种方法速度极慢。后来我在看 [regionmask](https://regionmask.readthedocs.io/en/stable/) 包的源码时发现了矢量化版本的 `contains` 函数，效率对于日常数据处理来说绰绰有余。另外还可以通过递归分割来优化循环法，可见 [Cartopy 系列：利用多边形生成掩膜数组](https://zhajiman.github.io/post/cartopy_polygon_to_mask/) 一文。现成的其它选择还有 regionmask、salem、rasterio 等包（[python绘图 | salem一招解决所有可视化中的掩膜(Mask)问题](https://mp.weixin.qq.com/s?__biz=MzA3MDQ1NDA4Mw==&mid=2247485322&idx=1&sn=25a3a7c9455da919a8e428cd6a099264&chksm=9f3dd9a6a84a50b01e112bb07c718fe041cfde1a539a0f7a4619cd90c62694d8fa45b31c3282&scene=21)）。
 
-def polygon_to_path(polygon):
-    '''将Polygon或MultiPolygon转为Path.'''
-    if hasattr(polygon, 'geoms'):
-        polygons = polygon.geoms
-    else:
-        polygons = [polygon]
+对填色图、风矢量等画图结果进行白化，将多边形轮廓外面的部分设成白色，仅在轮廓内部显示绘图结果
 
-    # 空多边形需要占位.
-    if polygon.is_empty:
-        return mpath.Path([(0, 0)])
-
-    # 用多边形含有的所有环的顶点构造Path.
-    vertices, codes = [], []
-    for polygon in polygons:
-        for ring in [polygon.exterior] + polygon.interiors[:]:
-            vertices += ring.coords[:]
-            codes += ring_codes(len(ring.coords))
-    path = mpath.Path(vertices, codes)
-
-    return path
-
-def polygon_to_mask(polygon, x, y):
-    '''生成落入多边形的点的掩膜数组.'''
-    x = np.asarray(x)
-    y = np.asarray(y)
-    mask = np.zeros(x.shape, dtype=bool)
-
-    # 判断每个点是否落入polygon, 不包含边界.
-    prepared = prep(polygon)
-    for index in np.ndindex(x.shape):
-        point = sgeom.Point(x[index], y[index])
-        if prepared.contains(point):
-            mask[index] = True
-
-    return mask
-
-def add_polygons(ax, polygons, **kwargs):
-    '''将多边形添加到Axes上. GeoAxes可以通过transform参数指定投影.'''
-    paths = [polygon_to_path(polygon) for polygon in polygons]
-    pc = PathCollection(paths, **kwargs)
-    ax.add_collection(pc)
-
-    return pc
-
-def fast_transform(geom, crs_src, crs_tgt):
-    '''快速变换几何对象. 不保证结果的有效性.'''
-    def func(x, y):
-        # 对多边形来说变换结果含NaN时可能报错.
-        x, y = np.array(x), np.array(y)
-        result = crs_tgt.transform_points(crs_src, x, y)
-        return result[:, 0], result[:, 1]
-
-    # 考虑空对象和坐标系相同的情况.
-    geom_type = type(geom)
-    if geom.is_empty:
-        return geom_type()
-    elif crs_src == crs_tgt:
-        return geom_type(geom)
-    else:
-        return sops.transform(func, geom)
-
-def clip_by_polygon(artist, polygon, crs=None, fast=False):
-    '''利用多边形裁剪画图结果. crs指定多边形的坐标系统, fast设置快速变换.'''
+```Python
+def clip_by_polygon(artist, polygon):
+    '''利用多边形裁剪画图结果.'''
     ax = artist.axes
-    if crs is not None:
-        proj = ax.projection
-        if fast:
-            polygon = fast_transform(polygon, crs, proj)
-        else:
-            polygon = proj.project_geometry(polygon, crs)
-
-    # 适用于contour, pcolor和quiver的结果.
     path = polygon_to_path(polygon)
     if hasattr(artist, 'collections'):
         for collection in artist.collections:
             collection.set_clip_path(path, ax.transData)
     else:
         artist.set_clip_path(path, ax.transData)
+
+cf = ax.contourf(lon, lat, data, levels=10)
+clip_by_polygon(cf, polygon)
 ```
 
-其中 `ring_codes`、`polygon_to_path` 和 `add_polygons` 在前文已经介绍过，不再赘述。`polygon_to_mask` 的功能是为落入多边形内部的网格点生成掩膜（mask）数组，我在网上看到有用 `Path.contain_points` 方法实现的（[Python截取不规则区域内格点](http://bbs.06climate.com/forum.php?mod=viewthread&tid=95590)），不过我测试后发现这一方法会把落入洞里的点也算在多边形内，并且使用 Shapely 的 `prepared` 模块会快得多（参考 [Cartopy 系列：利用多边形生成掩膜数组](https://zhajiman.github.io/post/cartopy_polygon_to_mask/)）。类似的选择还有 salem 包中的 `roi` 方法（[python绘图 | salem一招解决所有可视化中的掩膜(Mask)问题](https://mp.weixin.qq.com/s?__biz=MzA3MDQ1NDA4Mw==&mid=2247485322&idx=1&sn=25a3a7c9455da919a8e428cd6a099264&chksm=9f3dd9a6a84a50b01e112bb07c718fe041cfde1a539a0f7a4619cd90c62694d8fa45b31c3282&scene=21)） 和 rasterio 包的 `mask` 模块（[Masking a raster using a shapefile](https://rasterio.readthedocs.io/en/latest/topics/masking-by-shapefile.html)）等。
+显然前面的 `contains` 函数能通过设置 NaN，在数据层面实现白化效果，缺点是当网格分辨率较粗时，填色图的边缘会出现明显的锯齿感。而利用 `Matplotlib` 的 `Artist.set_clip_path` 方法，以一个 `Path` 或 `Patch` 对象作为轮廓，裁剪掉 `Artist` 在轮廓外面的部分，就能在画图层面实现白化效果，观感更为平滑自然，缺点是对数据处理没有什么帮助。网上非常流行的 maskout 包（实际上是一个模块）的原理便是后者（[Python完美白化](http://bbs.06climate.com/forum.php?mod=viewthread&tid=42437)、[提高白化效率](http://bbs.06climate.com/forum.php?mod=viewthread&tid=96578) 等）。而 maskout 的问题在于把 shapefile 文件的读取和白化功能都放在了 `shp2clip` 函数里，并且假定读者的文件的字段排列与原作者的文件相同，如果不同，那你就要手动修改 `shp2clip` 函数内的语句。并且下一次换用另一种 shapefile 文件时就又需要修改。
 
-`clip_by_polygon` 的功能是对填色图、风矢量等画图结果进行白化。所谓白化，按网上的说法就是以国界、省界等形状为轮廓，将填色图中处于轮廓外面的部分设成白色，仅在轮廓内部显示绘图结果。显然用前面的 `polygon_to_mask` 函数生成的掩膜数组，将多边形外的数据点设为 NaN 便能实现白化效果。缺点是当网格分辨率较粗时，填色图的边缘会出现明显的锯齿效果。另一种白化思路是利用 `Matplotlib` 中的 `Artist.set_clip_path` 方法，以一个 `Path` 或 `Patch` 对象作为轮廓，裁剪掉 `Artist` 在轮廓外面的部分。优点是白化效果平滑，缺点是这仅仅是一种视觉效果上的修改，对数据处理没有什么帮助。网上非常流行的 maskout 包（实际上是一个模块）便是采用的这一方案（[Python完美白化](http://bbs.06climate.com/forum.php?mod=viewthread&tid=42437)、[提高白化效率](http://bbs.06climate.com/forum.php?mod=viewthread&tid=96578)）。然而 maskout 的问题在于把 shapefile 文件的读取放在了 `shp2clip` 函数里面，并且假定读者的文件的字段排列与原作者的文件相同，如果不同，那你就要手动修改 `shp2clip` 函数内的语句。并且下一次换用另一种 shapefile 文件时就又需要修改。而 `clip_by_polygon` 函数只关心裁剪的部分，不涉及 shapefile 文件的读取，并且加入了坐标变换的功能。
+这里把白化部分的功能单独拿出来进行讲解：`pcolor`、`pcolormesh`、`imshow`、`quiver` 和 `scatter` 方法返回的对象都是 `matplotlib.collections.Collection` 的子类，可以直接用 `set_clip_path` 方法进行剪切；而 `contour` 和 `contourf` 返回的结果是每一级的等值线（用 `PathCollection` 表示）构成的列表，保存在 `collections` 属性中，所以需要迭代其成员进行剪切。代码中出现的 `polygon_to_path` 函数在前文有定义。
 
-具体到代码上，上一节提到过 `add_geometries` 中是用 `project_geometry` 方法对几何对象进行坐标变换的，这一方法能正确处理变换失败和跨边界的情况，例如：若变换结果出现了 NaN，直接将该多边形设为空多边形；若目标坐标系中几何对象跨越了左右边界，那么会将几何对象切分成由左右两部分构成的 `MultiPolygon`，以得到正确的画图效果。然而也正是因为 `project_geometry` 要进行如此复杂的操作，其速度有时会很慢。所以 `clip_by_polygon` 提供一个 `fast` 开关，可以选用简单的 `crs.transform_points` 方法进行坐标变换，速度会更快，代价是复杂情况下可能得到错误的结果。`pcolor`、`pcolormesh` 和 `quiver` 方法返回的对象都是 `matplotlib.collections.Collection` 的子类，可以直接剪切；`contourf` 返回的结果是每一级的等值线（用 `PathCollection` 表示）构成的列表，保存在 `collections` 属性中，所以需要迭代其成员进行剪切。
+为了方便测试和复用代码，我写了一个 [frykit](https://github.com/ZhaJiMan/frykit) 包，直接提供掩膜和白化相关的函数，并且加入了对坐标变换和填色图出界的处理（[cartopy issue#2052](https://github.com/SciTools/cartopy/issues/2052)）。另外 frykit 自带 [ChinaAdminDivisonSHP](https://github.com/GaryBikini/ChinaAdminDivisonSHP) 项目的 shapefile 文件，可以一行命令绘制中国国界、省界和市界，并且速度要比 `add_geometries` 快一些。更多说明请见 GitHub 页面，安装方法为
+
+```
+pip install frykit
+```
+
+依赖仅为 `cartopy>=0.20.0`。
 
 下面以 2020 年 6 月 21 日 12 时（CST）的 ERA5 地表 2 米温度场和 10 米风场数据来演示
 
 ```Python
 import numpy as np
 import xarray as xr
-from shapely.ops import unary_union
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-import matplotlib.patches as mpatches
 import cartopy.crs as ccrs
-import cartopy.io.shapereader as shpreader
-
-import shapetools
+import frykit.plot as fplt
+import frykit.shp as fshp
 
 extents_map = [78, 128, 15, 55]
 extents_data = [60, 150, 0, 60]
 lonmin, lonmax, latmin, latmax = extents_data
 
-# 文件路径.
-filepath_ERA5 = './data/ERA5/era5.tuv.20200621.nc'
-filepath_shp = './data/ChinaAdminDivisonSHP/2. Province/province'
-
 # 读取并裁剪数据.
-ds = xr.load_dataset(filepath_ERA5)
+ds = xr.load_dataset('./data/ERA5/era5.tuv.20200621.nc')
 ds = ds.sortby('latitude').sel(
     time='2020-06-21 04:00',
     longitude=slice(lonmin, lonmax),
@@ -957,19 +886,13 @@ lon, lat = np.meshgrid(ds.longitude, ds.latitude)
 # 开尔文转摄氏度.
 ds['t2m'] -= 273.15
 
-# 读取省界.
-reader = shpreader.BasicReader(filepath_shp)
-provinces = list(reader.geometries())
-reader.close()
-# 合成国界.
-country = unary_union(provinces)
-
-# 制作国界和省界的掩膜数组, 分辨率依照ERA5数据.
-masks_province = []
-for province in provinces:
-    mask_province = shapetools.polygon_to_mask(province, lon, lat)
-    masks_province.append(mask_province)
-mask_country = np.any(masks_province, axis=0)
+# 制作国界和省界的掩膜数组.
+country = fshp.get_cnshp(level='国')
+provinces = fshp.get_cnshp(level='省')
+mask_country = fshp.polygon_to_mask(country, lon, lat)
+masks_province = [
+    fshp.polygon_to_mask(province, lon, lat) for province in provinces
+]
 
 # 应用掩膜数组.
 t2m_masked = np.where(mask_country, t2m, np.nan)
@@ -1000,26 +923,11 @@ vmin, vmax = -10, 35
 norm = mcolors.Normalize(vmin, vmax)
 levels = np.linspace(vmin, vmax, 10)
 
-def add_quiverkey(ax, Q, U):
-    '''添加风箭头图例.'''
-    w, h = 0.15, 0.12
-    rect = mpatches.Rectangle(
-        (1 - w, 0), w, h, transform=ax.transAxes,
-        fc='white', ec='k', lw=0.5
-    )
-    ax.add_patch(rect)
-    qk = ax.quiverkey(
-        Q, X=1-w/2, Y=0.7*h, U=U,
-        label=f'{U} m/s', labelpos='S', labelsep=0.05,
-        fontproperties={'size': 'x-small'}
-    )
-
 # 子图1绘制省平均气温.
 ax = axes[0]
-pc = shapetools.add_polygons(
-    ax, provinces, ec='k', lw=0.2,
-    cmap=cmap, norm=norm, array=avgs,
-    transform=crs_data
+pc = fplt.add_polygons(
+    ax, provinces, crs=crs_data,
+    ec='k', lw=0.2, cmap=cmap, norm=norm, array=avgs
 )
 cbar = fig.colorbar(
     pc, ax=ax, ticks=levels, orientation='horizontal',
@@ -1031,13 +939,16 @@ ax.set_title('Averaged by Provinces', fontsize='medium')
 
 # 子图2绘制掩膜后的气温场和风场.
 ax = axes[1]
-ax.add_geometries(provinces, crs_data, fc='none', ec='k', lw=0.2)
-im = ax.contourf(
+fplt.add_polygons(
+    ax, provinces, crs=crs_data,
+    fc='none', ec='k', lw=0.2, zorder=1.5
+)
+cf = ax.contourf(
     lon, lat, t2m_masked, levels, cmap=cmap,
     extend='both', transform=crs_data
 )
 cbar = fig.colorbar(
-    im, ax=ax, ticks=levels, orientation='horizontal',
+    cf, ax=ax, ticks=levels, orientation='horizontal',
     pad=0.05, aspect=30, extend='both'
 )
 cbar.set_label('Temperature (℃)', fontsize='small')
@@ -1046,18 +957,23 @@ Q = ax.quiver(
     lon, lat, u10_masked, v10_masked,
     regrid_shape=25, transform=crs_data
 )
-add_quiverkey(ax, Q, U=10)
+patch_kwargs = {'linewidth': 0.5}
+key_kwargs = {'labelsep': 0.05, 'fontproperties': {'size': 'x-small'}}
+fplt.add_quiver_legend(Q, U=10, width=0.15, height=0.12, key_kwargs=key_kwargs)
 ax.set_title('Masked by Country', fontsize='medium')
 
 # 子图3绘制气温场和风场后再剪切.
 ax = axes[2]
-ax.add_geometries(provinces, crs_data, fc='none', ec='k', lw=0.2)
-im = ax.contourf(
+fplt.add_polygons(
+    ax, provinces, crs=crs_data,
+    fc='none', ec='k', lw=0.2, zorder=1.5
+)
+cf = ax.contourf(
     lon, lat, t2m, levels, cmap=cmap,
     extend='both', transform=crs_data
 )
 cbar = fig.colorbar(
-    im, ax=ax, ticks=levels, orientation='horizontal',
+    cf, ax=ax, ticks=levels, orientation='horizontal',
     pad=0.05, aspect=30, extend='both'
 )
 cbar.set_label('Temperature (℃)', fontsize='small')
@@ -1066,28 +982,28 @@ Q = ax.quiver(
     lon, lat, u10, v10,
     regrid_shape=25, transform=crs_data
 )
-add_quiverkey(ax, Q, U=10)
-shapetools.clip_by_polygon(im, country, crs=crs_data, fast=True)
-shapetools.clip_by_polygon(Q, country, crs=crs_data, fast=True)
+fplt.add_quiver_legend(Q, U=10, width=0.15, height=0.12, key_kwargs=key_kwargs)
+fplt.clip_by_polygon(cf, country, crs=crs_data, fix=True)
+fplt.clip_by_polygon(Q, country, crs=crs_data)
 ax.set_title('Clipped by Country', fontsize='medium')
 
 fig.savefig('applications.png', dpi=300, bbox_inches='tight')
 plt.close(fig)
 ```
 
-![applications](/cartopy_shapefile/applications.png)
+![applications_with_frykit](/cartopy_shapefile/applications_with_frykit.png)
 
-读者可以点击图片放大看看，第二张子图中填色图与国界间会有些参差不齐的空白，第三张子图中填色图则是严丝合缝地与国界贴在一起。本来可以用 `polygon_to_mask(country, lon, lat)` 直接获取国界的掩膜，但因为已经有了省界的掩膜，利用 `np.any` 可以计算出国界掩膜，从而节省时间。读者仔细看可能会发现，第三张图中 colorbar 的 25 刻度附近似乎有一些微小的彩色斑点，越看越像南海群岛……没错，其实是对 `GeoAxes` 的元素使用 `set_clip_path` 后，画框（`spines`）外的元素又会莫名其妙出现，这可能是 Cartopy 现阶段的 bug，解决办法可以参考 [填色图contour.set_clip_path超出边界](https://mp.weixin.qq.com/s/9K-ReadS3Dk0CCyRWxYUMg)。这里对出图效果影响不大，我就偷懒不改进了。
+读者可以点击图片放大看看，第二张子图中填色图与国界间会有些参差不齐的空白，第三张子图中填色图则是严丝合缝地与国界贴在一起。
 
 ## 结语
 
-本文稍微梳理了一下用 Matplotlib 和 Cartopy 绘制 shapefile 时所需的前置知识和工具链，虽然不了解这些也能用网上现成的代码完成简单的绘图，但只有理解了整个过程，才能使我们在设计复杂图形和 debug 时游刃有余（精美图像一例：[Plotting continents... shapefiles and tif images with Cartopy](http://neichin.github.io/personalweb/writing/Cartopy-shapefile/)）。当然对于赶时间的读者，我推荐安装 cnmaps 包
+本文稍微梳理了一下用 Matplotlib 和 Cartopy 绘制 shapefile 时所需的前置知识和工具链，虽然不了解这些也能用网上现成的代码完成简单的绘图，但只有理解了整个过程，才能使我们在设计复杂图形和 debug 时游刃有余（精美图像一例：[Plotting continents... shapefiles and tif images with Cartopy](http://neichin.github.io/personalweb/writing/Cartopy-shapefile/)）。当然对于赶时间的读者，我推荐使用 cnmaps 包，frykit 在很大程度上参考了 cnmaps 的 API。安装方法为
 
 ```
 conda install -c conda-forge cnmaps
 ```
 
-然后一行代码画国界、省界、市区县，都不用自己准备 shapefile
+然后一行代码画国界、省界、市区县，也不用自己准备 shapefile
 
 ```Python
 from cnmaps import get_adm_maps, draw_maps
@@ -1108,7 +1024,7 @@ clip_pcolormesh_by_map(mesh, map_polygon)
 
 ![cnmaps](/cartopy_shapefile/cnmaps.png)
 
-更多用法详见 [cnmaps使用指南](https://cnmaps-doc.readthedocs.io/zh_CN/latest/index.html)。本文内容较多，可能在一些地方存在错误，还请读者批评指正。另外如果本文中麻烦的 Python 操作可以用 ArcGIS 或 QGIS 等软件一键解决，也请多多介绍。
+另外还有直接导出 `GeoDataFrame` 等便利的功能，更多用法详见 [cnmaps使用指南](https://cnmaps-doc.readthedocs.io/zh_CN/latest/index.html)。本文内容较多，可能在一些地方存在错误，还请读者批评指正。另外如果本文中麻烦的 Python 操作可以用 ArcGIS 或 QGIS 等软件一键解决，也请多多介绍。
 
 ## 参考链接
 

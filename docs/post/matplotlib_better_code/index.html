@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>编写科研作图代码有更好的方法 - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="matplotlib" />
+
+
+<meta property="og:title" content="编写科研作图代码有更好的方法" />
+<meta name="twitter:title" content="编写科研作图代码有更好的方法" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/matplotlib_better_code/" /><meta property="og:description" content="
+这是物理海洋学家 Ken Hughes 在 2021 年发表的博客文章，原文标题为 A better way to code up scientific figures。以 Matplotlib 和 Matlab 为例，强调了模块化思想对于科研作图代码的帮助。我很少看到关于作图方法论的文章，所以翻译出来交流学习。
+
+我画一张出版级别的科研配图一般需要写 100 - 200 行代码，这个长度有点点危险，因为很容易写出能正常运行但又一团糟的东西。如果代码片段都很短还可以从头重写，但如果代码有上千行，提前做好规划会更明智一些。不过在这两种极端情况之间潜藏着另一种吸引人的做法：写出一段当时感觉无比连贯，但以后会让你吃苦头的脚本。
+假设你想画一张中等复杂度的图片，类似下面这张：
+
+" />
+<meta name="twitter:description" content="
+这是物理海洋学家 Ken Hughes 在 2021 年发表的博客文章，原文标题为 A better way to code up scientific figures。以 Matplotlib 和 Matlab 为例，强调了模块化思想对于科研作图代码的帮助。我很少看到关于作图方法论的文章，所以翻译出来交流学习。
+
+我画一张出版级别的科研配图一般需要写 100 - 200 行代码，这个长度有点点危险，因为很容易写出能正常运行但又一团糟的东西。如果代码片段都很短还可以从头重写，但如果代码有上千行，提前做好规划会更明智一些。不过在这两种极端情况之间潜藏着另一种吸引人的做法：写出一段当时感觉无比连贯，但以后会让你吃苦头的脚本。
+假设你想画一张中等复杂度的图片，类似下面这张：
+
+" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2022-09-17T00:00:00+00:00" /><meta property="article:modified_time" content="2022-09-17T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/matplotlib_better_code/">编写科研作图代码有更好的方法</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-09-17</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2412 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <blockquote>
+<p>这是物理海洋学家 Ken Hughes 在 2021 年发表的博客文章，原文标题为 <a href="https://brushingupscience.com/2021/11/02/a-better-way-to-code-up-scientific-figures/" target="_blank">A better way to code up scientific figures</a>。以 Matplotlib 和 Matlab 为例，强调了模块化思想对于科研作图代码的帮助。我很少看到关于作图方法论的文章，所以翻译出来交流学习。</p>
+</blockquote>
+<p>我画一张出版级别的科研配图一般需要写 100 - 200 行代码，这个长度有点点危险，因为很容易写出能正常运行但又一团糟的东西。如果代码片段都很短还可以从头重写，但如果代码有上千行，提前做好规划会更明智一些。不过在这两种极端情况之间潜藏着另一种吸引人的做法：写出一段当时感觉无比连贯，但以后会让你吃苦头的脚本。</p>
+<p>假设你想画一张中等复杂度的图片，类似下面这张：</p>
+<p><img class="img-zoomable" src="/matplotlib_better_code/data_overview-1.png" alt="data_overview-1" />
+</p>
+<p>相应的脚本可以被设想为一系列步骤：</p>
+<ol>
+<li>从 csv 文件中读取数据</li>
+<li>去掉被标记（flagged）的数据</li>
+<li>创建四张子图（subplot）</li>
+<li>第一行里画数据随时间的变化</li>
+<li>给 y 轴添加标签（label）</li>
+<li>设置 y 轴的范围</li>
+<li>第二行和第三行重复步骤 4 - 6</li>
+<li>添加填色图（contour）和灰色的等高线</li>
+<li>给时间轴添加标签</li>
+<li>添加各种标注（annotation）</li>
+</ol>
+<p>如果你对 Python、Matlab 或 R 之类的语言很熟，就能轻松地将步骤 1 - 10 扩充为一股“意识流”。像什么添加子图、给多个面板（panel）加标签、设置坐标轴范围等操作都可以不假思索地写出，因此你的脚本常常在不知不觉间超过 100 行。</p>
+<p>一般来说，笔记本电脑的屏幕或者外接显示器最多显示 40 - 50 行代码，所以你没法一眼看出脚本里的所有步骤。相反，你得靠你的短期记忆。</p>
+<p>不过先等一下！假设你想快速测试几个改动，于是你临时注释掉了几行代码，临时重写了一些变量，或者临时新添了一个面板图。</p>
+<p>恐怕你已经有种不详的预感了吧？这些临时改动中有一些会被保留，剩下的会改回去。最后原本简单的步骤 1 -10 变成了 <del>1</del>，1b，<del>2</del>，2b，3，3b，6，5，4，7，8，9，<del>10</del>，<del>10b</del>，10c，11，12。</p>
+<p>当你几个月后必须重温这个混乱的脚本时（例如第二审稿人给了点修改意见），其毛病才会真正显露出来。你写这个脚本的时候是靠短期记忆来理解所有片段是如何组合在一起的，但几个月后你肯定会忘个精光。</p>
+<p>作为一名科学家，过去几年里我写了太多这种混乱的作图脚本。即便到了现在，有时为了快速出结果我还是会这么写。不过在大部分时间里，我都会采用一种更好的编写方法。</p>
+<h2 id="编写作图脚本的模块化方法">编写作图脚本的模块化方法</h2>
+<p><a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008549" target="_blank">Ten simple rules for quick and dirty scientific programming</a> 中的第四条就是<strong>模块化你的代码</strong>，并且这也正是本文将要给出的建议。</p>
+<p>我写的每个作图脚本都由十几个函数组成，有读取数据的函数、画多个面板的函数、每张折线图对应的函数、给所有 axes 加标签的函数等。下面是一个极简的 Python 例子，在我屏幕上的效果是这样的：</p>
+<p><img class="img-zoomable" src="/matplotlib_better_code/modular_figure_example.png" alt="modular_figure_example" />
+</p>
+<p>你可能会觉得定义一堆单行函数有点小题大做，还会把脚本的长度变成原来的两倍。但请你相信我，只要你的脚本比这个小例子更复杂，模块化方法就能使你受益。</p>
+<p>具体来说，将多行代码归为函数有以下四个好处：</p>
+<h3 id="1-强迫你为脚本列出大纲">1. 强迫你为脚本列出大纲</h3>
+<p>我在前面提过，很容易将一个作图脚本设想为一系列步骤，但据我的经验来看，科学家们很少会把这些步骤记录下来。不过如果你创建了一系列函数，就要求你先有一个高层级的概览（overview）。在这个例子里，最后五行代码自然构成了大纲。</p>
+<h3 id="2-你可以用大白话描述你的代码">2. 你可以用大白话描述你的代码</h3>
+<p>你不会 Python 也能看懂例子脚本中的步骤，函数都是用大白话取的名，你只用看函数名就行。你当然可以用注释达成类似的效果，但在编写过程中注释内容往往会和代码的实际作用脱节。</p>
+<h3 id="3-定位到具体的命令更简单">3. 定位到具体的命令更简单</h3>
+<p>假设你想改变一张面板图里几条线的颜色，如果你的作图脚本有几百行，就得花点时间定位到需要改动的地方。但当几百行代码被细分到少量的函数里时，定位就会快很多。这跟用目录来查教科书的某一面是一个道理。</p>
+<h3 id="4-你可以只注释一行而不是一整块代码">4. 你可以只注释一行而不是一整块代码</h3>
+<p>在迭代到成品图的过程中，你可能会测试不同的排列、数值或图形种类。通过注释和反注释代码块来实现当然是可以的，但这种做法不仅麻烦，而且可以说是一个 <a href="https://agiletribe.wordpress.com/2015/12/26/never-leave-commented-code-in-the-source/" target="_blank">坏习惯</a>。相反，如果你写的每个函数都只完成特定的任务，你就只用注释或反注释一行代码来进行调整。比方说我要修改上面的例子，操作大概如下图所示：</p>
+<p><img class="img-zoomable" src="/matplotlib_better_code/modular_figure_changes.png" alt="modular_figure_changes" />
+</p>
+<h2 id="你的函数不必完美">你的函数不必完美</h2>
+<p>在我最初的示例中只有一个函数带参数，这无疑是种糟糕的写法，按理来说每个函数都应该有参数或能接受变量。对此我倒是不怎么担心，因为我知道当 Python 在函数体或输入里找不到所需的变量时就会到函数外面去找。由于每个函数都只用一次，所以不显式传递变量也没问题。（你可能会疑惑创建一次性的函数有没有价值，我的回答是 <a href="https://www.quora.com/Is-it-bad-if-I-write-a-function-that-only-gets-called-once" target="_blank">肯定的</a>。）</p>
+<p>在写 Matlab 时我也采取了几乎一样的方针，唯一的差别是需要额外将整个脚本用一个父函数封装，不然没法定义嵌套函数。我的脚本大致长这样：</p>
+<p><img class="img-zoomable" src="/matplotlib_better_code/matlab_modular_figure.png" alt="matlab_modular_figure" />
+</p>
+<h2 id="多用函数的建议并不新鲜">“多用函数”的建议并不新鲜</h2>
+<p>科学领域常用的编程语言（Python、Matlab、R、Julia）非常适合交互式使用。在命令行窗口输入 284*396 就会输出 112464。但命令行也就止步于此了，你很快意识到你想连续执行多行命令。因此你把这组连续的命令移到了一个脚本里，然后点击运行按钮。与命令行窗口不同的是，这种脚本能带你走得更远。（当我提到脚本时，我也在暗指那些能计算的 notebook。类似脚本，<a href="https://www.nature.com/articles/d41586-021-01174-w" target="_blank">notebook 同样混乱，而且会助长糟糕的编程习惯</a>。）</p>
+<p>许多科学家能在不懂函数的情况下完成任务，而一个不会用函数的程序员则压根找不着工作。这种不一致性使我不确定本文的定位是否合适。一方面来说，多用函数的建议听起来像废话，就好比我建议科学家写论文的时候记得带标题一样。另一方面，我看过了太多擅长计算机的科学家写出来的混乱不堪的作图脚本，所以坚信“多用函数”是一条既有价值又深刻的建议。</p>
+<p>我并不是唯一一个试图弥合程序员和科学家之间鸿沟的人。正如软件可持续性研究所的 Simon Hettrick <a href="https://www.software.ac.uk/blog/2016-09-26-scientific-coding-and-software-engineering-whats-difference" target="_blank">所说</a>：“这对写代码的科学家意味着什么？只有当他们当了软件工程师才算真正的程序员吗？我觉得不是。我认为科学家们应该把计算机编程作为一种探索性的工具来推动他们领域里的发现，这跟他们使用其它方法和工具并没有什么两样。但是作为科学家的程序员也能通过学习模块化、抽象化和数据结构而受益。”</p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2022
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+                
+                | Visits: <span id="busuanzi_value_site_pv"></span>
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.staticfile.org/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+<script defer src="https://cdn.staticfile.org/lazysizes/5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

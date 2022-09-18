@@ -80,9 +80,9 @@ if __name__ == '__main__':
 ```
 (base) laptop@zhajiman:/code$ time python test.py
 
-real	0m22.993s
-user	0m19.905s
-sys		0m0.096s
+real    0m22.993s
+user    0m19.905s
+sys     0m0.096s
 ```
 
 其中 `real` 指总耗时（墙上时钟经过的时间，即 wall time），`user` 指用户态代码耗费的 CPU 时间，`sys` 指系统态代码耗费的 CPU 时间。一般看 `real` 的数值即可，关于三种时间的解释可见 [linux time命令详解与坑](https://blog.csdn.net/z_ssyy/article/details/123069566)。
@@ -165,7 +165,7 @@ In [5]: %timeit -n 1 -r 1 main()
 15.4 s ± 0 ns per loop (mean ± std. dev. of 1 run, 1 loop each)
 ```
 
-无论是 `%time` 还是 `%timeit` 都有一个缺陷：只能在 IPython 顶层的命名空间中使用。例如我想测试 `contain(hebei, x, y)` 对于单点的速度，因为变量 `hebei` 在函数 `main` 的命名空间里，而外部没有，所以我在使用 `%timeit` 前又在全局新建了 `hebei` 变量。我还试过设置断点通过 ipdb 跳到函数内，结果发现此时 `%timeit` 用不了，不知道读者有没有比较好的解决方法。
+无论是 `%time` 还是 `%timeit` 都有一个缺陷：只能在 IPython 顶层的作用域中使用。例如我想测试 `contain(hebei, x, y)` 对于单点的速度，因为变量 `hebei` 在函数 `main` 的作用域里，而外部没有，所以我在使用 `%timeit` 前又在全局新建了 `hebei` 变量。我还试过设置断点通过 ipdb 跳到函数内，结果发现此时 `%timeit` 用不了，不知道读者有没有比较好的解决方法。
 
 ## 标准库的 time 模块
 
@@ -591,7 +591,7 @@ def lprofiler(filename):
 
 ### kernprof
 
-kernprof 是 line_profiler 附带的一个脚本，作用是简化调用 `LineProfiler` 的流程，自动输出结果文件。在命令行里用它代替 Python 命令执行脚本时，会先构造一个名为 `profile` 的 `LineProfiler` 对象，并将其注入脚本的命名空间。这样一来脚本开头无需添加 `import` 语句就能直接引用 `profile` 变量，接着用它装饰目标函数即可。这也是 line_profiler 文档的推荐用法。例如在脚本中加上一行
+kernprof 是 line_profiler 附带的一个脚本，作用是简化调用 `LineProfiler` 的流程，自动输出结果文件。在命令行里用它代替 Python 命令执行脚本时，会先构造一个名为 `profile` 的 `LineProfiler` 对象，并将其注入脚本的作用域。这样一来脚本开头无需添加 `import` 语句就能直接引用 `profile` 变量，接着用它装饰目标函数即可。这也是 line_profiler 文档的推荐用法。例如在脚本中加上一行
 
 ```Python
 @profile

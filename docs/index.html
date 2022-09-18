@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-08-03T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-09-17T00:00:00+00:00" />
 
 
 <style>
@@ -107,12 +107,35 @@
 
 <div class="post">
     <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/matplotlib_better_code/">编写科研作图代码有更好的方法</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-09-17</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2412 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <blockquote>
+<p>这是物理海洋学家 Ken Hughes 在 2021 年发表的博客文章，原文标题为 <a href="https://brushingupscience.com/2021/11/02/a-better-way-to-code-up-scientific-figures/" target="_blank">A better way to code up scientific figures</a>。以 Matplotlib 和 Matlab 为例，强调了模块化思想对于科研作图代码的帮助。我很少看到关于作图方法论的文章，所以翻译出来交流学习。</p>
+</blockquote>
+<p>我画一张出版级别的科研配图一般需要写 100 - 200 行代码，这个长度有点点危险，因为很容易写出能正常运行但又一团糟的东西。如果代码片段都很短还可以从头重写，但如果代码有上千行，提前做好规划会更明智一些。不过在这两种极端情况之间潜藏着另一种吸引人的做法：写出一段当时感觉无比连贯，但以后会让你吃苦头的脚本。</p>
+<p>假设你想画一张中等复杂度的图片，类似下面这张：</p>
+<p><img class="img-zoomable" src="/matplotlib_better_code/data_overview-1.png" alt="data_overview-1" />
+</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
         <a href="https://zhajiman.github.io/post/python_measure_time/">Python 系列：测量程序的运行时间</a>
     </h2>
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-08-03</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6675 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6672 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
 
@@ -158,7 +181,7 @@ z_mean = np.nanmean(z)
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-06-20</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;13788 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;12991 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/shapely">shapely</a>&nbsp;</span>
 
@@ -314,25 +337,6 @@ plt.show()
     <div class="post-item post-summary markdown-body">
         <h2 id="前言">前言</h2>
 <p>Matplotlib 中用箭头表示风场或电磁场等矢量场时需要用到 <code>quiver</code> 方法，据字典，quiver 一词的意思是颤动、颤抖或箭袋，貌似也就最后一个意思跟箭头搭得上边。相比于其它画图方法，<code>quiver</code> 的参数又多又容易混淆，所以本文将以图解的方式逐一介绍。这些参数按功能可分为三种：控制箭头位置和数值的、控制箭头长度和角度的，以及控制箭头尺寸和形状的。下面会按照这个分组顺序来解说。本文代码基于 Matplotlib 3.3.4。</p>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/guide_to_modis_aerosol_product/">MODIS 二级气溶胶产品指北（with Python）</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-12-04</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;9566 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/satellite">satellite</a>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="前言">前言</h2>
-<p>笔者初次使用 MODIS 二级气溶胶产品时，一下就被密密麻麻一堆变量搞懵了：很多变量名字里带个 <code>Optical_Depth</code>，这我能猜到，就是气溶胶光学厚度，但各种 <code>Corrected</code>、<code>Effective</code>、<code>Best</code>、<code>Average</code>、<code>Small</code>、<code>Large</code> 的前后缀鬼知道是什么。看过的论文基本不说具体用的哪个变量，各种教程也不会告诉你这些亲戚间的差异，似乎这件事一点也不重要。本着 know your data 的心态，我在翻阅了 MODIS 的几个官网后总算从反演的原理中稍微体会到了这些前后缀的意义。现将学习经验总结归纳如下，希望能帮到和我一样疑惑的小伙伴。同时本文还会提供简单的 Python 示例代码。</p>
-<p>如果嫌正文太啰嗦，可以直接跳到文末的总结部分，那里直接给出了各个变量的使用建议。</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-item pag-current">
