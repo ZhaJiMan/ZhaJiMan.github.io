@@ -6,7 +6,36 @@
     <description>Recent content on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 17 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 15 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>PyTorch 时间序列预测入门</title>
+      <link>https://zhajiman.github.io/post/pytorch_time_series_tutorial/</link>
+      <pubDate>Sat, 15 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/pytorch_time_series_tutorial/</guid>
+      <description>&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/pytorch_time_series_tutorial/xkcd.png&#34; alt=&#34;xkcd&#34; /&gt;
+&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;最近学习用 PyTorch 做时间序列预测，发现只有 &lt;a href=&#34;https://www.tensorflow.org/tutorials/structured_data/time_series&#34; target=&#34;_blank&#34;&gt;TensorFlow 官网的教程&lt;/a&gt; 把时间窗口的选取和模型的设置讲得直观易懂，故改编如下。本人也只是入门水平，翻译错误之处还请指正。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;本文是利用深度学习做时间序列预测的入门教程，用到的模型包括卷积神经网络（CNN）和循环神经网络（RNN）。全文分为两大部分，又可以细分为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;预测单个时间步：
+&lt;ul&gt;
+&lt;li&gt;预测一个特征。&lt;/li&gt;
+&lt;li&gt;预测所有特征。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;预测多个时间步：
+&lt;ul&gt;
+&lt;li&gt;单发预测：模型跑一次输出所有时间步的结果。&lt;/li&gt;
+&lt;li&gt;自回归：每次输出一个时间步的预测，再把结果喂给模型得到下一步的预测。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;本文用到的数据和 notebook 可以在 &lt;a href=&#34;https://github.com/ZhaJiMan/pytorch_time_series_tutorial&#34; target=&#34;_blank&#34;&gt;GitHub 仓库&lt;/a&gt; 找到。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>编写科研作图代码有更好的方法</title>
       <link>https://zhajiman.github.io/post/matplotlib_better_code/</link>

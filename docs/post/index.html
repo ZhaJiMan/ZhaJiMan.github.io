@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/post/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-09-17T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-10-15T00:00:00+00:00" />
 
 
 <style>
@@ -104,6 +104,43 @@
                 
 
 
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/pytorch_time_series_tutorial/">PyTorch 时间序列预测入门</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-10-15</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;12482 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/pytorch">pytorch</a>&nbsp;<a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97">时间序列</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <p><img class="img-zoomable" src="/pytorch_time_series_tutorial/xkcd.png" alt="xkcd" />
+</p>
+<blockquote>
+<p>最近学习用 PyTorch 做时间序列预测，发现只有 <a href="https://www.tensorflow.org/tutorials/structured_data/time_series" target="_blank">TensorFlow 官网的教程</a> 把时间窗口的选取和模型的设置讲得直观易懂，故改编如下。本人也只是入门水平，翻译错误之处还请指正。</p>
+</blockquote>
+<p>本文是利用深度学习做时间序列预测的入门教程，用到的模型包括卷积神经网络（CNN）和循环神经网络（RNN）。全文分为两大部分，又可以细分为：</p>
+<ul>
+<li>预测单个时间步：
+<ul>
+<li>预测一个特征。</li>
+<li>预测所有特征。</li>
+</ul>
+</li>
+<li>预测多个时间步：
+<ul>
+<li>单发预测：模型跑一次输出所有时间步的结果。</li>
+<li>自回归：每次输出一个时间步的预测，再把结果喂给模型得到下一步的预测。</li>
+</ul>
+</li>
+</ul>
+<p>本文用到的数据和 notebook 可以在 <a href="https://github.com/ZhaJiMan/pytorch_time_series_tutorial" target="_blank">GitHub 仓库</a> 找到。</p>
+    </div>
+</div>
 
 <div class="post">
     <h2 class="post-item post-title">
@@ -321,24 +358,6 @@ plt.show()
 <p><code>N</code> 除以 <code>n</code> 的商为 <code>size</code>，余数为 <code>rest</code>，数值满足 <code>0 &lt;= rest &lt; n or size</code>（除法规则请见 <a href="https://zhajiman.github.io/post/python_divide/" target="_blank">Python 系列：除法运算符</a>）。当 <code>N</code> 是 <code>n</code> 的倍数时，<code>rest = 0</code> ，列表正好被等分为 <code>n</code> 份，每份含 <code>size</code> 个元素；而当 <code>N</code> 不是 <code>n</code> 的倍数时，<code>rest &gt; 0</code>，按前面的分法会剩下 <code>rest</code> 个元素。对于后一种情况来说并不存在真正的等分，只能说希望尽量等分，问题的重点也落在了如何处理这 <code>rest</code> 个元素上。</p>
     </div>
 </div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/matplotlib_quiver/">Matplotlib 系列：图解 quiver</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-12-18</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3305 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="前言">前言</h2>
-<p>Matplotlib 中用箭头表示风场或电磁场等矢量场时需要用到 <code>quiver</code> 方法，据字典，quiver 一词的意思是颤动、颤抖或箭袋，貌似也就最后一个意思跟箭头搭得上边。相比于其它画图方法，<code>quiver</code> 的参数又多又容易混淆，所以本文将以图解的方式逐一介绍。这些参数按功能可分为三种：控制箭头位置和数值的、控制箭头长度和角度的，以及控制箭头尺寸和形状的。下面会按照这个分组顺序来解说。本文代码基于 Matplotlib 3.3.4。</p>
-    </div>
-</div>
 <div class="pagination"><div class="pag-item pag-current">
     <a href="/post/">1</a>
   </div><div class="pag-item">
@@ -430,6 +449,10 @@ plt.show()
             </span>
             
             <span>
+                <a href="/tags/pytorch/">pytorch</a>
+            </span>
+            
+            <span>
                 <a href="/tags/radiation/">radiation</a>
             </span>
             
@@ -447,6 +470,10 @@ plt.show()
             
             <span>
                 <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a>
             </span>
             
             <span>
@@ -554,6 +581,10 @@ plt.show()
             </span>
             
             <span>
+                <a href="/tags/pytorch/">pytorch</a>
+            </span>
+            
+            <span>
                 <a href="/tags/radiation/">radiation</a>
             </span>
             
@@ -571,6 +602,10 @@ plt.show()
             
             <span>
                 <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a>
             </span>
             
             <span>
