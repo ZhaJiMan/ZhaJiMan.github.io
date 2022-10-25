@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/python/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-08-03T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-10-24T00:00:00+00:00" />
 
 
 <style>
@@ -108,6 +108,41 @@
 </div>
 
 
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/python_modulo/">Python 系列：衔尾蛇一样的取模</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-10-24</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1207 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <p>Python 的取模运算 <code>r = m % n</code> 相当于</p>
+<pre><code class="language-Python"># 或q = math.floor(m / n)
+q = m // n
+r = m - q * n
+</code></pre>
+<p>即取模的结果是被除数减去地板除的商和除数的乘积，这一规则对正数、负数乃至浮点数皆适用。</p>
+<p>当 <code>n</code> 为正数时。显然任意实数 <code>x</code> 可以表示为 <code>x = r + k * n</code>，其中 <code>0 &lt;= r &lt; n</code>，<code>k</code> 是某个整数。那么有</p>
+<pre><code>x // n = floor(r/n + k) = k
+x % n = x - x // n = r
+</code></pre>
+<p>即 <code>x % n</code> 的结果总是一个大小在 <code>[0, n)</code> 之间的实数 <code>r</code>。当 <code>n = 10</code> 时，以 <code>x = 12</code> 和 <code>x = -12</code> 为例：</p>
+<p><img class="img-zoomable" src="/python_modulo/number.png" alt="number" />
+</p>
+<p>如果以 <code>n</code> 为一个周期，那么 <code>x = 12</code> 就相当于往右一个周期再走 2 格，<code>x % n</code> 会消去这个周期，剩下不满一个周期的 2；<code>x = -12</code> 相当于往左两个周期后再往右走 8 格，<code>x % n</code> 会消去这两个周期，剩下不满一个周期且为正数的 8。</p>
+<p>再本质点说，取模运算就是在 <code>[0, 10)</code> 的窗口内进行“衔尾蛇”移动：</p>
+<ul>
+<li><code>12</code> 向右超出窗口两格， <code>12 % 10 = 2</code>，即右边出两格那就左边进两格。</li>
+<li><code>-12</code> 向左超出窗口 12 格，<code>-12 % n = 8</code>，即左边出 12 格那就右边进 12 格，发现还是超出左边两格，再从右边进两格，最后距离零点 8 格。</li>
+</ul>
+  </div>
+</div>
 
 <div class="post">
   <h2 class="post-item post-title">

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Python 系列：衔尾蛇一样的取模 - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="python" />
+
+
+<meta property="og:title" content="Python 系列：衔尾蛇一样的取模" />
+<meta name="twitter:title" content="Python 系列：衔尾蛇一样的取模" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/python_modulo/" /><meta property="og:description" content="Python 的取模运算 r = m % n 相当于
+# 或q = math.floor(m / n)
+q = m // n
+r = m - q * n
+
+即取模的结果是被除数减去地板除的商和除数的乘积，这一规则对正数、负数乃至浮点数皆适用。
+当 n 为正数时。显然任意实数 x 可以表示为 x = r &#43; k * n，其中 0 &lt;= r &lt; n，k 是某个整数。那么有
+x // n = floor(r/n &#43; k) = k
+x % n = x - x // n = r
+
+即 x % n 的结果总是一个大小在 [0, n) 之间的实数 r。当 n = 10 时，以 x = 12 和 x = -12 为例：
+
+
+如果以 n 为一个周期，那么 x = 12 就相当于往右一个周期再走 2 格，x % n 会消去这个周期，剩下不满一个周期的 2；x = -12 相当于往左两个周期后再往右走 8 格，x % n 会消去这两个周期，剩下不满一个周期且为正数的 8。
+再本质点说，取模运算就是在 [0, 10) 的窗口内进行“衔尾蛇”移动：
+
+12 向右超出窗口两格， 12 % 10 = 2，即右边出两格那就左边进两格。
+-12 向左超出窗口 12 格，-12 % n = 8，即左边出 12 格那就右边进 12 格，发现还是超出左边两格，再从右边进两格，最后距离零点 8 格。
+" />
+<meta name="twitter:description" content="Python 的取模运算 r = m % n 相当于
+# 或q = math.floor(m / n)
+q = m // n
+r = m - q * n
+
+即取模的结果是被除数减去地板除的商和除数的乘积，这一规则对正数、负数乃至浮点数皆适用。
+当 n 为正数时。显然任意实数 x 可以表示为 x = r &#43; k * n，其中 0 &lt;= r &lt; n，k 是某个整数。那么有
+x // n = floor(r/n &#43; k) = k
+x % n = x - x // n = r
+
+即 x % n 的结果总是一个大小在 [0, n) 之间的实数 r。当 n = 10 时，以 x = 12 和 x = -12 为例：
+
+
+如果以 n 为一个周期，那么 x = 12 就相当于往右一个周期再走 2 格，x % n 会消去这个周期，剩下不满一个周期的 2；x = -12 相当于往左两个周期后再往右走 8 格，x % n 会消去这两个周期，剩下不满一个周期且为正数的 8。
+再本质点说，取模运算就是在 [0, 10) 的窗口内进行“衔尾蛇”移动：
+
+12 向右超出窗口两格， 12 % 10 = 2，即右边出两格那就左边进两格。
+-12 向左超出窗口 12 格，-12 % n = 8，即左边出 12 格那就右边进 12 格，发现还是超出左边两格，再从右边进两格，最后距离零点 8 格。
+" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2022-10-24T00:00:00+00:00" /><meta property="article:modified_time" content="2022-10-24T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/python_modulo/">Python 系列：衔尾蛇一样的取模</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-10-24</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1207 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <p>Python 的取模运算 <code>r = m % n</code> 相当于</p>
+<pre><code class="language-Python"># 或q = math.floor(m / n)
+q = m // n
+r = m - q * n
+</code></pre>
+<p>即取模的结果是被除数减去地板除的商和除数的乘积，这一规则对正数、负数乃至浮点数皆适用。</p>
+<p>当 <code>n</code> 为正数时。显然任意实数 <code>x</code> 可以表示为 <code>x = r + k * n</code>，其中 <code>0 &lt;= r &lt; n</code>，<code>k</code> 是某个整数。那么有</p>
+<pre><code>x // n = floor(r/n + k) = k
+x % n = x - x // n = r
+</code></pre>
+<p>即 <code>x % n</code> 的结果总是一个大小在 <code>[0, n)</code> 之间的实数 <code>r</code>。当 <code>n = 10</code> 时，以 <code>x = 12</code> 和 <code>x = -12</code> 为例：</p>
+<p><img class="img-zoomable" src="/python_modulo/number.png" alt="number" />
+</p>
+<p>如果以 <code>n</code> 为一个周期，那么 <code>x = 12</code> 就相当于往右一个周期再走 2 格，<code>x % n</code> 会消去这个周期，剩下不满一个周期的 2；<code>x = -12</code> 相当于往左两个周期后再往右走 8 格，<code>x % n</code> 会消去这两个周期，剩下不满一个周期且为正数的 8。</p>
+<p>再本质点说，取模运算就是在 <code>[0, 10)</code> 的窗口内进行“衔尾蛇”移动：</p>
+<ul>
+<li><code>12</code> 向右超出窗口两格， <code>12 % 10 = 2</code>，即右边出两格那就左边进两格。</li>
+<li><code>-12</code> 向左超出窗口 12 格，<code>-12 % n = 8</code>，即左边出 12 格那就右边进 12 格，发现还是超出左边两格，再从右边进两格，最后距离零点 8 格。</li>
+</ul>
+<p>下面介绍取模运算的两个应用。</p>
+<p>地球的经度以本初子午线为起点，自西向东绕行一圈，经度的数值从 0° 增长到 360°。不过经度还可以大于 360°，表示绕行一圈以上，甚至还可以是负数，表示自东向西绕行。显然这跟取模运算的衔尾蛇特性完美契合，通过取模运算可以将 <code>[0, 360)</code> 范围外的经度变换回这个范围内：</p>
+<pre><code class="language-Python">import numpy as np
+
+lon = np.arange(-360, 720 + 1, 180)
+print(lon)
+print(lon % 360)
+</code></pre>
+<pre><code>[-360, -180,    0,  180,  360,  540,  720]
+[   0,  180,    0,  180,    0,  180,    0]
+</code></pre>
+<p>另外一个常用的经度范围是 <code>[-180, 180)</code>，即经度跨过太平洋上的对向子午线时经度会从正数跳变到负数。问题是如何将 <code>[0, 360]</code> 范围内的经度变换到 <code>[-180, 180)</code> 范围内。显然 <code>[-180, 180)</code> 是一个窗口，我们希望范围在 <code>[180, 360]</code> 的经度从窗口右边离开，再从窗口左边进入。但因为窗口范围不满足 <code>[0, n)</code> 的形式，所以不能直接取模，而是应该先向右偏移 180°，在正轴完成衔尾蛇移动后再偏移回负轴：</p>
+<pre><code class="language-Python">(lon + 180) % 360 - 180
+</code></pre>
+<p><img class="img-zoomable" src="/python_modulo/lon.png" alt="lon" />
+</p>
+<p>注意，这一算法中 180° 会被算到 -180°，360° 会被算到 0°：</p>
+<pre><code class="language-Python">lon = lon = np.arange(0, 360 + 1, 180)
+print(lon)
+print((lon + 180) % 360 - 180)
+</code></pre>
+<pre><code>[    0,  180,  360]
+[    0, -180,    0],
+</code></pre>
+<p>第二个应用是将月份换算成季节。气候学上春季指 3、4、5 月份，夏季指 6、7、8 月份，秋季指 9、10、11 月份，冬季指 12 月和来年 1、2 月。这里暂时不考虑冬季跨年的问题（可参考笔者的 <code>Period</code> 文章），只是将 <code>[1, 12]</code> 的月份映射到 <code>[1, 4]</code> 上，1、2、3、4 分别表示春夏秋冬。</p>
+<p>首先可以想到，地板除能将 12 个月等分为 4 组：</p>
+<pre><code class="language-Python">month = np.arange(1, 13)
+print(month)
+print((month - 1) // 3 + 1)
+</code></pre>
+<pre><code>[ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12]
+[ 1,  1,  1,  2,  2,  2,  3,  3,  3,  4,  4,  4]
+</code></pre>
+<p>可惜春天是在 1、2、3 月的基础上向右偏移两个月；冬天是在 10、11、12 月的基础上向右偏移两个月，超出 12 月的部分从左边重新进入（即 1、2 月）。那么可以考虑通过取模把月份向左“旋转”两格，让春天排在前三格的位置，冬天排在最后三格的位置，这样就能应用地板除做分组了：</p>
+<pre><code class="language-Python">(month - 3) % 12 // 3 + 1
+</code></pre>
+<p><img class="img-zoomable" src="/python_modulo/season.png" alt="season" />
+</p>
+<p>当然，这两个问题都可以用更简单的方式来解决：经度可以用 <code>np.where(lon &gt; 180, 360 - lon, lon)</code> 转换，季节可以用 <code>if</code> 判断或字典来做映射。但取模运算能将你的代码精简至一行，同时方便迷惑其它读者（大雾）。</p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pytorch/">pytorch</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pytorch/">pytorch</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2022
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+                
+                | Visits: <span id="busuanzi_value_site_pv"></span>
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.staticfile.org/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+<script defer src="https://cdn.staticfile.org/lazysizes/5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

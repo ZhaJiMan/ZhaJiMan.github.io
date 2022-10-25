@@ -6,7 +6,34 @@
     <description>Recent content on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 15 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 24 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python 系列：衔尾蛇一样的取模</title>
+      <link>https://zhajiman.github.io/post/python_modulo/</link>
+      <pubDate>Mon, 24 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/python_modulo/</guid>
+      <description>&lt;p&gt;Python 的取模运算 &lt;code&gt;r = m % n&lt;/code&gt; 相当于&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;# 或q = math.floor(m / n)
+q = m // n
+r = m - q * n
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;即取模的结果是被除数减去地板除的商和除数的乘积，这一规则对正数、负数乃至浮点数皆适用。&lt;/p&gt;
+&lt;p&gt;当 &lt;code&gt;n&lt;/code&gt; 为正数时。显然任意实数 &lt;code&gt;x&lt;/code&gt; 可以表示为 &lt;code&gt;x = r + k * n&lt;/code&gt;，其中 &lt;code&gt;0 &amp;lt;= r &amp;lt; n&lt;/code&gt;，&lt;code&gt;k&lt;/code&gt; 是某个整数。那么有&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;x // n = floor(r/n + k) = k
+x % n = x - x // n = r
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;即 &lt;code&gt;x % n&lt;/code&gt; 的结果总是一个大小在 &lt;code&gt;[0, n)&lt;/code&gt; 之间的实数 &lt;code&gt;r&lt;/code&gt;。当 &lt;code&gt;n = 10&lt;/code&gt; 时，以 &lt;code&gt;x = 12&lt;/code&gt; 和 &lt;code&gt;x = -12&lt;/code&gt; 为例：&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/python_modulo/number.png&#34; alt=&#34;number&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;如果以 &lt;code&gt;n&lt;/code&gt; 为一个周期，那么 &lt;code&gt;x = 12&lt;/code&gt; 就相当于往右一个周期再走 2 格，&lt;code&gt;x % n&lt;/code&gt; 会消去这个周期，剩下不满一个周期的 2；&lt;code&gt;x = -12&lt;/code&gt; 相当于往左两个周期后再往右走 8 格，&lt;code&gt;x % n&lt;/code&gt; 会消去这两个周期，剩下不满一个周期且为正数的 8。&lt;/p&gt;
+&lt;p&gt;再本质点说，取模运算就是在 &lt;code&gt;[0, 10)&lt;/code&gt; 的窗口内进行“衔尾蛇”移动：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;12&lt;/code&gt; 向右超出窗口两格， &lt;code&gt;12 % 10 = 2&lt;/code&gt;，即右边出两格那就左边进两格。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-12&lt;/code&gt; 向左超出窗口 12 格，&lt;code&gt;-12 % n = 8&lt;/code&gt;，即左边出 12 格那就右边进 12 格，发现还是超出左边两格，再从右边进两格，最后距离零点 8 格。&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
     <item>
       <title>PyTorch 时间序列预测入门</title>
       <link>https://zhajiman.github.io/post/pytorch_time_series_tutorial/</link>
