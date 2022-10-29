@@ -6,7 +6,52 @@
     <description>Recent content in python on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 24 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 29 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Pandas 系列：管道风格</title>
+      <link>https://zhajiman.github.io/post/pandas_pipe/</link>
+      <pubDate>Sat, 29 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/pandas_pipe/</guid>
+      <description>&lt;h2 id=&#34;r-语言的管道&#34;&gt;R 语言的管道&lt;/h2&gt;
+&lt;p&gt;这回来介绍一下如何利用管道（pipe）风格将 Pandas 相关的代码写得更易读，不过首先让我们看看隔壁 R 语言中管道是怎么用的。假设输入是 &lt;code&gt;x&lt;/code&gt;，经过连续四个函数的处理后得到输出 &lt;code&gt;y&lt;/code&gt;，代码可以按顺序写：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-R&#34;&gt;x1 &amp;lt;- func1(x, arg1)
+x2 &amp;lt;- func2(x1, arg2)
+x3 &amp;lt;- func3(x2, arg3)
+y &amp;lt;- func4(x3, arg4)
+&lt;/code&gt;&lt;/pre&gt;</description>
+    </item>
+    
+    <item>
+      <title>Pandas 系列：图解插值</title>
+      <link>https://zhajiman.github.io/post/pandas_interpolate/</link>
+      <pubDate>Fri, 28 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/pandas_interpolate/</guid>
+      <description>&lt;p&gt;相信大伙对 NumPy 和 SciPy 里的插值比较熟：已知坐标值 &lt;code&gt;xp&lt;/code&gt; 和变量值 &lt;code&gt;fp&lt;/code&gt;，调用函数计算变量在目标坐标 &lt;code&gt;x&lt;/code&gt; 上的数值。例如 &lt;code&gt;np.interp&lt;/code&gt; 的 API 就是&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;np.interp(x, xp, fp)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Pandas 的 &lt;code&gt;Series&lt;/code&gt; 和 &lt;code&gt;DataFrame&lt;/code&gt; 对象也有插值方法 &lt;code&gt;interpolate&lt;/code&gt;，默认做线性插值。但其功能与 NumPy 和 SciPy 不太一样。以一个序列对象 &lt;code&gt;s&lt;/code&gt; 为例：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;# 缺测部分和有效部分.
+invalid = s.isna()
+valid = ~invalid
+
+# 对应于xp.
+s.index[valid]
+
+# 对应于fp.
+s.values[valid]
+
+# 对应于x.
+s.index
+
+# 两式大致等价.
+s.interpolate(method=&#39;index&#39;).values
+np.interp(s.index, s.index[valid], s.values[valid])
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;即 Pandas 的插值是要利用序列的有效值当 &lt;code&gt;xp&lt;/code&gt; 和 &lt;code&gt;fp&lt;/code&gt;，去填补缺测的部分。所以调用 &lt;code&gt;s.interpolate&lt;/code&gt; 时我们不需要传入形如 &lt;code&gt;x&lt;/code&gt; 的参数，而是应该在调用前就通过 &lt;code&gt;s.reindex&lt;/code&gt; 之类的方法将 &lt;code&gt;x&lt;/code&gt; 融合到 &lt;code&gt;s&lt;/code&gt; 的索引中。这么说可能有点抽象，下面就以图像直观展示 Pandas 里插值的效果。本文不会涉及到具体的插值算法（最邻近、三次样条……），仅以线性插值为例。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Python 系列：衔尾蛇一样的取模</title>
       <link>https://zhajiman.github.io/post/python_modulo/</link>

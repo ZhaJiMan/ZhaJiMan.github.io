@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-10-24T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-10-29T00:00:00+00:00" />
 
 
 <style>
@@ -104,6 +104,50 @@
                 
 
 
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/python_divide/">Python 系列：除法运算符</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-19</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;437 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <p>在 Python 3 中关于除法的运算符有三种：</p>
+<ul>
+<li><code>/</code>：表示精确的真除法。魔法方法为 <code>__truediv__</code>。</li>
+<li><code>//</code>：表示地板除。魔法方法为 <code>__floordiv__</code>。</li>
+<li><code>%</code>：表示求模。魔法方法为 <code>__mod__</code>。</li>
+</ul>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/vim_grammar/">Vim 的语法</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-17</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3818 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/vim">vim</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <p>Vim 是一个拥有魔力的文本编辑器——这并不是比喻，而是说你在 Vim 中真的可以念咒语来操纵文本。看看我们的键盘，在 normal 模式下几乎每个键都有特定的功能，尤其是其中的数字和 26 个字母。如果把每个键都看作 Vim 这门语言中的单词，那么只要依据特定的语法，通过连续击键来遣词造句，就能施展操作文本的魔法。并且 Vim 语言的语法简单到用一句话就能描述：</p>
+<pre><code>verb + noun
+</code></pre>
+<p>下面就来简单讲讲魔法的基本法。</p>
+<p><img class="img-zoomable" src="/vim_grammar/vim_keys.png" alt="vim_keys" />
+</p>
+    </div>
+</div>
 
 <div class="post">
     <h2 class="post-item post-title">
@@ -265,52 +309,6 @@
 </ul>
     </div>
 </div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/python_path/">Python 系列：操作文件和目录的路径</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-26</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4400 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="前言">前言</h2>
-<p>之前在 Linux 上用 Python 处理系统的文件和目录时，我都是简单粗暴地用 <code>os.system</code> 函数直接执行 shell 命令来实现的。例如新建一个目录并把文件移动进去，我会这么写</p>
-<pre><code class="language-Python">dirpath = './result'
-filepath = './data.txt'
-os.system(f'mkdir {dirpath}')
-os.system(f'mv {filepath} {dirpath}')
-</code></pre>
-<p>即把 shell 命令硬编码到程序中。但最近在 Windows 上运行老程序时，因为 <code>os.system</code> 默认调用 CMD，所以这种写法的老代码全部木大。</p>
-<p>其实借助 Python 标准库中用于系统交互和路径处理的模块，就能尽可能降低代码对平台的依赖，并且模块中也提供有许多方便的函数。本文会记录那些最常用的功能。</p>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/cartopy_lambert/">Cartopy 系列：为 Lambert 投影地图添加刻度</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-24</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2210 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="前言">前言</h2>
-<p>Cartopy 中的 Plate Carrée 投影使用方便，但在展示中国地图时会使中国的形状显得很瘪，与之相比，Lambert 投影的效果会更加美观，下图显示了两种投影的差异</p>
-<p><img class="img-zoomable" src="/cartopy_lambert/comparison.png" alt="comparison" />
-</p>
-<p>所以本文将会介绍如何在 Cartopy 中实现 Lambert 投影，并为地图添上合适的刻度。文中 Cartopy 的版本是 0.18.0。</p>
-    </div>
-</div>
 <div class="pagination"><div class="pag-first">
     <a href="/"><i class="iconfont icon-caret-back-circle-sharp"></i></a>
   </div><div class="pag-previous">
@@ -399,6 +397,10 @@ os.system(f'mv {filepath} {dirpath}')
             
             <span>
                 <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pandas/">pandas</a>
             </span>
             
             <span>
@@ -531,6 +533,10 @@ os.system(f'mv {filepath} {dirpath}')
             
             <span>
                 <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pandas/">pandas</a>
             </span>
             
             <span>

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Pandas 系列：图解插值 - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="python, pandas" />
+
+
+<meta property="og:title" content="Pandas 系列：图解插值" />
+<meta name="twitter:title" content="Pandas 系列：图解插值" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/pandas_interpolate/" /><meta property="og:description" content="相信大伙对 NumPy 和 SciPy 里的插值比较熟：已知坐标值 xp 和变量值 fp，调用函数计算变量在目标坐标 x 上的数值。例如 np.interp 的 API 就是
+np.interp(x, xp, fp)
+
+Pandas 的 Series 和 DataFrame 对象也有插值方法 interpolate，默认做线性插值。但其功能与 NumPy 和 SciPy 不太一样。以一个序列对象 s 为例：
+# 缺测部分和有效部分.
+invalid = s.isna()
+valid = ~invalid
+
+# 对应于xp.
+s.index[valid]
+
+# 对应于fp.
+s.values[valid]
+
+# 对应于x.
+s.index
+
+# 两式大致等价.
+s.interpolate(method=&#39;index&#39;).values
+np.interp(s.index, s.index[valid], s.values[valid])
+
+即 Pandas 的插值是要利用序列的有效值当 xp 和 fp，去填补缺测的部分。所以调用 s.interpolate 时我们不需要传入形如 x 的参数，而是应该在调用前就通过 s.reindex 之类的方法将 x 融合到 s 的索引中。这么说可能有点抽象，下面就以图像直观展示 Pandas 里插值的效果。本文不会涉及到具体的插值算法（最邻近、三次样条……），仅以线性插值为例。" />
+<meta name="twitter:description" content="相信大伙对 NumPy 和 SciPy 里的插值比较熟：已知坐标值 xp 和变量值 fp，调用函数计算变量在目标坐标 x 上的数值。例如 np.interp 的 API 就是
+np.interp(x, xp, fp)
+
+Pandas 的 Series 和 DataFrame 对象也有插值方法 interpolate，默认做线性插值。但其功能与 NumPy 和 SciPy 不太一样。以一个序列对象 s 为例：
+# 缺测部分和有效部分.
+invalid = s.isna()
+valid = ~invalid
+
+# 对应于xp.
+s.index[valid]
+
+# 对应于fp.
+s.values[valid]
+
+# 对应于x.
+s.index
+
+# 两式大致等价.
+s.interpolate(method=&#39;index&#39;).values
+np.interp(s.index, s.index[valid], s.values[valid])
+
+即 Pandas 的插值是要利用序列的有效值当 xp 和 fp，去填补缺测的部分。所以调用 s.interpolate 时我们不需要传入形如 x 的参数，而是应该在调用前就通过 s.reindex 之类的方法将 x 融合到 s 的索引中。这么说可能有点抽象，下面就以图像直观展示 Pandas 里插值的效果。本文不会涉及到具体的插值算法（最邻近、三次样条……），仅以线性插值为例。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2022-10-28T00:00:00+00:00" /><meta property="article:modified_time" content="2022-10-28T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/pandas_interpolate/">Pandas 系列：图解插值</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-10-28</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1901 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/pandas">pandas</a>&nbsp;</span>
+
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <p>相信大伙对 NumPy 和 SciPy 里的插值比较熟：已知坐标值 <code>xp</code> 和变量值 <code>fp</code>，调用函数计算变量在目标坐标 <code>x</code> 上的数值。例如 <code>np.interp</code> 的 API 就是</p>
+<pre><code class="language-Python">np.interp(x, xp, fp)
+</code></pre>
+<p>Pandas 的 <code>Series</code> 和 <code>DataFrame</code> 对象也有插值方法 <code>interpolate</code>，默认做线性插值。但其功能与 NumPy 和 SciPy 不太一样。以一个序列对象 <code>s</code> 为例：</p>
+<pre><code class="language-Python"># 缺测部分和有效部分.
+invalid = s.isna()
+valid = ~invalid
+
+# 对应于xp.
+s.index[valid]
+
+# 对应于fp.
+s.values[valid]
+
+# 对应于x.
+s.index
+
+# 两式大致等价.
+s.interpolate(method='index').values
+np.interp(s.index, s.index[valid], s.values[valid])
+</code></pre>
+<p>即 Pandas 的插值是要利用序列的有效值当 <code>xp</code> 和 <code>fp</code>，去填补缺测的部分。所以调用 <code>s.interpolate</code> 时我们不需要传入形如 <code>x</code> 的参数，而是应该在调用前就通过 <code>s.reindex</code> 之类的方法将 <code>x</code> 融合到 <code>s</code> 的索引中。这么说可能有点抽象，下面就以图像直观展示 Pandas 里插值的效果。本文不会涉及到具体的插值算法（最邻近、三次样条……），仅以线性插值为例。</p>
+<h2 id="以数值为索引的序列">以数值为索引的序列</h2>
+<pre><code class="language-Python">import numpy as np
+import pandas as pd
+
+index = pd.Index([1, 4], name='x')
+s = pd.Series(10 * index, index=index, name='y')
+
+target = np.arange(6)
+</code></pre>
+<p>作为例子的序列 <code>s</code> 只有两个值：10 和 40，对应的坐标是 1 和 4。现希望插值得到坐标 0 - 5 上的值，所以通过 <code>reindex</code> 方法将目标坐标融合到 <code>s</code> 的索引中，再调用 <code>interpolate</code>。过程如下图所示：</p>
+<p><img class="img-zoomable" src="/pandas_interpolate/01.png" alt="01" />
+</p>
+<p>图中绿色部分代表原始值和线性插值的结果，红色部分代表缺测或特殊的插值结果。可以看到 <code>s.reindex</code> 向序列中引入了浮点型的 NaN，所以 <code>sa</code> 的数据类型由整型偷偷转换成了浮点型。坐标 2 和 3 处的值由线性插值得到 20.0 和 30.0，这符合我们的预期；坐标 0 和 5 在 <code>s</code> 的坐标范围之外（即要做外插），<code>sa.interpolate</code> 的默认行为是保留序列开头的 NaN，用最后一个有效值去填充结尾处的 NaN，所以最后坐标 0 对应 NaN，5 对应 40.0。</p>
+<p>这个例子中目标坐标是等间距的，那如果不等间距会怎样？结果如下图所示：</p>
+<p><img class="img-zoomable" src="/pandas_interpolate/02.png" alt="02" />
+</p>
+<p>可以看到 <code>sa.interpolate()</code> 在 2.5 和 3.5 位置的结果是错误的。原因是 <code>interpolate</code> 有个指定插值方法的参数 <code>method</code>，默认值为 <code>'linear'</code>，会无视索引 <code>x</code> 的具体数值，认为 <code>y</code> 是等距排列的，进而插出错误的结果。如果你预先知道序列的每一行是等距排列的，那么可以放心调用无参数的 <code>interpolate()</code>，否则就需要指定 <code>method</code> 为 <code>'index'</code> 或 <code>'values'</code>，以 <code>x</code> 的数值作为目标坐标来做线性插值，得出 2.5 对应 25.0，3.5 得出 35.0。另外当 <code>method</code> 取 <code>quadratic</code>、<code>cubic</code>、<code>spline</code> 等高级方法时，自然会用上索引的数值。</p>
+<p>再考虑一种特殊的情况：目标坐标中不含 <code>s</code> 的坐标值，而是恰好穿插在其中。那么根据 <code>reindex</code> 的效果，<code>s</code> 原来的标签会被全部丢弃掉，得到一个全部缺测的序列 <code>sa</code>，于是 <code>sa.interpolate</code> 将不会有任何意义。笔者想到了三种办法来解决这一问题，其一便是用 NumPy 或 SciPy 正儿八经做插值计算，再老老实实地用得到的数组构造新序列，如下图所示：</p>
+<p><img class="img-zoomable" src="/pandas_interpolate/03.png" alt="03" />
+</p>
+<p>可以看到 <code>sa.interpolate()</code> 完全无效，而引入 NumPy 的线性插值后能得到预期结果。<code>np.interp</code> 的默认行为是用序列首尾的有效值填充外插的部分，所以图中有两处红色。</p>
+<p>方法二是用 xarray 代替 Pandas 做插值。虽然 xarray 是 Pandas 的亲戚，但 xarray 的插值方法 <code>interp</code> 反而与 NumPy 和 SciPy 接近，调用时需要给出目标坐标值。结果如下图所示：</p>
+<p><img class="img-zoomable" src="/pandas_interpolate/04.png" alt="04" />
+</p>
+<p>该方法中需要用 <code>sa.to_xarray</code> 将序列转为 <code>DataArray</code>，插值完后再用 <code>to_series</code> 变回序列。<code>DataArray.interp</code> 底层使用的是 <code>scipy.interpolate.interp1d</code> 函数，默认不会做外插，所以最后结果的首尾保留了 <code>NaN</code>。</p>
+<p>第三种方法只用 Pandas 自己的功能实现，但逻辑稍微麻烦些：<code>s.index</code> 与目标坐标求并集（会自动排序），然后进行 <code>reindex</code>，再调用 <code>interpolate</code>，最后从结果中索引出目标坐标的行。效果下图所示：</p>
+<p><img class="img-zoomable" src="/pandas_interpolate/05.png" alt="05" />
+</p>
+<p>结果嘛没什么可说的，开头保留了缺测，结尾的缺测直接前向填充。需要注意的地方是，这里 <code>interpolate</code> 不能取 <code>method='linear'</code>，否则会插出错误的数值。</p>
+<h2 id="以时间为索引的序列">以时间为索引的序列</h2>
+<p>时间序列的插值基本同上一节的描述。一个小区别是，<code>method</code> 中 <code>index</code> 和 <code>values</code> 多了一个别名 <code>time</code>，效果是一样的。这节真正要讲的是 <code>asfreq</code> 和 <code>resample</code> 的插值。</p>
+<p>粗略来说，<code>asfreq</code> 的效果是以序列的起止时间为范围，生成一串等间距的时间戳（例如逐日、每小时、每分钟……），再以该时间戳做 <code>reindex</code>。所以将 <code>asfreq</code> 和 <code>interpolate</code> 方法串起来，可以轻松实现等间隔时刻的内插，如下图所示：</p>
+<p><img class="img-zoomable" src="/pandas_interpolate/06.png" alt="06" />
+</p>
+<p>图中通过 <code>s.asfreq('D').interpolate()</code> 便能实现逐日的线性插值。与之相对照的笨方法是：</p>
+<pre><code class="language-Python">target = pd.date_range(s.index[0], s.index[-1], freq='D')
+s.reindex(target).interpolate()
+</code></pre>
+<p>在时间序列重采样相关的教程中可能会出现 <code>s.resample('D').interpolate()</code> 的用法。查看源代码会发现等价于 <code>s.asfreq('D').interpolate()</code>，依旧可以归纳为上图。</p>
+<h2 id="结语">结语</h2>
+<p>总结一下前面的结论：</p>
+<ul>
+<li>Pandas 中的 <code>interpolate</code> 的作用是通过插值填充缺测部分。</li>
+<li>默认做无视索引数值的线性插值，可以通过 <code>method</code> 参数修改这一行为。</li>
+<li>插值前需要用 <code>reindex</code> 之类的方法引入目标坐标。</li>
+<li>可以用 xarray、NumPy 或 SciPy 做好插值后再导回 Pandas。</li>
+<li>时间序列可以用 <code>asfreq</code> 或 <code>resample</code> 处理后再进行插值。</li>
+</ul>
+<p>本文简单图解了 Pandas 插值的基本行为和使用场景，但考虑到 <code>interpolate</code> 方法的参数较为复杂，仍然可能有错漏的地方，还请读者批评指正。</p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pandas/">pandas</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pytorch/">pytorch</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#以数值为索引的序列">以数值为索引的序列</a></li>
+    <li><a href="#以时间为索引的序列">以时间为索引的序列</a></li>
+    <li><a href="#结语">结语</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pandas/">pandas</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pytorch/">pytorch</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#以数值为索引的序列">以数值为索引的序列</a></li>
+    <li><a href="#以时间为索引的序列">以时间为索引的序列</a></li>
+    <li><a href="#结语">结语</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2022
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+                
+                | Visits: <span id="busuanzi_value_site_pv"></span>
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.staticfile.org/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+<script defer src="https://cdn.staticfile.org/lazysizes/5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

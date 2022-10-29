@@ -1936,5 +1936,3 @@ AR LSTM : 0.2922
 - [Udacity 的 Intro to TensorFlow for Deep Learning](https://www.udacity.com/course/intro-to-tensorflow-for-deep-learning--ud187) 的第 8 课，包含 [练习题](https://github.com/tensorflow/examples/tree/master/courses/udacity_intro_to_tensorflow_for_deep_learning)。
 
 此外，虽然本教程只关注 PyTorch 内置的功能，但你也可以用来实现任何 [经典的时间序列模型](https://otexts.com/fpp3/)。
-
-https://zhajiman.github.io/post/pytorch_time_series_tutorial/
