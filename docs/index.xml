@@ -6,7 +6,21 @@
     <description>Recent content on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 29 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 10 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>预测的 KPI：RMSE、MAE、MAPE 和 Bias</title>
+      <link>https://zhajiman.github.io/post/forecast_kpis/</link>
+      <pubDate>Thu, 10 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/forecast_kpis/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;Nicolas Vandeput 发布在 &lt;a href=&#34;https://towardsdatascience.com/forecast-kpi-rmse-mae-mape-bias-cdc5703d242d&#34; target=&#34;_blank&#34;&gt;Towards Data Science 上的文章&lt;/a&gt;，同时也是其著作《&lt;a href=&#34;https://www.amazon.com/Data-Science-Supply-Chain-Forecasting/dp/3110671107&#34; target=&#34;_blank&#34;&gt;Data Science for Supply Chain Forecasting&lt;/a&gt;》中的一章。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;为预测任务挑选一个合适的指标并没有想象中那么简单，所以这次我们来研究一下 RMSE、MAE、MAPE 和 Bias 的优缺点。&lt;em&gt;剧透：MAPE 是其中最差的，别用。&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/forecast_kpis/fig1.png&#34; alt=&#34;fig1&#34; /&gt;
+&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Pandas 系列：管道风格</title>
       <link>https://zhajiman.github.io/post/pandas_pipe/</link>

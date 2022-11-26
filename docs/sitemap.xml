@@ -2,19 +2,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://zhajiman.github.io/post/</loc>
+    <lastmod>2022-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/</loc>
+    <lastmod>2022-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</loc>
+    <lastmod>2022-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/</loc>
+    <lastmod>2022-11-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/post/forecast_kpis/</loc>
+    <lastmod>2022-11-10T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://zhajiman.github.io/tags/pandas/</loc>
     <lastmod>2022-10-29T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/post/pandas_pipe/</loc>
     <lastmod>2022-10-29T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhajiman.github.io/post/</loc>
-    <lastmod>2022-10-29T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://zhajiman.github.io/tags/python/</loc>
-    <lastmod>2022-10-29T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhajiman.github.io/</loc>
     <lastmod>2022-10-29T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/post/pandas_interpolate/</loc>
@@ -27,9 +36,6 @@
     <lastmod>2022-10-15T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/post/pytorch_time_series_tutorial/</loc>
-    <lastmod>2022-10-15T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhajiman.github.io/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/</loc>
     <lastmod>2022-10-15T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/tags/matplotlib/</loc>
