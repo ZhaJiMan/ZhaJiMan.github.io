@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-11-10T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-02-11T00:00:00+00:00" />
 
 
 <style>
@@ -104,6 +104,69 @@
                 
 
 
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/cartopy_shapefile/">Cartopy 系列：探索 shapefile</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-06-20</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;12991 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/shapely">shapely</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <h2 id="前言">前言</h2>
+<p>Cartopy 可以通过 <code>feature</code> 模块向地图添加国界 <code>BORDER</code> 和省界 <code>STATES</code>，因其底层采用的 Natural Earth 地图数据并不符合我国的政治主张，所以我们经常需要自备 shapefile 文件来画中国省界，以下面的代码为例</p>
+<pre><code class="language-Python">import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.io.shapereader as shpreader
+
+extents = [70, 140, 0, 60]
+crs = ccrs.PlateCarree()
+fig = plt.figure()
+ax = fig.add_subplot(111, projection=crs)
+ax.set_extent(extents, crs)
+
+filepath = './data/bou2_4/bou2_4p.shp'
+reader = shpreader.Reader(filepath)
+geoms = reader.geometries()
+ax.add_geometries(geoms, crs, lw=0.5, fc='none')
+reader.close()
+
+plt.show()
+</code></pre>
+<p>图就不放了，这段代码足以应付大部分需要画省界的情况。然而我在无脑粘贴代码的过程中逐渐产生了疑惑：为什么 shapefile 会由三个文件组成？省界是以何种形式存储在文件中？Cartopy 和 Matplotlib 又是怎样将省界画出来的？调查一番源码后总结出了这段代码底层实现的流程：</p>
+<ul>
+<li>利用 PyShp 包读取 shapefile 文件中的每个形状。</li>
+<li>利用 Shapely 包将形状转换为几何对象。</li>
+<li>利用 Cartopy 包将几何对象投影到地图所在的坐标系上。</li>
+<li>用投影后的坐标构造 Matplotlib 的 Path 对象，最后画在地图上。</li>
+</ul>
+<p>本文的目的即是从头到尾解说一下这段流程，希望加深对 shapefile 格式，Matplotlib 和 Cartopy 包的理解。令人意外的是，随着探索的不断深入，我发现自己自然而然地学会了如何实现省份填色、省份合并，地图白化等，以前看起来十分困难的操作。本文也会一并介绍这些应用。</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/jsdelivr_problem/">解决博客 jsDelivr 资源无法访问的问题</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-05-28</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;963 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/hugo">hugo</a>&nbsp;<a href="/tags/net">net</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <p>前段时间重看自己的文章时发现公式渲染、图片的放大缩小和代码高亮等功能都失效了，按 F12 发现原因是引自 <code>cdn.jsdelivr.net</code> 的字体资源、CSS 和 JS 文件都无法访问，挂梯子后页面恢复正常。</p>
+<p><img class="img-zoomable" src="/jsdelivr_problem/website.png" alt="website" />
+</p>
+    </div>
+</div>
 
 <div class="post">
     <h2 class="post-item post-title">
@@ -263,54 +326,6 @@
 <p><img class="img-zoomable" src="/matplotlib_artist/fig_0.jpg" alt="fig_0" />
 </p>
 <p>毫无疑问 Python 里的 matplotlib 是个非常棒的可视化工具，但在 matplotlib 中慢慢调细节也是件很烦人的事。你很容易浪费好几个小时去找修改图里细节的方法，有时你连那个细节的名字也不知道的话，搜索起来会更加困难。就算你在 Stack Overflow 上找到了相关的提示，也可能再花几个小时根据需求来修改它。不过，只要了解了 matplotlib 图的具体组成，以及你可以对组件执行的操作，就能避开这些徒劳无益的工作。我想，我跟你们中的大多数人一样，做图时遇到的困难都是靠读 Stack Overflow 上那些 matplotlib 高手们的答案来解决的。最近我发现 <a href="https://matplotlib.org/stable/tutorials/intermediate/artists.html" target="_blank">官方的 <code>Artist</code> 对象教程</a> 信息很丰富，有助于我们理解 matplotlib 的画图过程并节省调图时间<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。本文里我会分享一些关于 matplotlib 里 <code>Artist</code> 对象的基本知识，以避免浪费数小时调图的情况出现。</p>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/python_mutable_arguments/">Python 系列：小心默认的可变参数</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-11-14</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;488 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <p>之前我在 <a href="https://zhajiman.github.io/post/cartopy_introduction/" target="_blank">Cartopy 系列：从入门到放弃</a> 一文中定义了这样一个函数</p>
-<pre><code class="language-python">def set_map_extent_and_ticks(
-    ax, extent, xticks, yticks, nx=0, ny=0,
-    xformatter=LongitudeFormatter(),
-    yformatter=LatitudeFormatter()
-):
-    ...
-</code></pre>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/cartopy_appendix/">Cartopy 系列：对入门教程的补充</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-11-06</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6211 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="前言">前言</h2>
-<p>几年前曾写过 <a href="https://zhajiman.github.io/post/cartopy_introduction/" target="_blank">Cartopy 系列：从入门到放弃</a>，但现在来看还是遗漏了不少细节，比如初学者可能会遇到以下问题</p>
-<ul>
-<li>经度是用 [-180°, 180°] 还是 [0°, 360°] 范围？</li>
-<li>为什么有时候设置的刻度显示不全？</li>
-<li>怎么截取跨越地图边界的区域，画图又怎么跨越边界？</li>
-</ul>
-<p>本文将会用坐标变换的思想来解答以上问题，希望能给读者一些实用的启示。本来应该把这些内容写到入门教程里的，但可能会太长，所以现在单独成篇。文中的讨论主要针对最常用的 Plate Carrée 投影，其它投影需要读者自己测试。代码基于 Cartopy 0.18.0，虽然现在已经更新到 0.20.0 了，但基本思想是一致的。</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-first">
@@ -603,7 +618,7 @@
     <div class="container-lg clearfix">
         <div class="col-12 footer">
             
-            <span>&copy; 2020-2022
+            <span>&copy; 2020-2023
                 <a href="https://zhajiman.github.io/">炸鸡人</a>
                  | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
                 | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"

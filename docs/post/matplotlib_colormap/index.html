@@ -134,7 +134,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-05</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5502 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5504 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -351,13 +351,13 @@ masked_array(data=[0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
 <p>其中新增的 <code>vcenter</code> 是分段点，要求 <code>vmin</code>、<code>vcenter</code> 和 <code>vmax</code> 的值依次递增。映射的具体公式为
 $$
 y = \begin{cases}
-0 &amp;\text{if} \quad x &lt; vmin \newline
-(x - vmin) / (vcenter - vmin) &amp;\text{if} \quad vmin \le x &lt; vcenter \newline
-(x - vcenter) / (vmax - vcenter) &amp;\text{if} \quad vcenter \le x \le vmax \newline
-1 &amp;\text{if} \quad x &gt; vmax
+-\infty &amp;\text{if} \quad x &lt; vmin \newline
+\frac{(x - vmin)}{2(vcenter - vmin)} &amp;\text{if} \quad vmin \le x &lt; vcenter \newline
+\frac{(x - vcenter)}{2(vmax - vcenter)} + \frac{1}{2} &amp;\text{if} \quad vcenter \le x \le vmax \newline
++\infty &amp;\text{if} \quad x &gt; vmax
 \end{cases}
 $$
-其内部是用 <code>np.interp</code> 函数完成计算的，所以超出 <code>[vmin, vmax]</code> 范围的 <code>x</code> 会被映射为 0 或 1。</p>
+其内部是用 <code>np.interp</code> 函数完成计算的，超出 <code>[vmin, vmax]</code> 范围的 <code>x</code> 设置为无穷大（<code>np.inf</code>）。</p>
 <h3 id="24-boundarynorm">2.4 BoundaryNorm</h3>
 <p>除了线性和对数的映射，有时我们需要的映射关系像是往一组摆在一起的框里投球。例如下图这个例子</p>
 <p><img class="img-zoomable" src="/matplotlib_colormap/mapping_boundary.png" alt="mapping_boundary" />
@@ -932,7 +932,7 @@ plt.show()
     <div class="container-lg clearfix">
         <div class="col-12 footer">
             
-            <span>&copy; 2020-2022
+            <span>&copy; 2020-2023
                 <a href="https://zhajiman.github.io/">炸鸡人</a>
                  | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
                 | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"

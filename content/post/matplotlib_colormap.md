@@ -305,13 +305,13 @@ TwoSlopeNorm(vcenter, vmin=None, vmax=None)
 其中新增的 `vcenter` 是分段点，要求 `vmin`、`vcenter` 和 `vmax` 的值依次递增。映射的具体公式为
 $$
 y = \begin{cases}
-0 &\text{if} \quad x < vmin \newline
-(x - vmin) / (vcenter - vmin) &\text{if} \quad vmin \le x < vcenter \newline
-(x - vcenter) / (vmax - vcenter) &\text{if} \quad vcenter \le x \le vmax \newline
-1 &\text{if} \quad x > vmax
+-\infty &\text{if} \quad x < vmin \newline
+\frac{(x - vmin)}{2(vcenter - vmin)} &\text{if} \quad vmin \le x < vcenter \newline
+\frac{(x - vcenter)}{2(vmax - vcenter)} + \frac{1}{2} &\text{if} \quad vcenter \le x \le vmax \newline
++\infty &\text{if} \quad x > vmax
 \end{cases}
 $$
-其内部是用 `np.interp` 函数完成计算的，所以超出 `[vmin, vmax]` 范围的 `x` 会被映射为 0 或 1。
+其内部是用 `np.interp` 函数完成计算的，超出 `[vmin, vmax]` 范围的 `x` 设置为无穷大（`np.inf`）。
 
 ### 2.4 BoundaryNorm
 

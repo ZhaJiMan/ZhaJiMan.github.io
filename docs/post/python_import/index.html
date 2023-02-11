@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Python 系列：import 语句 - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="python" />
+
+
+<meta property="og:title" content="Python 系列：import 语句" />
+<meta name="twitter:title" content="Python 系列：import 语句" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/python_import/" /><meta property="og:description" content="" />
+<meta name="twitter:description" content="" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2022-11-30T00:00:00+00:00" /><meta property="article:modified_time" content="2022-11-30T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/python_import/">Python 系列：import 语句</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-11-30</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3035 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <p>Q：</p>
+<ul>
+<li>什么是模块</li>
+<li>执行的脚本和主模块</li>
+<li>什么是包</li>
+<li><code>import</code> 语句怎么找到模块或包</li>
+<li>包是如何找到自己的子模块/包的</li>
+<li><code>__name__</code>、<code>__file__</code> 和 <code>__dict__</code> 属性</li>
+<li>为什么导入要放到脚本最上面</li>
+<li>循环导入</li>
+<li>自己写包怎么组织，怎么找到</li>
+<li><code>site</code> 是什么，第三方包和标准库的区别</li>
+</ul>
+<p>查看所有第三方包：</p>
+<ul>
+<li><code>pip list</code></li>
+<li><code>conda list</code></li>
+</ul>
+<h2 id="命令行参数">命令行参数</h2>
+<h3 id="-c">-c</h3>
+<p><a href="https://docs.python.org/3/using/cmdline.html">https://docs.python.org/3/using/cmdline.html</a></p>
+<p><code>python -c command</code> 时，当前目录的相对路径（空字符串）会被加到 <code>sys.path</code> 的开头，这样 <code>command</code> 里可以引用当前目录的模块。不过 <code>-c</code> 选项也没什么用就是了。</p>
+<h3 id="-m">-m</h3>
+<p><code>python -m modname</code> 会在 <code>sys.path</code> 里搜索名为 <code>modname</code> 的模块，找到作为 <code>__main__</code> 模块执行。<code>modname</code> 可以是模块文件，也可以是 package，相当于执行 <code>modname/__main__.py</code> 文件。当前目录的绝对路径会被加到 <code>sys.path</code> 的开头。<code>-I</code> 选项能够禁用当前目录、<code>site-package</code> 目录和 <code>PYTHON*</code> 环境变量里的目录。</p>
+<p>如果模块或 package 在更深的目录层级里，<code>-m</code> 选项就会找不到它们，所以必须在和模块同级的目录下执行。</p>
+<p>关于 <code>-m</code> 的说明：</p>
+<p>Note: This option cannot be used with built-in modules and extension modules written in C, since they do not have Python module files. However, it can still be used for precompiled modules, even if the original source file is not available.</p>
+<p>例如 <code>timeit</code> 这样的标准库模块就能以 <code>-m</code> 选项作为脚本执行，提供一些命令行功能。</p>
+<h3 id="接文件名">接文件名</h3>
+<p><code>python &lt;script&gt;</code> 时，<code>&lt;script&gt;</code> 必须是一个指向 Python 文件、含 <code>__main__.py</code> 文件的目录，或 zip 压缩包的路径（绝对路径或相对路径）。</p>
+<ul>
+<li>当 <code>&lt;script&gt;</code> 是 Python 文件时，文件所在的目录的绝对路径会加到 <code>sys.path</code> 的开头。</li>
+<li>当 <code>&lt;script&gt;</code> 是目录或 zip 文件时，名为 <code>&lt;script&gt;</code> 的目录的绝对路径会加到 <code>sys.path</code> 的开头。</li>
+</ul>
+<p>同样可以使用 <code>-I</code> 选项隔离这些路径。</p>
+<p>如果什么选项也不给，相当于 <code>python -i</code>，即进入交互模式。当前目录的相对路径，即空字符串会加到 <code>sys.path</code> 的开头。奇怪的是 IPython 是把空字符串加到 <code>sys.path</code> 的中间。</p>
+<h3 id="总结">总结</h3>
+<p><code>python &lt;script&gt;</code>：将 <code>&lt;script&gt;</code> 所在的目录，或以 <code>&lt;script&gt;</code> 为名的目录的绝对路径加到 <code>sys.path</code> 的开头。</p>
+<p><code>python -c command</code>：将当前目录的相对路径（空字符串）加到 <code>sys.path</code> 的开头。</p>
+<p><code>python -m modename</code>：将当前目录的绝对路径加到 <code>sys.path</code> 的开头。</p>
+<p><code>python</code> 将当前目录的相对路径（空字符串）加到 <code>sys.path</code> 的开头；IPython 加到中间。</p>
+<h2 id="builtin">builtin</h2>
+<p><a href="https://docs.python.org/3/library/builtins.html">https://docs.python.org/3/library/builtins.html</a></p>
+<p>内置的函数和常量都放在 <code>builtin</code> 模块里，但一般我们不需要导入这个模块，直接在全局就可以调用其内容。大多数模块的全局都有 <code>__builtins__</code> 变量，其值通常为 <code>builtin</code> 模块或其 <code>__dict__</code> 属性。这是一个实现细节，一般不用关心。</p>
+<h2 id="syspath-的初始化">sys.path 的初始化</h2>
+<p><a href="https://docs.python.org/3/library/sys_path_init.html">https://docs.python.org/3/library/sys_path_init.html</a></p>
+<p>首先，如果 <code>python</code> 命令后面有文件，那么 <code>sys.path</code> 的第一条就是文件所在目录的路径；如果没有，即交互模式、<code>-c</code> 和 <code>-m</code>，那么第一条是当前目录（空字符串）。</p>
+<p>接下来是 <code>PYTHONPATH</code> 里的路径。注意 <code>PYTHONPATH</code> 会影响到系统上所有 Python 版本和环境，所以需要小心使用。</p>
+<p>我的打印结果是：</p>
+<pre><code>D:\code\python\test
+D:\code\github\frykit
+D:\conda\python39.zip
+D:\conda\DLLs
+D:\conda\lib
+D:\conda
+D:\conda\lib\site-packages
+D:\conda\lib\site-packages\certifi-2022.6.15-py3.9.egg
+D:\conda\lib\site-packages\win32
+D:\conda\lib\site-packages\win32\lib
+D:\conda\lib\site-packages\Pythonwin
+</code></pre>
+<p>第一行是文件所在目录，第二行是 <code>PYTHONPATH</code> 的内容。</p>
+<p>接下来是标准模块所在的目录，以及这些模块依赖的扩展模块（用 C 或 C++ 写的，<code>.pyd</code> 或 <code>.so</code> 文件）所在的目录。<code>sys.prefix</code> 是与平台无关的 Python 模块的目录前缀，<code>sys.exec_prefix</code> 是扩展模块的目录前缀，不过 <code>sys</code> 的文档也说这是与平台相关的 Python 模块的目录前缀。</p>
+<h2 id="modules">Modules</h2>
+<p><a href="https://docs.python.org/3/tutorial/modules.html">https://docs.python.org/3/tutorial/modules.html</a></p>
+<p>把函数和类定义写在文件里，之后在脚本或解释器中使用其中定义的函数，这种文件即 module。</p>
+<p>module 内的定义可以被导入其它 module，或 main module——在最顶层或计算器模式下运行的脚本里可获取的变量的组合。</p>
+<p>所谓模块就是一个含有 Python 定义和语句的文件，文件名即模块名，后缀是 <code>.py</code>。模块的名字在模块内以全局变量 <code>__name__</code> 的形式出现。</p>
+<h3 id="更多解释">更多解释</h3>
+<blockquote>
+<p>下面这段不懂，为什么只在第一次运行时才执行呢？</p>
+</blockquote>
+<p>模块内的语句和函数定义用来初始化模块，它们只在模块的名字第一次被 <code>import</code> 语句引用时才会执行。（事实上函数定义也是被执行的语句，效果是将函数名添加到模块的全局命名空间中。）</p>
+<p>每个模块都有其私有的命名空间，对于定义其中的函数来说就是全局命名空间。因此，模块的作者可以在模块内随便用全局变量，而不用担心与用户的全局变量发生冲突。模块的全局变量以 <code>modname.itemname</code> 的形式获取。</p>
+<p>模块里可以导入其它模块。如果把模块放到模块或脚本的最顶上，那么导入的模块名字会被添加到模块的全局命名空间里。（注：换句话说函数里导入的会添加到局部命名空间里？）</p>
+<p><code>from modname import itemname</code> 的形式不会在当前局部命名空间里引入 <code>modname</code>。而 <code>from modname import *</code> 会把导入模块里所有不以 <code>_</code> 开头的名字。当然一般不推荐这样导入。<code>as</code> 用来将 <code>import</code> 后面的对象绑定给 <code>as</code> 后面的名字。</p>
+<p>出于效率上的考虑，在解释器的会话里每个模块只会导入一次，因此如果模块的内容改变了，需要重启解释器，或者调用 <code>importlib</code> 模块的 <code>reload</code> 方法。</p>
+<h4 id="模块作为脚本执行">模块作为脚本执行</h4>
+<pre><code class="language-Python">python modname.py &lt;arguments&gt;
+</code></pre>
+<p>模块被执行，其 <code>__name__</code> 的值为 <code>'__main__'</code>。所以可以在模块最后添加</p>
+<pre><code class="language-Python">if __name__ == '__main__':
+    ...
+</code></pre>
+<p>这段代码只会在脚本作为“主文件”时才会被执行（例如放测试语句）。当文件作为模块被导入时，这段代码就不会被执行。</p>
+<h4 id="模块搜索路径">模块搜索路径</h4>
+<p>解释器搜索名为 <code>spam</code> 的模块时，首先会找这个名字的内置（built-in）模块，名字列在 <code>sys.builtin_module_names</code> 里。如果没找着，就会在 <code>sys.path</code> 里列出来的目录里找 <code>spam.py</code>。<code>sys.path</code> 的内容为：</p>
+<ul>
+<li>输入脚本的所在目录的绝对路径，并且排第一位。</li>
+<li><code>PYTHONPATH</code>，系统环境变量里的一串目录名。</li>
+<li>跟安装相关的，例如 <code>site-packages</code> 目录。</li>
+</ul>
+<p><code>sys.path</code> 初始化后，Python 程序可以修改其内容。其中脚本所在目录的路径比标准库路径靠前，因而同名时会优先在脚本目录找。</p>
+<blockquote>
+<p><a href="https://docs.python.org/3/library/sys_path_init.html">https://docs.python.org/3/library/sys_path_init.html</a>：搜索模块的路径在 Python 启动时初始化，通过 <code>sys.path</code> 获取。</p>
+</blockquote>
+<h2 id="python-标准库">Python 标准库</h2>
+<p><a href="https://docs.python.org/zh-cn/3/library/index.html">https://docs.python.org/zh-cn/3/library/index.html</a></p>
+<blockquote>
+<p>Python 标准库非常庞大，所提供的组件涉及范围十分广泛，正如以下内容目录所显示的。这个库包含了多个内置模块 (以 C 编写)，Python 程序员必须依靠它们来实现系统级功能，例如文件 I/O，此外还有大量以 Python 编写的模块，提供了日常编程中许多问题的标准解决方案。其中有些模块经过专门设计，通过将特定平台功能抽象化为平台中立的 API 来鼓励和加强 Python 程序的可移植性。</p>
+</blockquote>
+<p>划重点：标准库包含内置模块（C 写的）。</p>
+<p>官方文档是从内置函数、常量、类型和异常开始讲起，接着介绍需要 <code>import</code> 的包/模块。</p>
+<h2 id="sysconfig">sysconfig</h2>
+<p><code>sysconfig</code> 模块可以查询安装路径，安装方案（scheme）会因平台和安装选项的不同而不同。九种方案为：</p>
+<ul>
+<li><code>posix_prefix</code></li>
+<li><code>posix_home</code></li>
+<li><code>posix_user</code></li>
+<li><code>posix_venv</code></li>
+<li><code>nt</code></li>
+<li><code>nt_user</code></li>
+<li><code>nt_venv</code></li>
+<li><code>venv</code></li>
+<li><code>osx_framework_user</code></li>
+</ul>
+<p>posix 指 Linux 或 macOS，nt 指 Windows。这里不打算深究方案的含义。每个方案由 8 个路径组成：</p>
+<ul>
+<li><code>stdlib</code>: directory containing the standard Python library files that are not platform-specific.</li>
+<li><code>platstdlib</code>: directory containing the standard Python library files that are platform-specific.</li>
+<li><code>platlib</code>: directory for site-specific, platform-specific files.</li>
+<li><code>purelib</code>: directory for site-specific, non-platform-specific files.</li>
+<li><code>include</code>: directory for non-platform-specific header files for the Python C-API.</li>
+<li><code>platinclude</code>: directory for platform-specific header files for the Python C-API.</li>
+<li><code>scripts</code>: directory for script files.</li>
+<li><code>data</code>: directory for data files.</li>
+</ul>
+<p>用 <code>sysconfig.get_paths</code> 以字典的形式查看当前平台默认方案的所有路径（目录），<code>get_path</code> 可以指定上面的 8 个名字。以 Linux 平台 conda 的 base 和 test 环境为例：</p>
+<pre><code class="language-Python">{'stdlib': '/data/anaconda3/lib/python3.9',
+ 'platstdlib': '/data/anaconda3/lib/python3.9',
+ 'purelib': '/data/anaconda3/lib/python3.9/site-packages',
+ 'platlib': '/data/anaconda3/lib/python3.9/site-packages',
+ 'include': '/data/anaconda3/include/python3.9',
+ 'platinclude': '/data/anaconda3/include/python3.9',
+ 'scripts': '/data/anaconda3/bin',
+ 'data': '/data/anaconda3'}
+</code></pre>
+<pre><code class="language-Python">{'stdlib': '/data/anaconda3/envs/test/lib/python3.10',
+ 'platstdlib': '/data/anaconda3/envs/test/lib/python3.10',
+ 'purelib': '/data/anaconda3/envs/test/lib/python3.10/site-packages',
+ 'platlib': '/data/anaconda3/envs/test/lib/python3.10/site-packages',
+ 'include': '/data/anaconda3/envs/test/include/python3.10',
+ 'platinclude': '/data/anaconda3/envs/test/include/python3.10',
+ 'scripts': '/data/anaconda3/envs/test/bin',
+ 'data': '/data/anaconda3/envs/test'}
+</code></pre>
+<p>再以 Windows 平台的 base 为例：</p>
+<pre><code class="language-Python">{'stdlib': 'D:\\conda\\Lib',
+ 'platstdlib': 'D:\\conda\\Lib',
+ 'purelib': 'D:\\conda\\Lib\\site-packages',
+ 'platlib': 'D:\\conda\\Lib\\site-packages',
+ 'include': 'D:\\conda\\Include',
+ 'platinclude': 'D:\\conda\\Include',
+ 'scripts': 'D:\\conda\\Scripts',
+ 'data': 'D:\\conda'}
+</code></pre>
+<p>可以总结出的信息是，base 环境的根目录是 <code>/data/anaconda3</code>，而 test 环境在其下的 <code>envs/test</code> 里，二者子路径的结构相同。标准库都在 <code>lib</code> 目录里，第三方包都是在 <code>site-packages</code> 里，头文件在 <code>include</code> 里，脚本在 <code>bin</code> 或 <code>Scripts</code> Linux 和 Windows 的细节有很多不同，原因不明。</p>
+<h2 id="pass">pass</h2>
+<p><a href="https://www.zhihu.com/question/30296617/answer/112564303">https://www.zhihu.com/question/30296617/answer/112564303</a></p>
+<p>虚拟机执行脚本的过程：</p>
+<ul>
+<li>完成模块的加载和链接。</li>
+<li>将源代码翻译为 <code>PyCodeObject</code> 对象（即字节码），并将其写入内存中。</li>
+<li>从内存里读取指令并执行。</li>
+<li>程序结束后根据命令行调用情况，决定是否将 <code>PyCodeObject</code> 写回硬盘当中（即 <code>.pyc</code> 或 <code>.pyo</code> 文件）。</li>
+<li>之后若再次执行该脚本，则先检查本地是否有上述字节码文件。</li>
+</ul>
+<p>模块每次导入前都会检查字节码文件的修改时间是否和自身一致，否的话重新生成字节码并覆盖原文件。</p>
+<p><code>.pyc</code> 文件的加载速度比 <code>.py</code> 有所提高，并且可以隐藏源码，起一定程度的反编译作用。<code>.pyo</code> 是优化 <code>.pyc</code> 后生成的更小的文件。</p>
+<h2 id="python-是如何检索包路径的">Python 是如何检索包路径的</h2>
+<p><a href="https://zhuanlan.zhihu.com/p/426672057">https://zhuanlan.zhihu.com/p/426672057</a></p>
+<p><code>D:\\conda\\lib\\site-packages</code> 貌似是 Conda 的第三方包位置。</p>
+<p><code>site</code> 模块和 <code>.pth</code> 文件？在 <code>site.getsitepackages()</code> 里的路径里，搜索 <code>.pth</code> 文件，将其中的路径载入 <code>sys.path</code>。</p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pandas/">pandas</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pytorch/">pytorch</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#命令行参数">命令行参数</a>
+      <ul>
+        <li><a href="#-c">-c</a></li>
+        <li><a href="#-m">-m</a></li>
+        <li><a href="#接文件名">接文件名</a></li>
+        <li><a href="#总结">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#builtin">builtin</a></li>
+    <li><a href="#syspath-的初始化">sys.path 的初始化</a></li>
+    <li><a href="#modules">Modules</a>
+      <ul>
+        <li><a href="#更多解释">更多解释</a></li>
+      </ul>
+    </li>
+    <li><a href="#python-标准库">Python 标准库</a></li>
+    <li><a href="#sysconfig">sysconfig</a></li>
+    <li><a href="#pass">pass</a></li>
+    <li><a href="#python-是如何检索包路径的">Python 是如何检索包路径的</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pandas/">pandas</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pytorch/">pytorch</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#命令行参数">命令行参数</a>
+      <ul>
+        <li><a href="#-c">-c</a></li>
+        <li><a href="#-m">-m</a></li>
+        <li><a href="#接文件名">接文件名</a></li>
+        <li><a href="#总结">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#builtin">builtin</a></li>
+    <li><a href="#syspath-的初始化">sys.path 的初始化</a></li>
+    <li><a href="#modules">Modules</a>
+      <ul>
+        <li><a href="#更多解释">更多解释</a></li>
+      </ul>
+    </li>
+    <li><a href="#python-标准库">Python 标准库</a></li>
+    <li><a href="#sysconfig">sysconfig</a></li>
+    <li><a href="#pass">pass</a></li>
+    <li><a href="#python-是如何检索包路径的">Python 是如何检索包路径的</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2023
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+                
+                | Visits: <span id="busuanzi_value_site_pv"></span>
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.staticfile.org/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+<script defer src="https://cdn.staticfile.org/lazysizes/5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

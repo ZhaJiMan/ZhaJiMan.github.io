@@ -6,7 +6,36 @@
     <description>Recent content in matplotlib on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 17 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/matplotlib/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 11 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/matplotlib/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Matplotlib 系列：手动设置时间序列折线图的刻度</title>
+      <link>https://zhajiman.github.io/post/matplotlib_time_tick/</link>
+      <pubDate>Sat, 11 Feb 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/matplotlib_time_tick/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;Matplotlib 中画折线图用 &lt;code&gt;ax.plot(x, y)&lt;/code&gt;，当横坐标 &lt;code&gt;x&lt;/code&gt; 是时间数组时，例如 &lt;code&gt;datetime&lt;/code&gt; 或 &lt;code&gt;np.datetime64&lt;/code&gt; 构成的列表，&lt;code&gt;x&lt;/code&gt; 和 &lt;code&gt;y&lt;/code&gt; 的组合即一条时间序列。Matplotlib 能直接画出时间序列，并自动设置刻度。下面以一条长三年的气温时间序列为例：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv(&#39;test.csv&#39;, index_col=0, parse_dates=True)
+series = df.loc[&#39;2012&#39;:&#39;2014&#39;, &#39;T&#39;]
+
+fig, ax = plt.subplots(figsize=(10, 4))
+ax.plot(series.index, series)
+ax.set_ylabel(&#39;Temperature (℃)&#39;)
+
+print(ax.xaxis.get_major_locator())
+print(ax.xaxis.get_major_formatter())
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;matplotlib.dates.AutoDateLocator object at 0x000001AC6BF89A00&amp;gt;
+&amp;lt;matplotlib.dates.AutoDateFormatter object at 0x000001AC6BF89B20&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/matplotlib_time_tick/fig_1.png&#34; alt=&#34;fig_1&#34; /&gt;
+&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>编写科研作图代码有更好的方法</title>
       <link>https://zhajiman.github.io/post/matplotlib_better_code/</link>

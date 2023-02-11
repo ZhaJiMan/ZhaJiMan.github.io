@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/matplotlib/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-09-17T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-02-11T00:00:00+00:00" />
 
 
 <style>
@@ -108,6 +108,43 @@
 </div>
 
 
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/matplotlib_time_tick/">Matplotlib 系列：手动设置时间序列折线图的刻度</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-02-11</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1920 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97">时间序列</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="前言">前言</h2>
+<p>Matplotlib 中画折线图用 <code>ax.plot(x, y)</code>，当横坐标 <code>x</code> 是时间数组时，例如 <code>datetime</code> 或 <code>np.datetime64</code> 构成的列表，<code>x</code> 和 <code>y</code> 的组合即一条时间序列。Matplotlib 能直接画出时间序列，并自动设置刻度。下面以一条长三年的气温时间序列为例：</p>
+<pre><code class="language-Python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('test.csv', index_col=0, parse_dates=True)
+series = df.loc['2012':'2014', 'T']
+
+fig, ax = plt.subplots(figsize=(10, 4))
+ax.plot(series.index, series)
+ax.set_ylabel('Temperature (℃)')
+
+print(ax.xaxis.get_major_locator())
+print(ax.xaxis.get_major_formatter())
+</code></pre>
+<pre><code>&lt;matplotlib.dates.AutoDateLocator object at 0x000001AC6BF89A00&gt;
+&lt;matplotlib.dates.AutoDateFormatter object at 0x000001AC6BF89B20&gt;
+</code></pre>
+<p><img class="img-zoomable" src="/matplotlib_time_tick/fig_1.png" alt="fig_1" />
+</p>
+  </div>
+</div>
 
 <div class="post">
   <h2 class="post-item post-title">
@@ -290,7 +327,7 @@ plt.show()
   <div class="post-item post-meta">
     <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-05</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5502 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5504 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -331,27 +368,6 @@ plt.show()
 <li>DPI 和清晰度的关系。</li>
 <li>如何导出期刊要求的高 DPI 图片。</li>
 </ul>
-  </div>
-</div>
-
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/cartopy_lambert/">Cartopy 系列：为 Lambert 投影地图添加刻度</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-24</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2210 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <h2 id="前言">前言</h2>
-<p>Cartopy 中的 Plate Carrée 投影使用方便，但在展示中国地图时会使中国的形状显得很瘪，与之相比，Lambert 投影的效果会更加美观，下图显示了两种投影的差异</p>
-<p><img class="img-zoomable" src="/cartopy_lambert/comparison.png" alt="comparison" />
-</p>
-<p>所以本文将会介绍如何在 Cartopy 中实现 Lambert 投影，并为地图添上合适的刻度。文中 Cartopy 的版本是 0.18.0。</p>
   </div>
 </div>
 
@@ -638,7 +654,7 @@ plt.show()
     <div class="container-lg clearfix">
         <div class="col-12 footer">
             
-            <span>&copy; 2020-2022
+            <span>&copy; 2020-2023
                 <a href="https://zhajiman.github.io/">炸鸡人</a>
                  | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
                 | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"

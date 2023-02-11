@@ -6,7 +6,16 @@
     <description>Recent content in python on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 29 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 30 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python 系列：import 语句</title>
+      <link>https://zhajiman.github.io/post/python_import/</link>
+      <pubDate>Wed, 30 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/python_import/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Pandas 系列：管道风格</title>
       <link>https://zhajiman.github.io/post/pandas_pipe/</link>

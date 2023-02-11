@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Matplotlib 系列：手动设置时间序列折线图的刻度 - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="matplotlib, 时间序列" />
+
+
+<meta property="og:title" content="Matplotlib 系列：手动设置时间序列折线图的刻度" />
+<meta name="twitter:title" content="Matplotlib 系列：手动设置时间序列折线图的刻度" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/matplotlib_time_tick/" /><meta property="og:description" content="前言
+Matplotlib 中画折线图用 ax.plot(x, y)，当横坐标 x 是时间数组时，例如 datetime 或 np.datetime64 构成的列表，x 和 y 的组合即一条时间序列。Matplotlib 能直接画出时间序列，并自动设置刻度。下面以一条长三年的气温时间序列为例：
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv(&#39;test.csv&#39;, index_col=0, parse_dates=True)
+series = df.loc[&#39;2012&#39;:&#39;2014&#39;, &#39;T&#39;]
+
+fig, ax = plt.subplots(figsize=(10, 4))
+ax.plot(series.index, series)
+ax.set_ylabel(&#39;Temperature (℃)&#39;)
+
+print(ax.xaxis.get_major_locator())
+print(ax.xaxis.get_major_formatter())
+
+&lt;matplotlib.dates.AutoDateLocator object at 0x000001AC6BF89A00&gt;
+&lt;matplotlib.dates.AutoDateFormatter object at 0x000001AC6BF89B20&gt;
+
+
+" />
+<meta name="twitter:description" content="前言
+Matplotlib 中画折线图用 ax.plot(x, y)，当横坐标 x 是时间数组时，例如 datetime 或 np.datetime64 构成的列表，x 和 y 的组合即一条时间序列。Matplotlib 能直接画出时间序列，并自动设置刻度。下面以一条长三年的气温时间序列为例：
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv(&#39;test.csv&#39;, index_col=0, parse_dates=True)
+series = df.loc[&#39;2012&#39;:&#39;2014&#39;, &#39;T&#39;]
+
+fig, ax = plt.subplots(figsize=(10, 4))
+ax.plot(series.index, series)
+ax.set_ylabel(&#39;Temperature (℃)&#39;)
+
+print(ax.xaxis.get_major_locator())
+print(ax.xaxis.get_major_formatter())
+
+&lt;matplotlib.dates.AutoDateLocator object at 0x000001AC6BF89A00&gt;
+&lt;matplotlib.dates.AutoDateFormatter object at 0x000001AC6BF89B20&gt;
+
+
+" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2023-02-11T00:00:00+00:00" /><meta property="article:modified_time" content="2023-02-11T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/matplotlib_time_tick/">Matplotlib 系列：手动设置时间序列折线图的刻度</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-02-11</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1920 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97">时间序列</a>&nbsp;</span>
+
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="前言">前言</h2>
+<p>Matplotlib 中画折线图用 <code>ax.plot(x, y)</code>，当横坐标 <code>x</code> 是时间数组时，例如 <code>datetime</code> 或 <code>np.datetime64</code> 构成的列表，<code>x</code> 和 <code>y</code> 的组合即一条时间序列。Matplotlib 能直接画出时间序列，并自动设置刻度。下面以一条长三年的气温时间序列为例：</p>
+<pre><code class="language-Python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('test.csv', index_col=0, parse_dates=True)
+series = df.loc['2012':'2014', 'T']
+
+fig, ax = plt.subplots(figsize=(10, 4))
+ax.plot(series.index, series)
+ax.set_ylabel('Temperature (℃)')
+
+print(ax.xaxis.get_major_locator())
+print(ax.xaxis.get_major_formatter())
+</code></pre>
+<pre><code>&lt;matplotlib.dates.AutoDateLocator object at 0x000001AC6BF89A00&gt;
+&lt;matplotlib.dates.AutoDateFormatter object at 0x000001AC6BF89B20&gt;
+</code></pre>
+<p><img class="img-zoomable" src="/matplotlib_time_tick/fig_1.png" alt="fig_1" />
+</p>
+<p>打印 x 轴的属性发现，Matplotlib 默认为时间序列设置了 <code>AutoDateLocator</code> 和 <code>AutoDateFormatter</code>，前者会自动根据 <code>ax</code> 的时间范围在 x 轴上选出位置、数量和间隔都比较合适的刻度，后者会自动根据主刻度的间隔，将刻度格式化为合适的样式。以上图为例，Matplotlib 自动选择了间隔 4 个月的刻度，刻度标签的字符串呈 <code>YYYY-MM</code> 的格式。</p>
+<p><img class="img-zoomable" src="/matplotlib_time_tick/fig_2.png" alt="fig_2" />
+</p>
+<p>虽然自动刻度很方便，但如果想像上图一样调整刻度间隔，追加小刻度，并修改刻度标签格式，就需要手动设置刻度。本文的目的就是介绍手动修改时间刻度的方法，内容主要分为三点：</p>
+<ul>
+<li>了解 Matplotlib 处理时间的机制。</li>
+<li>运用 <code>matplotlib.dates</code> 模块里提供的工具设置刻度。</li>
+<li>解决 Pandas 时间序列图的问题。</li>
+</ul>
+<p>本文基于 Matplotlib 3.6.2 和 Pandas 1.5.1。</p>
+<h2 id="matplotlib-处理时间的机制">Matplotlib 处理时间的机制</h2>
+<p><code>matplotlib.dates</code>（后简称 <code>mdates</code>）模块里有两个函数：<code>date2num</code> 和 <code>num2date</code>。前者能将一个 <code>datetime</code> 或 <code>np.datetime64</code> 对象转换成该对象离 1970-01-01T00:00:00 以来的天数（注意不是秒数），后者则是反过来转换。当 <code>ax.plot</code> 接受时间类型的 <code>x</code> 时，会在内部创建一个 <code>mdates.DateConverter</code> 对象，对 <code>x</code> 的每个元素调用 <code>date2num</code>，将其转换成表示天数的浮点型一维数组。Matplotlib 在内部便是以这种浮点数的形式存储时间的。下面验证一下这点：</p>
+<pre><code class="language-Python">x0, x1 = ax.get_xlim()
+origin = '1970-01-01 00:00'
+t0 = pd.to_datetime(x0, unit='D', origin=origin)
+t1 = pd.to_datetime(x1, unit='D', origin=origin)
+print(x0, t0)
+print(x1, t1)
+</code></pre>
+<pre><code>15285.200347222222 2011-11-07 04:48:30
+16490.792708333334 2015-02-24 19:01:30
+</code></pre>
+<p>其中 <code>pd.to_datetime</code> 可以直接换成 <code>num2date</code>。所以后续在 <code>ax</code> 上画新线条时，使用时间类型或浮点类型的 <code>x</code> 都可以。</p>
+<p>此外，在脚本开头 <code>import pandas</code> 时，Pandas 会将一些额外的 Converter 注入到 Matplotlib 中，使之能够识别 <code>pandas.Timestamp</code> 和 <code>pandas.DatetimeIndex</code> 等类型的 <code>x</code>。</p>
+<h2 id="使用-matplotlibdates-提供的工具">使用 matplotlib.dates 提供的工具</h2>
+<p>除引言里提到的 <code>AutoDateLocator</code> 和 <code>AutoDateFormatter</code> 外，<code>mdates</code> 还提供其它规则的 Locator 和 Formatter。以设置月份刻度的 <code>MonthLocator</code> 为例：</p>
+<pre><code class="language-Python">dates.MonthLocator(bymonth=None, bymonthday=1, interval=1, tz=None)
+</code></pre>
+<p>其中 <code>bymonth</code> 参数可以是表示月份的整数，或整数构成的列表，默认值是 1 - 12 月。<code>MonthLocator</code> 会在 <code>ax</code> 的 x 轴显示范围间生成一系列间隔为 <code>interval</code> 个月的 <code>datetime</code> 对象，它们的日由 <code>bymonthday</code> 指定，时分秒都为 0。从中挑选出月份跟 <code>bymonth</code> 匹配的对象，调用 <code>date2num</code> 函数作为最后的刻度值。因为内部实现用的是 <code>dateutil.rrule.rrule</code>，所以参数也是与之同名的。例如 <code>MonthLocator()</code> 的效果就是在每年每月 1 号 00:00:00 的位置设置一个刻度，那么一年就会有 12 个刻度。<code>MonthLocator(bymonth=[1, 4, 7, 10])</code> 就是在每年 1、4、7 和 10 月设置刻度。</p>
+<p>除此之外 <code>mdates</code> 里还有 <code>YearLocator</code>、<code>DayLocator</code>、<code>WeekDayLocator</code>、<code>HourLocator</code> 等，原理和参数跟 <code>MonthLocator</code> 类似，就不多介绍了。</p>
+<p>接着以 <code>DateFormatter</code> 为例：</p>
+<pre><code class="language-Python">class matplotlib.dates.DateFormatter(fmt, tz=None, *, usetex=None)
+</code></pre>
+<p>原理非常简单，就是对刻度值 <code>x</code> 调用 <code>num2date(x).strftime(fmt)</code>，得到刻度标签。例如取 <code>DateFormatter(fmt='%Y-%m')</code>，就能让刻度标签呈 <code>YYYY-MM</code> 的格式。</p>
+<p>此外我们知道，如果直接向 <code>ax.xaxis.get_major_formatter</code> 传入一个参数为 <code>x</code> 和 <code>pos</code> 的函数，就相当于用这个函数构造了一个 <code>FuncFormatter</code>。所以可以简单自制一个只在每年 1 月标出年份的 Formatter：</p>
+<pre><code class="language-Python">def format_func(x, pos=None):
+    x = mdates.num2date(x)
+    if x.month == 1:
+        fmt = '%m\n%Y'
+    else:
+        fmt = '%m'
+    label = x.strftime(fmt)
+    
+    return label
+</code></pre>
+<p>所以引言里的效果可以用下面的代码实现：</p>
+<pre><code class="language-Python">import matplotlib.dates as mdates
+
+ax.xaxis.set_major_locator(mdates.MonthLocator([1, 4, 7, 10]))
+ax.xaxis.set_minor_locator(mdates.MonthLocator())
+ax.xaxis.set_major_formatter(format_func)
+</code></pre>
+<h2 id="pandas-时间序列图">Pandas 时间序列图</h2>
+<p>Pandas 的 <code>Series</code> 和 <code>DataFrame</code> 对象自带 <code>plot</code> 方法，默认以 Matplotlib 为后端画图。以气温时间序列的第一年为例：</p>
+<pre><code class="language-Python">subset = series.loc['2012-01':'2012-12']
+ax = subset.plot(figsize=(10, 4), xlabel='')
+
+print(ax.xaxis.get_major_locator())
+print(ax.xaxis.get_major_formatter())
+</code></pre>
+<pre><code>&lt;pandas.plotting._matplotlib.converter.TimeSeries_DateLocator object at 0x000002639E7AD970&gt;
+&lt;pandas.plotting._matplotlib.converter.TimeSeries_DateFormatter object at 0x000002639E793CD0&gt;
+</code></pre>
+<p><img class="img-zoomable" src="/matplotlib_time_tick/fig_3.png" alt="fig_3" />
+</p>
+<p>跟用 <code>ax.plot</code> 来画的一个区别是，Pandas 默认给 x 轴设置了自己实现的 <code>TimeSeries_DateLocator</code> 和 <code>TimeSeries_DateFormatter</code>。效果如上图所示，自动选取逐月刻度，以英文缩写标注月份，并且只在一月标注年份。但再仔细看，小刻度咋像乱标的。因此尝试修改 Locator 和 Formatter：</p>
+<pre><code class="language-Python">ax.xaxis.set_major_locator(mdates.MonthLocator())
+ax.xaxis.set_minor_locator(mticker.NullLocator())
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%M'))
+</code></pre>
+<p>结果是……刻度全部消失了。检查一下浮点数范围：</p>
+<pre><code class="language-Python">x0, x1 = ax.get_xlim()
+print(x0, mdates.num2date(x0))
+print(x1, mdates.num2date(x1))
+</code></pre>
+<pre><code>ValueError: Date ordinal 22089600.0 converts to 62449-04-09T00:00:00.000000 (using epoch 1970-01-01T00:00:00), but Matplotlib dates must be between year 0001 and 9999.
+</code></pre>
+<p>喜提 <code>ValueError</code>，说浮点数作为时间来说出界了。随后检查发现，x 轴坐标的单位是距 1970-01-01T00:00:00 的分钟数，无怪乎 <code>mdates</code> 里的 Locator 和 Formatter 都失效了。猜测原因是 Pandas 的 <code>plot</code> 虽然也会将时间转换成浮点数，但单位会根据时间的频率（即 <code>freq</code>）发生变化，所以 Pandas 也为其准备了特制的 Locator 和 Formatter。解决方法也很简单，如果你不满意 Pandas 自动刻度的效果，就直接用 <code>ax.plot</code> 来画，再使用 <code>mdates</code> 里的工具。具体代码见上一节。</p>
+<h2 id="总结">总结</h2>
+<p>Matplotlib 用天数的浮点数表示时间，方便内部数值计算。需要按逐月等规则设置刻度时，再在浮点数和时间对象之间来回转换。<code>matplotlib.dates</code> 中提供了定位和修饰时间刻度的工具，配合 Pandas 使用时可能会有冲突。</p>
+<h2 id="参考资料">参考资料</h2>
+<p><a href="https://matplotlib.org/stable/api/dates_api.html" target="_blank">matplotlib.dates</a></p>
+<p><a href="https://dateutil.readthedocs.io/en/stable/rrule.html" target="_blank">dateutil.rrule</a></p>
+<p><a href="https://matplotlib.org/stable/gallery/ticks/date_index_formatter.html" target="_blank">Custom tick formatter for time series</a></p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pandas/">pandas</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pytorch/">pytorch</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#matplotlib-处理时间的机制">Matplotlib 处理时间的机制</a></li>
+    <li><a href="#使用-matplotlibdates-提供的工具">使用 matplotlib.dates 提供的工具</a></li>
+    <li><a href="#pandas-时间序列图">Pandas 时间序列图</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pandas/">pandas</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pytorch/">pytorch</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#matplotlib-处理时间的机制">Matplotlib 处理时间的机制</a></li>
+    <li><a href="#使用-matplotlibdates-提供的工具">使用 matplotlib.dates 提供的工具</a></li>
+    <li><a href="#pandas-时间序列图">Pandas 时间序列图</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2023
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+                
+                | Visits: <span id="busuanzi_value_site_pv"></span>
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.staticfile.org/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+<script defer src="https://cdn.staticfile.org/lazysizes/5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>
