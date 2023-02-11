@@ -144,23 +144,6 @@ print(ax.xaxis.get_major_formatter())
 
 <div class="post">
     <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/python_import/">Python 系列：import 语句</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-11-30</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3035 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
         <a href="https://zhajiman.github.io/post/forecast_kpis/">预测的 KPI：RMSE、MAE、MAPE 和 Bias</a>
     </h2>
     <div class="post-item post-meta">
@@ -380,6 +363,50 @@ z_mean = np.nanmean(z)
 <p><img class="img-zoomable" src="/cartopy_polygon_to_mask/diagram.png" alt="diagram" />
 </p>
 <p>本文的目的是介绍如何用 Python 制作掩膜数组，并尽量优化其运行时间。从 shapefile 中读取中国国界并转化为 Shapely 中的多边形对象等操作，已经在博文 <a href="https://zhajiman.github.io/post/cartopy_shapefile/" target="_blank">Cartopy 系列：探索 shapefile</a> 中详细介绍过了，本文是对其的一个补充。</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/cartopy_shapefile/">Cartopy 系列：探索 shapefile</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-06-20</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;12991 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/shapely">shapely</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <h2 id="前言">前言</h2>
+<p>Cartopy 可以通过 <code>feature</code> 模块向地图添加国界 <code>BORDER</code> 和省界 <code>STATES</code>，因其底层采用的 Natural Earth 地图数据并不符合我国的政治主张，所以我们经常需要自备 shapefile 文件来画中国省界，以下面的代码为例</p>
+<pre><code class="language-Python">import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.io.shapereader as shpreader
+
+extents = [70, 140, 0, 60]
+crs = ccrs.PlateCarree()
+fig = plt.figure()
+ax = fig.add_subplot(111, projection=crs)
+ax.set_extent(extents, crs)
+
+filepath = './data/bou2_4/bou2_4p.shp'
+reader = shpreader.Reader(filepath)
+geoms = reader.geometries()
+ax.add_geometries(geoms, crs, lw=0.5, fc='none')
+reader.close()
+
+plt.show()
+</code></pre>
+<p>图就不放了，这段代码足以应付大部分需要画省界的情况。然而我在无脑粘贴代码的过程中逐渐产生了疑惑：为什么 shapefile 会由三个文件组成？省界是以何种形式存储在文件中？Cartopy 和 Matplotlib 又是怎样将省界画出来的？调查一番源码后总结出了这段代码底层实现的流程：</p>
+<ul>
+<li>利用 PyShp 包读取 shapefile 文件中的每个形状。</li>
+<li>利用 Shapely 包将形状转换为几何对象。</li>
+<li>利用 Cartopy 包将几何对象投影到地图所在的坐标系上。</li>
+<li>用投影后的坐标构造 Matplotlib 的 Path 对象，最后画在地图上。</li>
+</ul>
+<p>本文的目的即是从头到尾解说一下这段流程，希望加深对 shapefile 格式，Matplotlib 和 Cartopy 包的理解。令人意外的是，随着探索的不断深入，我发现自己自然而然地学会了如何实现省份填色、省份合并，地图白化等，以前看起来十分困难的操作。本文也会一并介绍这些应用。</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-item pag-current">
