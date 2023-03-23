@@ -6,7 +6,41 @@
     <description>Recent content in matplotlib on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 11 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/matplotlib/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 21 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/matplotlib/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CALIPSO L2 VFM 产品的读取和绘制（with Python）</title>
+      <link>https://zhajiman.github.io/post/calipso_vfm/</link>
+      <pubDate>Tue, 21 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/calipso_vfm/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;CALIPSO 卫星的 L2 VFM（Vertical Feature Mask）产品根据激光的后向散射和消光信息，将激光通过的各高度层分类为云或气溶胶。该产品在现实中的表现如下图所示：卫星一边在轨道上移动一边向地面发射激光脉冲，相当于在地面上缓缓拉开一幅“画卷”，VFM 描述了“画卷”上云和气溶胶的分布和分类情况。&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/calipso_vfm/R-C.jpg&#34; alt=&#34;R-C&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;处理 VFM 产品的难点在于：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;VFM 数组呈 &lt;code&gt;(N, 5515)&lt;/code&gt; 的形状，N 表示卫星移动时产生了 N 次观测，但 5515 并非表示有 5515 层高度，而是三种水平和垂直分辨率都不同的数据摊平成了长 5515 的数组。因此处理数据时需要参照文档的说明对 5515 进行变形。&lt;/li&gt;
+&lt;li&gt;文件中的经纬度和时间与 5515 的对应关系。时间数组需要解析成可用的格式。&lt;/li&gt;
+&lt;li&gt;每个 range bin 的分类结果编码到了 16 位的无符号短整型的每个比特上，需要按位解码。&lt;/li&gt;
+&lt;li&gt;网上现成的代码偏少。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;网上能找到的代码有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/hmjbarbosa/CALIOPmatlab&#34; target=&#34;_blank&#34;&gt;CALIOPmatlab&lt;/a&gt;：以前 VFM 的在线文档里是给出过 MATLAB 和 IDL 的代码的，但现在链接消失了。这个仓库提供了民间改进后 MATLAB 代码。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.hdfeos.org/zoo/index_openLaRC_Examples.php&#34; target=&#34;_blank&#34;&gt;HDF-EOS COMPREHENSIVE EXAMPLES&lt;/a&gt;：HDF-EOS 网站的示例，简单易理解。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://meteothink.org/examples/meteoinfolab/satellite/calipso.html&#34; target=&#34;_blank&#34;&gt;MeteoInfo examples: CALIPSO data&lt;/a&gt;：基于 MeteoInfo 的代码，还有其它产品的例子。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/NASA-DEVELOP/VOCAL&#34; target=&#34;_blank&#34;&gt;Visualization of CALIPSO (VOCAL)&lt;/a&gt;：CALIPSO 官方基于 Python 2 的可视化工具。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.csdn.net/jnbfknasf113/article/details/122297875&#34; target=&#34;_blank&#34;&gt;星载激光雷达CALIPSO-VFM产品数据读取与显示&lt;/a&gt;：MATLAB 代码的讲解。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;笔者也曾写过两次教程：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;&#34;&gt;NCL绘制CALIPSO L2 VFM图像&lt;/a&gt;：写得很烂，作图部分可能存在问题。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://bbs.06climate.com/forum.php?mod=viewthread&amp;amp;tid=101621&#34; target=&#34;_blank&#34;&gt;Python 绘制 CALIPSO L2 VFM 产品&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;本文是对旧教程的翻新，会对 VFM 数据的结构进行更多解释，对代码也进行了更新。本文使用 &lt;a href=&#34;https://github.com/fhs/pyhdf&#34; target=&#34;_blank&#34;&gt;pyhdf&lt;/a&gt; 读取 HDF4 文件，用 Matplotlib 3.6.2 画图。为了方便画图，用了一些自制的函数（&lt;a href=&#34;https://github.com/ZhaJiMan/frykit&#34; target=&#34;_blank&#34;&gt;frykit&lt;/a&gt;）。虽然基于 Python，但希望能给使用其它语言的读者提供一点思路。&lt;/p&gt;
+&lt;p&gt;完整代码已放入仓库 &lt;a href=&#34;https://github.com/ZhaJiMan/calipso-vfm-visualization&#34; target=&#34;_blank&#34;&gt;calipso-vfm-visualization&lt;/a&gt;。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Matplotlib 系列：手动设置时间序列折线图的刻度</title>
       <link>https://zhajiman.github.io/post/matplotlib_time_tick/</link>

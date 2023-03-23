@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/python/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-10-29T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-03-23T00:00:00+00:00" />
 
 
 <style>
@@ -108,6 +108,65 @@
 </div>
 
 
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/python_resources/">Python 相关资源汇总（持续更新中）</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-03-23</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1672 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/%E8%B5%84%E6%BA%90">资源</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <p>简单汇总罗列一下我在网上找到的还不错的 Python 相关资源，包括语言本身以及各种常用库的教程，当然触手可及的官方文档就不收纳了。通通都是免费资源（付费的咱也看不到），分享给有需要的读者。不过互联网资源并非恒久不灭，说不定哪天域名就失效了，或是原作者突然隐藏文章，且看且珍惜吧。</p>
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/calipso_vfm/">CALIPSO L2 VFM 产品的读取和绘制（with Python）</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-03-21</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3530 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/satellite">satellite</a>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="前言">前言</h2>
+<p>CALIPSO 卫星的 L2 VFM（Vertical Feature Mask）产品根据激光的后向散射和消光信息，将激光通过的各高度层分类为云或气溶胶。该产品在现实中的表现如下图所示：卫星一边在轨道上移动一边向地面发射激光脉冲，相当于在地面上缓缓拉开一幅“画卷”，VFM 描述了“画卷”上云和气溶胶的分布和分类情况。</p>
+<p><img class="img-zoomable" src="/calipso_vfm/R-C.jpg" alt="R-C" />
+</p>
+<p>处理 VFM 产品的难点在于：</p>
+<ul>
+<li>VFM 数组呈 <code>(N, 5515)</code> 的形状，N 表示卫星移动时产生了 N 次观测，但 5515 并非表示有 5515 层高度，而是三种水平和垂直分辨率都不同的数据摊平成了长 5515 的数组。因此处理数据时需要参照文档的说明对 5515 进行变形。</li>
+<li>文件中的经纬度和时间与 5515 的对应关系。时间数组需要解析成可用的格式。</li>
+<li>每个 range bin 的分类结果编码到了 16 位的无符号短整型的每个比特上，需要按位解码。</li>
+<li>网上现成的代码偏少。</li>
+</ul>
+<p>网上能找到的代码有：</p>
+<ul>
+<li><a href="https://github.com/hmjbarbosa/CALIOPmatlab" target="_blank">CALIOPmatlab</a>：以前 VFM 的在线文档里是给出过 MATLAB 和 IDL 的代码的，但现在链接消失了。这个仓库提供了民间改进后 MATLAB 代码。</li>
+<li><a href="https://www.hdfeos.org/zoo/index_openLaRC_Examples.php" target="_blank">HDF-EOS COMPREHENSIVE EXAMPLES</a>：HDF-EOS 网站的示例，简单易理解。</li>
+<li><a href="http://meteothink.org/examples/meteoinfolab/satellite/calipso.html" target="_blank">MeteoInfo examples: CALIPSO data</a>：基于 MeteoInfo 的代码，还有其它产品的例子。</li>
+<li><a href="https://github.com/NASA-DEVELOP/VOCAL" target="_blank">Visualization of CALIPSO (VOCAL)</a>：CALIPSO 官方基于 Python 2 的可视化工具。</li>
+<li><a href="https://blog.csdn.net/jnbfknasf113/article/details/122297875" target="_blank">星载激光雷达CALIPSO-VFM产品数据读取与显示</a>：MATLAB 代码的讲解。</li>
+</ul>
+<p>笔者也曾写过两次教程：</p>
+<ul>
+<li><a href="">NCL绘制CALIPSO L2 VFM图像</a>：写得很烂，作图部分可能存在问题。</li>
+<li><a href="http://bbs.06climate.com/forum.php?mod=viewthread&amp;tid=101621" target="_blank">Python 绘制 CALIPSO L2 VFM 产品</a></li>
+</ul>
+<p>本文是对旧教程的翻新，会对 VFM 数据的结构进行更多解释，对代码也进行了更新。本文使用 <a href="https://github.com/fhs/pyhdf" target="_blank">pyhdf</a> 读取 HDF4 文件，用 Matplotlib 3.6.2 画图。为了方便画图，用了一些自制的函数（<a href="https://github.com/ZhaJiMan/frykit" target="_blank">frykit</a>）。虽然基于 Python，但希望能给使用其它语言的读者提供一点思路。</p>
+<p>完整代码已放入仓库 <a href="https://github.com/ZhaJiMan/calipso-vfm-visualization" target="_blank">calipso-vfm-visualization</a>。</p>
+  </div>
+</div>
 
 <div class="post">
   <h2 class="post-item post-title">
@@ -287,23 +346,6 @@ x % n = x - x // n = r
 
 <div class="post">
   <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/python_resources/">Python 相关资源汇总（持续更新中）</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-11-29</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1541 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/%E8%B5%84%E6%BA%90">资源</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <p>简单汇总罗列一下我在网上找到的还不错的 Python 相关资源，包括语言本身以及各种常用库的教程，当然触手可及的官方文档就不收纳了。通通都是免费资源（付费的咱也看不到），分享给有需要的读者。不过互联网资源并非恒久不灭，说不定哪天域名就失效了，或是原作者突然隐藏文章，且看且珍惜吧。</p>
-  </div>
-</div>
-
-<div class="post">
-  <h2 class="post-item post-title">
     <a href="https://zhajiman.github.io/post/python_mutable_arguments/">Python 系列：小心默认的可变参数</a>
   </h2>
   <div class="post-item post-meta">
@@ -323,27 +365,6 @@ x % n = x - x // n = r
 ):
     ...
 </code></pre>
-  </div>
-</div>
-
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/python_namespace_scope/">Python 系列：命名空间和作用域</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-23</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4063 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <h2 id="定义">定义</h2>
-<h3 id="命名空间">命名空间</h3>
-<p><strong>命名空间（namespace）</strong>：官方说法是从名称到对象的映射，实际上就是保存变量名与变量值绑定关系的一个空间。赋值语句会将绑定关系写入命名空间，而引用变量时则会根据变量名在命名空间中查询出对应的值。并且大部分的命名空间都是利用 Python 的字典来实现的（例外如类的 <code>__slots__</code> 属性）。程序中出现在全局的变量构成一个命名空间，Python 内置的函数和异常类也有它们自己的命名空间，每次定义函数或类时也会创建专属于它们的命名空间。命名空间之间相互独立，同名的变量可以存在于不同的命名空间中，例如两个函数内部可以使用同名的局部变量，这有助于我们在不引发冲突的同时合理复用变量名。</p>
-<h3 id="作用域">作用域</h3>
-<p><strong>作用域（scope）</strong>：官方说法是 Python 程序中能直接访问一个命名空间的文本区域。听起来有点抽象，实际上就是指出程序中哪些区域的文本归哪个命名空间管理，例如函数的作用域显然就是函数体（定义函数的所有语句），全局作用域就是从头到尾整个程序。但并不是说出现在一个作用域中的变量就一定属于该作用域（的命名空间）：若在该区域内通过赋值语句等操作创建（或修改）了该变量的绑定关系后，那它就属于该作用域；否则它就属于其它作用域，在当前区域引用它需要根据特定的规则向其它作用域进行查询。例如常见的在函数中引用全局变量。本文的一个重点就是要来仔细说说这一规则。</p>
   </div>
 </div>
 

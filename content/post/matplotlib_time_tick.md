@@ -36,7 +36,7 @@ print(ax.xaxis.get_major_formatter())
 
 <!--more-->
 
-打印 x 轴的属性发现，Matplotlib 默认为时间序列设置了 `AutoDateLocator` 和 `AutoDateFormatter`，前者会自动根据 `ax` 的时间范围在 x 轴上选出位置、数量和间隔都比较合适的刻度，后者会自动根据主刻度的间隔，将刻度格式化为合适的样式。以上图为例，Matplotlib 自动选择了间隔 4 个月的刻度，刻度标签的字符串呈 `YYYY-MM` 的格式。
+打印 x 轴的属性发现，Matplotlib 默认为时间序列设置了 `AutoDateLocator` 和 `AutoDateFormatter`，前者会自动根据 `ax` 的时间范围在 x 轴上选出位置、数量和间隔都比较合适的刻度，后者会自动根据主刻度的间隔，将刻度标签格式化为合适的样式。以上图为例，Matplotlib 自动选择了间隔 4 个月的刻度，刻度标签的字符串呈 `YYYY-MM` 的格式。
 
 ![fig_2](/matplotlib_time_tick/fig_2.png)
 

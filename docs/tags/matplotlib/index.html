@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/matplotlib/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-02-11T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-03-21T00:00:00+00:00" />
 
 
 <style>
@@ -111,12 +111,54 @@
 
 <div class="post">
   <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/calipso_vfm/">CALIPSO L2 VFM 产品的读取和绘制（with Python）</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-03-21</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3530 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/satellite">satellite</a>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="前言">前言</h2>
+<p>CALIPSO 卫星的 L2 VFM（Vertical Feature Mask）产品根据激光的后向散射和消光信息，将激光通过的各高度层分类为云或气溶胶。该产品在现实中的表现如下图所示：卫星一边在轨道上移动一边向地面发射激光脉冲，相当于在地面上缓缓拉开一幅“画卷”，VFM 描述了“画卷”上云和气溶胶的分布和分类情况。</p>
+<p><img class="img-zoomable" src="/calipso_vfm/R-C.jpg" alt="R-C" />
+</p>
+<p>处理 VFM 产品的难点在于：</p>
+<ul>
+<li>VFM 数组呈 <code>(N, 5515)</code> 的形状，N 表示卫星移动时产生了 N 次观测，但 5515 并非表示有 5515 层高度，而是三种水平和垂直分辨率都不同的数据摊平成了长 5515 的数组。因此处理数据时需要参照文档的说明对 5515 进行变形。</li>
+<li>文件中的经纬度和时间与 5515 的对应关系。时间数组需要解析成可用的格式。</li>
+<li>每个 range bin 的分类结果编码到了 16 位的无符号短整型的每个比特上，需要按位解码。</li>
+<li>网上现成的代码偏少。</li>
+</ul>
+<p>网上能找到的代码有：</p>
+<ul>
+<li><a href="https://github.com/hmjbarbosa/CALIOPmatlab" target="_blank">CALIOPmatlab</a>：以前 VFM 的在线文档里是给出过 MATLAB 和 IDL 的代码的，但现在链接消失了。这个仓库提供了民间改进后 MATLAB 代码。</li>
+<li><a href="https://www.hdfeos.org/zoo/index_openLaRC_Examples.php" target="_blank">HDF-EOS COMPREHENSIVE EXAMPLES</a>：HDF-EOS 网站的示例，简单易理解。</li>
+<li><a href="http://meteothink.org/examples/meteoinfolab/satellite/calipso.html" target="_blank">MeteoInfo examples: CALIPSO data</a>：基于 MeteoInfo 的代码，还有其它产品的例子。</li>
+<li><a href="https://github.com/NASA-DEVELOP/VOCAL" target="_blank">Visualization of CALIPSO (VOCAL)</a>：CALIPSO 官方基于 Python 2 的可视化工具。</li>
+<li><a href="https://blog.csdn.net/jnbfknasf113/article/details/122297875" target="_blank">星载激光雷达CALIPSO-VFM产品数据读取与显示</a>：MATLAB 代码的讲解。</li>
+</ul>
+<p>笔者也曾写过两次教程：</p>
+<ul>
+<li><a href="">NCL绘制CALIPSO L2 VFM图像</a>：写得很烂，作图部分可能存在问题。</li>
+<li><a href="http://bbs.06climate.com/forum.php?mod=viewthread&amp;tid=101621" target="_blank">Python 绘制 CALIPSO L2 VFM 产品</a></li>
+</ul>
+<p>本文是对旧教程的翻新，会对 VFM 数据的结构进行更多解释，对代码也进行了更新。本文使用 <a href="https://github.com/fhs/pyhdf" target="_blank">pyhdf</a> 读取 HDF4 文件，用 Matplotlib 3.6.2 画图。为了方便画图，用了一些自制的函数（<a href="https://github.com/ZhaJiMan/frykit" target="_blank">frykit</a>）。虽然基于 Python，但希望能给使用其它语言的读者提供一点思路。</p>
+<p>完整代码已放入仓库 <a href="https://github.com/ZhaJiMan/calipso-vfm-visualization" target="_blank">calipso-vfm-visualization</a>。</p>
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
     <a href="https://zhajiman.github.io/post/matplotlib_time_tick/">Matplotlib 系列：手动设置时间序列折线图的刻度</a>
   </h2>
   <div class="post-item post-meta">
     <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-02-11</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1920 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1922 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97">时间序列</a>&nbsp;</span>
 
@@ -345,29 +387,6 @@ plt.show()
 </ul>
 <p>第二部分的映射关系是固定不变的，但第一部分的映射关系可以通过归一化相关的类加以改变，进而实现对数色标、对称色标、离散色标等一系列填色效果。</p>
 <p>本文将会依次介绍 <code>Colormap</code> 类、<code>Normalize</code> 类，以及实际应用的例子。代码基于 Matplotlib 3.3.4。</p>
-  </div>
-</div>
-
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/matplotlib_dpi/">Matplotlib 系列：导出高 DPI 的图片</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-04-08</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2809 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <h2 id="前言">前言</h2>
-<p>昨天一同学问我怎么把已经画好的图片的 DPI 改到 300，以满足期刊对图片清晰度的要求。上网搜索一番后才发现，虽然我经常在 Matplotlib 中用 <code>dpi</code> 参数来调节图片清晰度，但实际上我对这个概念半懂不懂。这次借这个契机调研和总结一下相关的知识。本文将会依次介绍</p>
-<ul>
-<li>分辨率和 DPI 是什么。</li>
-<li>DPI 和清晰度的关系。</li>
-<li>如何导出期刊要求的高 DPI 图片。</li>
-</ul>
   </div>
 </div>
 

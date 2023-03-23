@@ -152,7 +152,7 @@ print(ax.xaxis.get_major_formatter())
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-02-11</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1920 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1922 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97">时间序列</a>&nbsp;</span>
 
@@ -182,7 +182,7 @@ print(ax.xaxis.get_major_formatter())
 </code></pre>
 <p><img class="img-zoomable" src="/matplotlib_time_tick/fig_1.png" alt="fig_1" />
 </p>
-<p>打印 x 轴的属性发现，Matplotlib 默认为时间序列设置了 <code>AutoDateLocator</code> 和 <code>AutoDateFormatter</code>，前者会自动根据 <code>ax</code> 的时间范围在 x 轴上选出位置、数量和间隔都比较合适的刻度，后者会自动根据主刻度的间隔，将刻度格式化为合适的样式。以上图为例，Matplotlib 自动选择了间隔 4 个月的刻度，刻度标签的字符串呈 <code>YYYY-MM</code> 的格式。</p>
+<p>打印 x 轴的属性发现，Matplotlib 默认为时间序列设置了 <code>AutoDateLocator</code> 和 <code>AutoDateFormatter</code>，前者会自动根据 <code>ax</code> 的时间范围在 x 轴上选出位置、数量和间隔都比较合适的刻度，后者会自动根据主刻度的间隔，将刻度标签格式化为合适的样式。以上图为例，Matplotlib 自动选择了间隔 4 个月的刻度，刻度标签的字符串呈 <code>YYYY-MM</code> 的格式。</p>
 <p><img class="img-zoomable" src="/matplotlib_time_tick/fig_2.png" alt="fig_2" />
 </p>
 <p>虽然自动刻度很方便，但如果想像上图一样调整刻度间隔，追加小刻度，并修改刻度标签格式，就需要手动设置刻度。本文的目的就是介绍手动修改时间刻度的方法，内容主要分为三点：</p>

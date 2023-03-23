@@ -124,7 +124,7 @@ DPI 和清晰度的关系。
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-04-08</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2809 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2788 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -161,17 +161,13 @@ DPI 和清晰度的关系。
 </ul>
 <p>DPI 表现的是打印机的精细程度。对于同样大小的纸张，打印机的 DPI 更高，打印时就会用上更多墨点，那么打印效果自然也更好。</p>
 <p>电子设备借鉴了打印设备里 DPI 的概念，用 PPI 来衡量像素点的物理尺寸。PPI 对于显示器和图片的意义稍有不同，下面来分别介绍。首先，显示器的 PPI 计算公式为</p>
-<p>$$
-\rm{PPI}=对角线像素数/对角线物理长度
-$$</p>
+<pre><code>PPI = 对角线像素数 / 对角线物理长度
+</code></pre>
 <p>给定屏幕大小，PPI 更高则屏幕含有的像素数更多，那么显示效果会更好。例如苹果的 iPhone 就强调其 Retina 屏幕的像素密度高达 326 PPI，有着超出人眼识别能力的细腻效果（广告语看看就得了）。</p>
 <p>对图片来说，PPI 和 DPI 这两个术语经常混淆使用，例如 Windows 菜单就称呼图片单位英寸的像素数为 DPI，那么后文也会沿用这一说法。图片 DPI 的计算方法是</p>
-<p>$$
-\rm{水平DPI}=宽度像素数/物理宽度
-$$
-$$
-\rm{垂直DPI}=高度像素数/物理高度
-$$</p>
+<pre><code>水平DPI = 宽度像素数 / 物理宽度
+垂直DPI = 高度像素数 / 物理高度
+</code></pre>
 <p>可以看出，DPI 就是将图片从像素尺寸缩放到物理尺寸的比值。另外，DPI 的倒数即每个像素的单位物理长度，因为我们总是希望像素的物理形状是正方形，所以大多数情况下水平 DPI 就等于垂直 DPI，这样打印出来的图片也能维持原有的宽高比。</p>
 <p>一些图片格式会记录图片的 DPI 值，Windows 下图片的右键菜单属性栏里便能看到。我们在对图片进行排版或打印时，软件会根据图片的分辨率和 DPI 自动设定图片的纸上尺寸。不过如果你想把图片打印大点，那么根据定义计算，图片 DPI 会变小；想打印小点，图片 DPI 就会变大——没错，DPI 并不是图片的固有属性，真正决定 DPI 的是图片分辨率和你想要的纸上尺寸，右键菜单属性栏里的数值只是个参考。这一点还可以从两个例子说明，一是 png 格式压根不含 DPI 值，你得根据打印需求自己去算；二是可以用 Pillow 库直接修改图片的 DPI 值</p>
 <pre><code class="language-Python">from PIL import Image
@@ -211,7 +207,8 @@ fig.savefig('output.jpg', dpi=600, pil_kwargs={'quality': 95})
 <h2 id="额外说明">额外说明</h2>
 <p>额外说明一点搜到的实用小知识。</p>
 <p>Matplotlib 中的线宽和字体字号是以磅（point）为单位的，有</p>
-<p>$$1\ \rm{pt}=1/72\ \rm{inch}$$</p>
+<pre><code>1 pt = 1/72 inch
+</code></pre>
 <p>例如，<code>linewidth=72</code> 时，线宽恰好为 1 英寸。注意这是个物理单位，对应于纸上长度。所以增大 <code>figsize</code> 时图中元素会显得更小更细，而增大 <code>dpi</code> 时图中元素大小不变，但图片像素更多、显示效果更清晰。</p>
 <h2 id="参考资料">参考资料</h2>
 <p><a href="https://en.wikipedia.org/wiki/Dots_per_inch" target="_blank">Dots per inch - Wikipedia</a></p>
@@ -576,24 +573,6 @@ fig.savefig('output.jpg', dpi=600, pil_kwargs={'quality': 95})
 
 
 <script defer src="/assets/js/fuji.min.js"></script>
-
-<link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.6/katex.min.css" integrity="sha384-ZPe7yZ91iWxYumsBEOn7ieg8q/o+qh/hQpSaPow8T6BwALcXSCS6C6fSRPIAnTQs" crossorigin="anonymous">
-<script defer src="https://cdn.staticfile.org/KaTeX/0.15.6/katex.min.js" integrity="sha384-ljao5I1l+8KYFXG7LNEA7DyaFvuvSCmedUf6Y6JI7LJqiu8q5dEivP2nDdFH31V4" crossorigin="anonymous"></script>
-<script defer src="https://cdn.staticfile.org/KaTeX/0.15.6/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        renderMathInElement(document.body, {
-          delimiters: [
-              {left: '$$', right: '$$', display: true},
-              {left: '$', right: '$', display: false},
-              {left: '\\(', right: '\\)', display: false},
-              {left: '\\[', right: '\\]', display: true}
-          ],
-          throwOnError : false
-        });
-    });
-</script>
-
 
 
 

@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/post/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-02-11T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-03-23T00:00:00+00:00" />
 
 
 <style>
@@ -107,12 +107,71 @@
 
 <div class="post">
     <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/python_resources/">Python 相关资源汇总（持续更新中）</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-03-23</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1672 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/%E8%B5%84%E6%BA%90">资源</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <p>简单汇总罗列一下我在网上找到的还不错的 Python 相关资源，包括语言本身以及各种常用库的教程，当然触手可及的官方文档就不收纳了。通通都是免费资源（付费的咱也看不到），分享给有需要的读者。不过互联网资源并非恒久不灭，说不定哪天域名就失效了，或是原作者突然隐藏文章，且看且珍惜吧。</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/calipso_vfm/">CALIPSO L2 VFM 产品的读取和绘制（with Python）</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-03-21</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3530 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/satellite">satellite</a>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <h2 id="前言">前言</h2>
+<p>CALIPSO 卫星的 L2 VFM（Vertical Feature Mask）产品根据激光的后向散射和消光信息，将激光通过的各高度层分类为云或气溶胶。该产品在现实中的表现如下图所示：卫星一边在轨道上移动一边向地面发射激光脉冲，相当于在地面上缓缓拉开一幅“画卷”，VFM 描述了“画卷”上云和气溶胶的分布和分类情况。</p>
+<p><img class="img-zoomable" src="/calipso_vfm/R-C.jpg" alt="R-C" />
+</p>
+<p>处理 VFM 产品的难点在于：</p>
+<ul>
+<li>VFM 数组呈 <code>(N, 5515)</code> 的形状，N 表示卫星移动时产生了 N 次观测，但 5515 并非表示有 5515 层高度，而是三种水平和垂直分辨率都不同的数据摊平成了长 5515 的数组。因此处理数据时需要参照文档的说明对 5515 进行变形。</li>
+<li>文件中的经纬度和时间与 5515 的对应关系。时间数组需要解析成可用的格式。</li>
+<li>每个 range bin 的分类结果编码到了 16 位的无符号短整型的每个比特上，需要按位解码。</li>
+<li>网上现成的代码偏少。</li>
+</ul>
+<p>网上能找到的代码有：</p>
+<ul>
+<li><a href="https://github.com/hmjbarbosa/CALIOPmatlab" target="_blank">CALIOPmatlab</a>：以前 VFM 的在线文档里是给出过 MATLAB 和 IDL 的代码的，但现在链接消失了。这个仓库提供了民间改进后 MATLAB 代码。</li>
+<li><a href="https://www.hdfeos.org/zoo/index_openLaRC_Examples.php" target="_blank">HDF-EOS COMPREHENSIVE EXAMPLES</a>：HDF-EOS 网站的示例，简单易理解。</li>
+<li><a href="http://meteothink.org/examples/meteoinfolab/satellite/calipso.html" target="_blank">MeteoInfo examples: CALIPSO data</a>：基于 MeteoInfo 的代码，还有其它产品的例子。</li>
+<li><a href="https://github.com/NASA-DEVELOP/VOCAL" target="_blank">Visualization of CALIPSO (VOCAL)</a>：CALIPSO 官方基于 Python 2 的可视化工具。</li>
+<li><a href="https://blog.csdn.net/jnbfknasf113/article/details/122297875" target="_blank">星载激光雷达CALIPSO-VFM产品数据读取与显示</a>：MATLAB 代码的讲解。</li>
+</ul>
+<p>笔者也曾写过两次教程：</p>
+<ul>
+<li><a href="">NCL绘制CALIPSO L2 VFM图像</a>：写得很烂，作图部分可能存在问题。</li>
+<li><a href="http://bbs.06climate.com/forum.php?mod=viewthread&amp;tid=101621" target="_blank">Python 绘制 CALIPSO L2 VFM 产品</a></li>
+</ul>
+<p>本文是对旧教程的翻新，会对 VFM 数据的结构进行更多解释，对代码也进行了更新。本文使用 <a href="https://github.com/fhs/pyhdf" target="_blank">pyhdf</a> 读取 HDF4 文件，用 Matplotlib 3.6.2 画图。为了方便画图，用了一些自制的函数（<a href="https://github.com/ZhaJiMan/frykit" target="_blank">frykit</a>）。虽然基于 Python，但希望能给使用其它语言的读者提供一点思路。</p>
+<p>完整代码已放入仓库 <a href="https://github.com/ZhaJiMan/calipso-vfm-visualization" target="_blank">calipso-vfm-visualization</a>。</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
         <a href="https://zhajiman.github.io/post/matplotlib_time_tick/">Matplotlib 系列：手动设置时间序列折线图的刻度</a>
     </h2>
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-02-11</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1920 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1922 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97">时间序列</a>&nbsp;</span>
 
@@ -335,78 +394,6 @@ x % n = x - x // n = r
     <div class="post-item post-summary markdown-body">
         <h2 id="前言">前言</h2>
 <p>说到测量程序的运行时间这件事，我最早的做法是在桌上摆个手机，打开秒表应用，右手在命令行里敲回车的同时左手启动秒表，看屏幕上程序跑完后再马上按停秒表，最后在纸上记下时间。后来我在 Linux 上学会了在命令开头添加一个 <code>time</code>，终于摆脱了手动计时的原始操作。这次就想总结一下迄今为止我用过的那些测量时间的工具/代码。</p>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/cartopy_polygon_to_mask/">Cartopy 系列：利用多边形生成掩膜数组</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-07-31</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2290 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/shapely">shapely</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <p>二维平面上一系列点的坐标由 <code>x</code> 和 <code>y</code> 数组描述，同时准备一个形状相同的 <code>mask</code> 数组。若第 <code>i</code> 个点落入了平面上一个多边形的内部，则令 <code>mask[i] = True</code>；若在多边形外，则令 <code>mask[i] = False</code>。由此得到的 <code>mask</code> 数组即掩膜（mask）数组，它可以作为布尔索引分出多边形内外的点</p>
-<pre><code class="language-Python">x_in, y_in = x[mask], y[mask]
-x_out, y_out = x[mask], y[mask]
-</code></pre>
-<p>它可以作为掩膜，掩盖多边形范围外的值——即把外面的值设为 NaN，以便进行后续的计算</p>
-<pre><code class="language-Python">z[~mask] = np.nan
-z_mean = np.nanmean(z)
-</code></pre>
-<p>下图展示了两个应用：左小图的多边形是一个中心带洞的正方形，给定一系列散点的坐标，计算出掩膜后可以把多边形内的散点画成红色，多边形外的散点画成蓝色；右小图的多边形是中国全域，给定 <code>(50, 50)</code> 形状的经纬度网格，计算出掩膜后用橙色画出掩膜为 <code>True</code> 的部分，这张掩膜之后可以用来处理网格上的其它变量。</p>
-<p><img class="img-zoomable" src="/cartopy_polygon_to_mask/diagram.png" alt="diagram" />
-</p>
-<p>本文的目的是介绍如何用 Python 制作掩膜数组，并尽量优化其运行时间。从 shapefile 中读取中国国界并转化为 Shapely 中的多边形对象等操作，已经在博文 <a href="https://zhajiman.github.io/post/cartopy_shapefile/" target="_blank">Cartopy 系列：探索 shapefile</a> 中详细介绍过了，本文是对其的一个补充。</p>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/cartopy_shapefile/">Cartopy 系列：探索 shapefile</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-06-20</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;12991 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/shapely">shapely</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="前言">前言</h2>
-<p>Cartopy 可以通过 <code>feature</code> 模块向地图添加国界 <code>BORDER</code> 和省界 <code>STATES</code>，因其底层采用的 Natural Earth 地图数据并不符合我国的政治主张，所以我们经常需要自备 shapefile 文件来画中国省界，以下面的代码为例</p>
-<pre><code class="language-Python">import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
-import cartopy.io.shapereader as shpreader
-
-extents = [70, 140, 0, 60]
-crs = ccrs.PlateCarree()
-fig = plt.figure()
-ax = fig.add_subplot(111, projection=crs)
-ax.set_extent(extents, crs)
-
-filepath = './data/bou2_4/bou2_4p.shp'
-reader = shpreader.Reader(filepath)
-geoms = reader.geometries()
-ax.add_geometries(geoms, crs, lw=0.5, fc='none')
-reader.close()
-
-plt.show()
-</code></pre>
-<p>图就不放了，这段代码足以应付大部分需要画省界的情况。然而我在无脑粘贴代码的过程中逐渐产生了疑惑：为什么 shapefile 会由三个文件组成？省界是以何种形式存储在文件中？Cartopy 和 Matplotlib 又是怎样将省界画出来的？调查一番源码后总结出了这段代码底层实现的流程：</p>
-<ul>
-<li>利用 PyShp 包读取 shapefile 文件中的每个形状。</li>
-<li>利用 Shapely 包将形状转换为几何对象。</li>
-<li>利用 Cartopy 包将几何对象投影到地图所在的坐标系上。</li>
-<li>用投影后的坐标构造 Matplotlib 的 Path 对象，最后画在地图上。</li>
-</ul>
-<p>本文的目的即是从头到尾解说一下这段流程，希望加深对 shapefile 格式，Matplotlib 和 Cartopy 包的理解。令人意外的是，随着探索的不断深入，我发现自己自然而然地学会了如何实现省份填色、省份合并，地图白化等，以前看起来十分困难的操作。本文也会一并介绍这些应用。</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-item pag-current">

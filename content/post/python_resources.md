@@ -1,6 +1,6 @@
 ---
 title: "Python 相关资源汇总（持续更新中）"
-date: 2021-11-29
+date: 2023-03-23
 showToc: true
 tags:
 - python
@@ -29,11 +29,19 @@ tags:
 
 [Python 工匠](https://github.com/piglei/one-python-craftsman)：作者 piglei 关于 Python 编程技巧和实践的文章合集。
 
+[古明地盆的博客](https://www.cnblogs.com/traditional/)：以及公众号“古明地觉的编程教室”。
+
+[Python behind the scenes](https://tenthousandmeters.com/)：分析 Python 底层的一系列博文。
+
+[Pythonのthreadingとmultiprocessingを完全理解](https://qiita.com/kaitolucifer/items/e4ace07bd8e112388c75)：对 Python 多进程的详细介绍。
+
 ## NumPy、SciPy 和 Pandas
 
 [NumPy Illustrated: The Visual Guide to NumPy](https://betterprogramming.pub/numpy-illustrated-the-visual-guide-to-numpy-3b1d4976de1d)：以图解的方式形象展现了 NumPy 数组的结构和常用用法，特别是强调了行向量、列向量和矩阵的关系，非常值得一读。[知乎](https://zhuanlan.zhihu.com/p/342356377) 上有中文翻译版。
 
 [Python Data Science Handbook](https://jakevdp.github.io/PythonDataScienceHandbook/)：虽然叫手册，但内容编排有条理，带你入门数据科学必备的几个包。
+
+[Why Python is Slow: Looking Under the Hood](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/)：上一本书的作者对于 Python 和 NumPy 速度差距的进一步分析。
 
 [From Python to Numpy](https://www.labri.fr/perso/nrougier/from-python-to-numpy/)：介绍了很多高级用法和在物理学中的应用。
 
@@ -41,7 +49,7 @@ tags:
 
 [SciPy Cookbook](https://scipy-cookbook.readthedocs.io)：介绍了很多 SciPy 的应用场景，附带一些 NumPy 和 Matplotlib 的技巧。
 
-[Joyful-Pandas](http://joyfulpandas.datawhale.club/)：中文教程，因为内容过于详尽以至于读起来反而有点 painful……
+[Python for Data Analysis](https://wesmckinney.com/book/)：Pandas 包的作者写的电子书，比网上乱七八糟的教程要细致全面得多。
 
 [xarray を用いたデータ解析](https://qiita.com/fujiisoup/items/0d71995e54055e9708fc)：xarray 的开发者之一写的日文入门教程。
 
