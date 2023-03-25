@@ -90,7 +90,7 @@ fcf1 = fcf[:, 1165:5515].reshape(-1, 15, 290)[:, :, ::-1]
 
 上一节将 `Feature_Classification_Flags` 处理成了形如 `(N, 545)` 的二维数组，数据类型为 `ushort`（即 16 位的无符号短整型）。为了节省存储空间，分类结果被编码到了 `ushort` 的每个比特上。以表示沙尘气溶胶的数值 46107 为例：
 
-![bits_intepretation](/calipso_vfm/bits_intepretation.png)
+![bits_intepretation](/calipso_vfm/bits    _intepretation.png)
 
 46107 的比特表示是 `1011010000011011`，从右往左可以分为 7 个字段。例如前 3 个比特 `011` 代表 Feature Type，即大气类型，此处 `011` 对应十进制的 3，表示类型为气溶胶；第 10 ~ 12 比特 `010` 代表 Feature Sub-type，即更细分的类型，此处 `010` 对应十进制的 2，当 Feature Type 为气溶胶时，2 的 Sub-type 就表示沙尘气溶胶。每个字段的解读方法还请参考 [官网表格](https://www-calipso.larc.nasa.gov/resources/calipso_users_guide/data_summaries/vfm/)。
 
