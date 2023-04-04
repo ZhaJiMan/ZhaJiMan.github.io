@@ -294,7 +294,7 @@ ax1.scatter(
     lon, lat, c=ftype[:, ind], s=0.2,
     cmap=cmap, norm=norm, transform=crs
 )
-mean_time = time.mean().strftime('%Y-%m-%d %H:%m')
+mean_time = time.mean().strftime('%Y-%m-%d %H:%M')
 ax1.set_title(mean_time, loc='left', fontsize='small')
 ax1.set_title(f'VFM at {h0} km', loc='right', fontsize='small')
 
@@ -325,7 +325,7 @@ cbar.ax.tick_params(length=0, labelsize='x-small')
 plt.show()
 ```
 
-![main_type.png](/calipso_vfm/main_type.png)
+![main_type.png](/calipso_vfm/main_type_.png)
 
 如果要画气溶胶的 Sub-type，只需要在上面的代码中进行少量修改：
 
@@ -344,7 +344,7 @@ ticklabels = [
 ]
 ```
 
-![aerosol_type.png](/calipso_vfm/aerosol_type.png)
+![aerosol_type.png](/calipso_vfm/aerosol_type_.png)
 
 注意图中 `'not aerosol'` 的像元，实际上包含 Feature Type 不为气溶胶和 Sub-type 无法确定的两类像元。
 

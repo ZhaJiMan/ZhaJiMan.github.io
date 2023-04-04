@@ -423,7 +423,7 @@ ax1.scatter(
     lon, lat, c=ftype[:, ind], s=0.2,
     cmap=cmap, norm=norm, transform=crs
 )
-mean_time = time.mean().strftime('%Y-%m-%d %H:%m')
+mean_time = time.mean().strftime('%Y-%m-%d %H:%M')
 ax1.set_title(mean_time, loc='left', fontsize='small')
 ax1.set_title(f'VFM at {h0} km', loc='right', fontsize='small')
 
@@ -453,7 +453,7 @@ cbar.ax.tick_params(length=0, labelsize='x-small')
 
 plt.show()
 </code></pre>
-<p><img class="img-zoomable" src="/calipso_vfm/main_type.png" alt="main_type.png" />
+<p><img class="img-zoomable" src="/calipso_vfm/main_type_.png" alt="main_type.png" />
 </p>
 <p>如果要画气溶胶的 Sub-type，只需要在上面的代码中进行少量修改：</p>
 <pre><code class="language-Python">ftype = np.where(fcf[:, :, 0] == 3, fcf[:, :, 4], 0)
@@ -467,7 +467,7 @@ ticklabels = [
     'clean\ncontinental', 'pullted\ndust', 'smoke', 'other'
 ]
 </code></pre>
-<p><img class="img-zoomable" src="/calipso_vfm/aerosol_type.png" alt="aerosol_type.png" />
+<p><img class="img-zoomable" src="/calipso_vfm/aerosol_type_.png" alt="aerosol_type.png" />
 </p>
 <p>注意图中 <code>'not aerosol'</code> 的像元，实际上包含 Feature Type 不为气溶胶和 Sub-type 无法确定的两类像元。</p>
 <h2 id="结语">结语</h2>
