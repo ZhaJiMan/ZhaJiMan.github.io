@@ -162,7 +162,7 @@ Python 绘制 CALIPSO L2 VFM 产品
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-03-21</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3532 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3530 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/satellite">satellite</a>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -235,7 +235,8 @@ fcf1 = fcf[:, 1165:5515].reshape(-1, 15, 290)[:, :, ::-1]
 <p>具体来说，<code>Longitude</code>、<code>Latitude</code> 和 <code>Profile_UTC_Time</code> 指的是卫星在地面扫过一个 5 km 宽的 block 的时间段里，时间中点对应的经纬度和 UTC 时间。即文件虽然可以 reshape 出 <code>N * 15</code> 条廓线，但只提供了 N 个 block 中点的经纬度坐标和时间戳。因此我们需要将 <code>N * 15</code> 条廓线处理成 <code>N</code> 条廓线，而水平平均便可以做到这一点。考虑到对数值离散的分类结果做平均可能不太合理，笔者的处理是每层只取第一条廓线，然后拼接成完整高度的一条廓线。即取序号为 1 ~ 55、166 ~ 365、1166 ~ 1455，图中“最左边一列”的 3 条廓线拼成一条廓线，再将经纬度和时间戳匹配给它。</p>
 <h2 id="vfm-分类的解码">VFM 分类的解码</h2>
 <p>上一节将 <code>Feature_Classification_Flags</code> 处理成了形如 <code>(N, 545)</code> 的二维数组，数据类型为 <code>ushort</code>（即 16 位的无符号短整型）。为了节省存储空间，分类结果被编码到了 <code>ushort</code> 的每个比特上。以表示沙尘气溶胶的数值 46107 为例：</p>
-<p>![bits_intepretation](/calipso_vfm/bits    _intepretation.png)</p>
+<p><img class="img-zoomable" src="/calipso_vfm/bits_intepretation.png" alt="bits_intepretation" />
+</p>
 <p>46107 的比特表示是 <code>1011010000011011</code>，从右往左可以分为 7 个字段。例如前 3 个比特 <code>011</code> 代表 Feature Type，即大气类型，此处 <code>011</code> 对应十进制的 3，表示类型为气溶胶；第 10 ~ 12 比特 <code>010</code> 代表 Feature Sub-type，即更细分的类型，此处 <code>010</code> 对应十进制的 2，当 Feature Type 为气溶胶时，2 的 Sub-type 就表示沙尘气溶胶。每个字段的解读方法还请参考 <a href="https://www-calipso.larc.nasa.gov/resources/calipso_users_guide/data_summaries/vfm/" target="_blank">官网表格</a>。</p>
 <p>上面的分析采用的是 <code>ushort</code> -&gt; 字符串 -&gt; 子串 -&gt; <code>int</code> 的处理办法，实际编程时采用位运算会更快捷，可以直接在 <code>ndarray</code> 上做向量运算。下面举一个提取 Feature Type 的例子：</p>
 <pre><code class="language-Python">'''
