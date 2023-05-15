@@ -772,14 +772,14 @@ def add_geometries(ax, geoms, crs, **kwargs):
     ax.add_collection(c)
 ```
 
-首先是将几何对象的序列转为 `ShapelyFeature` 对象，利用其 `intersecting_geometries` 方法过滤掉没有落入地图显示范围内的几何对象，这样在画图时就能略去看不到的部分，避免浪费时间。然后代表地图投影坐标系统的 `ax.projection` 有一个 `project_geometry` 方法，能够将输入的几何对象从 `crs` 坐标系变换到 `ax.projection` 坐标系，返回新的几何对象。`geos_to_path` 函数与前文我们实现的 `polygon_to_path` 函数功能一样（返回结果略有差别），是把几何对象转为 Matplotlib 的路径对象，以便之后画图。这里 `_as_mpl_transform` 的作用说实话我没看太懂，看有没有读者能解释一下。最后是构造 `PathCollection`，并把准备好的 `kwargs` 画图参数也输入进去，然后添加到 `GeoAxes` 上。
+首先是将几何对象的序列转为 `ShapelyFeature` 对象，利用其 `intersecting_geometries` 方法过滤掉没有落入地图显示范围内的几何对象，这样在画图时就能略去看不到的部分，避免浪费时间。然后代表地图投影坐标系统的 `ax.projection` 有一个 `project_geometry` 方法，能够将输入的几何对象从 `crs` 坐标系变换到 `ax.projection` 坐标系，返回新的几何对象。`geos_to_path` 函数与前文我们实现的 `polygon_to_path` 函数功能一样（返回结果略有差别），是把几何对象转为 Matplotlib 的路径对象，以便之后画图。这里 `_as_mpl_transform` 的作用是把 `CRS` 对象转为 `Transform` 对象。最后是构造 `PathCollection`，并把准备好的 `kwargs` 画图参数也输入进去，然后添加到 `GeoAxes` 上。
 
 然而 `add_geometries` 也存在一些问题：
 
 - 是 `GeoAxes` 专属的方法，普通的 `Axes` 没有。
 - `geoms` 可以是点或线几何，但点画出来看不到，线最好设置 `fc='none'`。
 - `geoms` 中如果有几何对象被过滤掉了，那么上色顺序会跟 `facecolors` 或 `array` 参数的顺序不符。
-- 没有返回值，不方便作为 `mappable` 对象传给 colorbar。
+- 返回值不含 `PathCollection` 的信息，不方便作为 `mappable` 对象传给 colorbar。
 
 为了改进这些问题，下面手工实现一个版本
 
@@ -868,9 +868,10 @@ import cartopy.crs as ccrs
 import frykit.plot as fplt
 import frykit.shp as fshp
 
-extents_map = [78, 128, 15, 55]
-extents_data = [60, 150, 0, 60]
-lonmin, lonmax, latmin, latmax = extents_data
+# 地图范围和数据范围.
+map_extents = [78, 128, 15, 55]
+data_extents = [60, 150, 0, 60]
+lonmin, lonmax, latmin, latmax = data_extents
 
 # 读取并裁剪数据.
 ds = xr.load_dataset('./data/ERA5/era5.tuv.20200621.nc')
@@ -879,43 +880,45 @@ ds = ds.sortby('latitude').sel(
     longitude=slice(lonmin, lonmax),
     latitude=slice(latmin, latmax)
 )
-t2m = ds.t2m.values
+t2m = ds.t2m.values - 273.15
 u10 = ds.u10.values
 v10 = ds.v10.values
 lon, lat = np.meshgrid(ds.longitude, ds.latitude)
-# 开尔文转摄氏度.
-ds['t2m'] -= 273.15
 
 # 制作国界和省界的掩膜数组.
-country = fshp.get_cnshp(level='国')
-provinces = fshp.get_cnshp(level='省')
-mask_country = fshp.polygon_to_mask(country, lon, lat)
-masks_province = [
-    fshp.polygon_to_mask(province, lon, lat) for province in provinces
+country = fshp.get_cn_shp(level='国')
+provinces = fshp.get_cn_shp(level='省')
+country_mask = fshp.polygon_to_mask(country, lon, lat)
+province_masks = [
+    fshp.polygon_to_mask(province, lon, lat)
+    for province in provinces
 ]
 
 # 应用掩膜数组.
-t2m_masked = np.where(mask_country, t2m, np.nan)
-u10_masked = np.where(mask_country, u10, np.nan)
-v10_masked = np.where(mask_country, v10, np.nan)
+t2m_masked = np.where(country_mask, t2m, np.nan)
+u10_masked = np.where(country_mask, u10, np.nan)
+v10_masked = np.where(country_mask, v10, np.nan)
 
 # 计算每个省的平均气温.
-avgs = np.full(len(provinces), np.nan)
-for i, mask_province in enumerate(masks_province):
-    if mask_province.any():
-        avgs[i] = t2m[mask_province].mean()
+t2m_mean = np.full(len(provinces), np.nan)
+for i, mask in enumerate(province_masks):
+    if mask.any():
+        t2m_mean[i] = t2m[mask].mean()
 
 # 设置投影.
-crs_map = ccrs.LambertConformal(
-    central_longitude=105, standard_parallels=(25, 47)
+map_crs = ccrs.LambertConformal(
+    central_longitude=105,
+    standard_parallels=(25, 47)
 )
-crs_data = ccrs.PlateCarree()
+data_crs = ccrs.PlateCarree()
 
-kwargs = {'projection': crs_map}
-fig, axes = plt.subplots(1, 3, figsize=(12, 6), subplot_kw=kwargs)
+fig, axes = plt.subplots(
+    1, 3, figsize=(12, 6),
+    subplot_kw={'projection': map_crs}
+)
 fig.subplots_adjust(wspace=0.1)
 for ax in axes.flat:
-    ax.set_extent(extents_map, crs_data)
+    ax.set_extent(map_extents, crs=data_crs)
 
 # 准备cmap和norm.
 cmap = plt.cm.plasma
@@ -926,8 +929,8 @@ levels = np.linspace(vmin, vmax, 10)
 # 子图1绘制省平均气温.
 ax = axes[0]
 pc = fplt.add_polygons(
-    ax, provinces, crs=crs_data,
-    ec='k', lw=0.2, cmap=cmap, norm=norm, array=avgs
+    ax, provinces, ec='k', lw=0.2,
+    cmap=cmap, norm=norm, array=t2m_mean
 )
 cbar = fig.colorbar(
     pc, ax=ax, ticks=levels, orientation='horizontal',
@@ -939,13 +942,10 @@ ax.set_title('Averaged by Provinces', fontsize='medium')
 
 # 子图2绘制掩膜后的气温场和风场.
 ax = axes[1]
-fplt.add_polygons(
-    ax, provinces, crs=crs_data,
-    fc='none', ec='k', lw=0.2, zorder=1.5
-)
+fplt.add_polygons(ax, provinces, fc='none', ec='k', lw=0.2)
 cf = ax.contourf(
     lon, lat, t2m_masked, levels, cmap=cmap,
-    extend='both', transform=crs_data
+    extend='both', transform=data_crs
 )
 cbar = fig.colorbar(
     cf, ax=ax, ticks=levels, orientation='horizontal',
@@ -955,22 +955,18 @@ cbar.set_label('Temperature (℃)', fontsize='small')
 cbar.ax.tick_params(labelsize='small')
 Q = ax.quiver(
     lon, lat, u10_masked, v10_masked,
-    regrid_shape=25, transform=crs_data
+    regrid_shape=25, transform=data_crs
 )
-patch_kwargs = {'linewidth': 0.5}
 key_kwargs = {'labelsep': 0.05, 'fontproperties': {'size': 'x-small'}}
 fplt.add_quiver_legend(Q, U=10, width=0.15, height=0.12, key_kwargs=key_kwargs)
 ax.set_title('Masked by Country', fontsize='medium')
 
 # 子图3绘制气温场和风场后再剪切.
 ax = axes[2]
-fplt.add_polygons(
-    ax, provinces, crs=crs_data,
-    fc='none', ec='k', lw=0.2, zorder=1.5
-)
+fplt.add_polygons(ax, provinces, fc='none', ec='k', lw=0.2)
 cf = ax.contourf(
     lon, lat, t2m, levels, cmap=cmap,
-    extend='both', transform=crs_data
+    extend='both', transform=data_crs
 )
 cbar = fig.colorbar(
     cf, ax=ax, ticks=levels, orientation='horizontal',
@@ -980,11 +976,11 @@ cbar.set_label('Temperature (℃)', fontsize='small')
 cbar.ax.tick_params(labelsize='small')
 Q = ax.quiver(
     lon, lat, u10, v10,
-    regrid_shape=25, transform=crs_data
+    regrid_shape=25, transform=data_crs
 )
 fplt.add_quiver_legend(Q, U=10, width=0.15, height=0.12, key_kwargs=key_kwargs)
-fplt.clip_by_polygon(cf, country, crs=crs_data, fix=True)
-fplt.clip_by_polygon(Q, country, crs=crs_data)
+fplt.clip_by_polygon(cf, country)
+fplt.clip_by_polygon(Q, country)
 ax.set_title('Clipped by Country', fontsize='medium')
 
 fig.savefig('applications.png', dpi=300, bbox_inches='tight')
