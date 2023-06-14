@@ -6,7 +6,38 @@
     <description>Recent content in cartopy on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 31 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/cartopy/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 14 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/cartopy/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cartopy 系列：裁剪填色图出界问题</title>
+      <link>https://zhajiman.github.io/post/cartopy_clip_outside/</link>
+      <pubDate>Wed, 14 Jun 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/cartopy_clip_outside/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;裁剪或者说白化，就是让填色图只显示在多边形里面，不显示在多边形外面，例如只显示 &lt;code&gt;GeoAxes.contourf&lt;/code&gt; 在中国境内的结果。实现方法为：&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;from matplotlib.path import Path
+from cartopy.mpl.patch import geos_to_path
+from cartopy.io.shapereader import Reader
+
+reader = Reader(filepath)
+geom = next(reader.geometries())
+reader.close()
+
+cf = ax.contourf(X, Y, Z, transform=crs)
+geom = ax.projection.project_geometry(geom, crs)
+path = Path.make_compound_path(*geos_to_path(geom))
+for col in cf.collections:
+    col.set_clip_path(path, ax.transData)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;将 &lt;code&gt;crs&lt;/code&gt; 坐标系上的多边形对象变换到 data 坐标系上。&lt;/li&gt;
+&lt;li&gt;利用 &lt;code&gt;geos_to_path&lt;/code&gt; 和 &lt;code&gt;make_compound_path&lt;/code&gt; 将变换后的多边形转为 &lt;code&gt;Path&lt;/code&gt; 对象。&lt;/li&gt;
+&lt;li&gt;对 &lt;code&gt;QuadContourSet.collections&lt;/code&gt; 里的每个成员调用 &lt;code&gt;set_clip_path&lt;/code&gt; 方法，并且指定 data 坐标系。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/cartopy_clip_outside/fig1.png&#34; alt=&#34;fig1&#34; /&gt;
+&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Cartopy 系列：利用多边形生成掩膜数组</title>
       <link>https://zhajiman.github.io/post/cartopy_polygon_to_mask/</link>

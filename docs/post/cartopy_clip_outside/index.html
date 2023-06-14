@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.84.4" />
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+<link rel="manifest" href="/icons/site.webmanifest">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Cartopy 系列：裁剪填色图出界问题 - 炸鸡人博客</title>
+
+
+<meta name="author" content="炸鸡人" />
+
+
+<meta name="description" content="A minimal Hugo theme with nice theme color." />
+
+
+<meta name="keywords" content="cartopy, matplotlib" />
+
+
+<meta property="og:title" content="Cartopy 系列：裁剪填色图出界问题" />
+<meta name="twitter:title" content="Cartopy 系列：裁剪填色图出界问题" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/cartopy_clip_outside/" /><meta property="og:description" content="前言
+裁剪或者说白化，就是让填色图只显示在多边形里面，不显示在多边形外面，例如只显示 GeoAxes.contourf 在中国境内的结果。实现方法为：
+from matplotlib.path import Path
+from cartopy.mpl.patch import geos_to_path
+from cartopy.io.shapereader import Reader
+
+reader = Reader(filepath)
+geom = next(reader.geometries())
+reader.close()
+
+cf = ax.contourf(X, Y, Z, transform=crs)
+geom = ax.projection.project_geometry(geom, crs)
+path = Path.make_compound_path(*geos_to_path(geom))
+for col in cf.collections:
+    col.set_clip_path(path, ax.transData)
+
+
+将 crs 坐标系上的多边形对象变换到 data 坐标系上。
+利用 geos_to_path 和 make_compound_path 将变换后的多边形转为 Path 对象。
+对 QuadContourSet.collections 里的每个成员调用 set_clip_path 方法，并且指定 data 坐标系。
+
+
+" />
+<meta name="twitter:description" content="前言
+裁剪或者说白化，就是让填色图只显示在多边形里面，不显示在多边形外面，例如只显示 GeoAxes.contourf 在中国境内的结果。实现方法为：
+from matplotlib.path import Path
+from cartopy.mpl.patch import geos_to_path
+from cartopy.io.shapereader import Reader
+
+reader = Reader(filepath)
+geom = next(reader.geometries())
+reader.close()
+
+cf = ax.contourf(X, Y, Z, transform=crs)
+geom = ax.projection.project_geometry(geom, crs)
+path = Path.make_compound_path(*geos_to_path(geom))
+for col in cf.collections:
+    col.set_clip_path(path, ax.transData)
+
+
+将 crs 坐标系上的多边形对象变换到 data 坐标系上。
+利用 geos_to_path 和 make_compound_path 将变换后的多边形转为 Path 对象。
+对 QuadContourSet.collections 里的每个成员调用 set_clip_path 方法，并且指定 data 坐标系。
+
+
+" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2023-06-14T00:00:00+00:00" /><meta property="article:modified_time" content="2023-06-14T00:00:00+00:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://zhajiman.github.io/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</head>
+
+<body
+  data-theme="light"
+  data-theme-auto='false'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://zhajiman.github.io/">炸鸡人博客</a>
+            
+            <span class="title-sub">基本上无害</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/cartopy_clip_outside/">Cartopy 系列：裁剪填色图出界问题</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-06-14</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1718 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="前言">前言</h2>
+<p>裁剪或者说白化，就是让填色图只显示在多边形里面，不显示在多边形外面，例如只显示 <code>GeoAxes.contourf</code> 在中国境内的结果。实现方法为：</p>
+<pre><code class="language-Python">from matplotlib.path import Path
+from cartopy.mpl.patch import geos_to_path
+from cartopy.io.shapereader import Reader
+
+reader = Reader(filepath)
+geom = next(reader.geometries())
+reader.close()
+
+cf = ax.contourf(X, Y, Z, transform=crs)
+geom = ax.projection.project_geometry(geom, crs)
+path = Path.make_compound_path(*geos_to_path(geom))
+for col in cf.collections:
+    col.set_clip_path(path, ax.transData)
+</code></pre>
+<ul>
+<li>将 <code>crs</code> 坐标系上的多边形对象变换到 data 坐标系上。</li>
+<li>利用 <code>geos_to_path</code> 和 <code>make_compound_path</code> 将变换后的多边形转为 <code>Path</code> 对象。</li>
+<li>对 <code>QuadContourSet.collections</code> 里的每个成员调用 <code>set_clip_path</code> 方法，并且指定 data 坐标系。</li>
+</ul>
+<p><img class="img-zoomable" src="/cartopy_clip_outside/fig1.png" alt="fig1" />
+</p>
+<p>完整代码为：</p>
+<pre><code class="language-Python">import numpy as np
+import shapefile
+import shapely.geometry as sgeom
+from shapely.ops import unary_union
+import matplotlib.pyplot as plt
+from matplotlib.path import Path
+import cartopy.crs as ccrs
+from cartopy.mpl.patch import geos_to_path
+
+def test_data():
+    '''生成测试的二维数据.'''
+    x = np.linspace(70, 140, 100)
+    y = np.linspace(10, 60, 100)
+    X, Y = np.meshgrid(x, y)
+    Z = X + Y
+    
+    return X, Y, Z
+
+def load_country():
+    '''读取中国国界线数据.'''
+    filepath = './data/bou2_4p.shp'
+    with shapefile.Reader(filepath, encoding='gbk') as reader:
+        provinces = list(map(sgeom.shape, reader.shapes()))
+    country = unary_union(provinces)
+    
+    return country
+
+def make_map(extents):
+    '''创建地图.'''
+    map_crs = ccrs.LambertConformal(
+        central_longitude=105,
+        standard_parallels=(25, 47)
+    )
+    data_crs = ccrs.PlateCarree()
+
+    fig = plt.figure()
+    ax = fig.add_subplot(projection=map_crs)
+    ax.set_extent(extents, crs=data_crs)
+    ax.coastlines()
+
+    return ax
+
+X, Y, Z = test_data()
+country = load_country()
+crs = ccrs.PlateCarree()
+
+ax = make_map([75, 135, 10, 60])
+ax.add_geometries(country, crs, fc='none', ec='k')
+cf = ax.contourf(X, Y, Z, levels=20, transform=crs)
+
+geom = ax.projection.project_geometry(country, crs)
+path = Path.make_compound_path(*geos_to_path(geom))
+for col in cf.collections:
+    col.set_clip_path(path, ax.transData)
+</code></pre>
+<p>但当地图的显示范围比用来裁剪的形状要小时，就会出现填色图溢出地图边界的情况。下面以东南区域为例：</p>
+<p><img class="img-zoomable" src="/cartopy_clip_outside/fig2.png" alt="fig2" />
+</p>
+<p>创建矩形边界小地图的代码为：</p>
+<pre><code class="language-Python">ax = make_map([100, 125, 15, 40])
+</code></pre>
+<p>创建扇形边界小地图的代码为：</p>
+<pre><code class="language-Python">ax = make_map([100, 125, 15, 40])
+verts = [(100, 15), (125, 15), (125, 40), (100, 40), (100, 15)]
+rect = Path(verts).interpolated(100)
+ax.set_boundary(rect, crs)
+</code></pre>
+<p>发现填色图虽然被国界裁剪了，但西部和东北区域溢出了地图的边界，这个效果显然是不可接受的。本文的目的是解释其原因并给出两种通用且简单的解决方法。文中 Catopy 版本为 0.21。</p>
+<h2 id="出界的原因">出界的原因</h2>
+<p><code>Artist.clipbox</code> 属性是一个矩形的边界框，能够在绘制 <code>Artist</code> 时不让它超出这个框框的范围。<code>Artist._clippath</code> 属性是 <code>Path</code> 对象，能够在绘制 <code>Artist</code> 时裁剪它。<code>Path</code> 对象可以是任意形状，可以是带洞的多边形，可以由多个多边形组成，只要在构造 <code>Path</code> 时设定好 <code>codes</code> 参数即可。刚创建的 <code>Artist</code> 的这两个属性都为 <code>None</code>，表示不做裁剪；<code>Artist</code> 被添加到 <code>Axes</code> 上时，会用代表显示范围的矩形的 <code>Axes.patch</code> 属性作为 <code>clipbox</code>。因此 <code>Axes.plot</code> 和 <code>Axes.contourf</code> 等方法画出来的结果从来都不会有出界的情况。</p>
+<p>一般 <code>Artist._clippath</code> 属性始终为 <code>None</code>，我们可以通过 <code>Artist.set_clip_path</code> 方法来设定它，并且注意到其优先级低于 <code>_clipbox</code>。所以如果你在普通的 <code>Axes</code> 上做过地图裁剪的话，会发现并没有填色图出界的问题。实际上，出界是因为 <code>GeoAxes.patch</code> 并不一定是矩形的，例如全球范围的 Lambert 投影地图的边界是展开的圆锥，Mollweide 投影地图的边界是一个椭圆。为了让 <code>Artist</code> 的内容不超出形状各异的边界，Cartopy 选择将 <code>GeoAxes.patch</code> 赋给 <code>_clippath</code>，<code>clipbox</code> 保持为 <code>None</code>（即便地图边界实际上是矩形）。</p>
+<p>简言之，Cartopy 在画图时已经用地图的边界裁剪了填色图，我们之后再用中国国界做裁剪，就会破坏掉原来的裁剪效果。当中国国界小于地图边界时不会露陷，而大于时就会出现填色图超出地图边界的问题。</p>
+<h2 id="解决方法">解决方法</h2>
+<h3 id="设定-bbox">设定 bbox</h3>
+<p>注意到 <code>Axes</code> 和 <code>GeoAxes</code> 都有 <code>bbox</code> 属性，也能表示轴的边界框。当地图边界是矩形时，<code>GeoAxes.patch</code> 和 <code>GeoAxes.bbox</code> 表示相同的范围，因此设定 <code>Artist.clipbox</code> 来裁去出界的部分：</p>
+<pre><code class="language-Python">for col in cf.collections:
+    col.set_clip_path(path, ax.transData)
+    col.set_clip_box(ax.bbox)
+</code></pre>
+<p><img class="img-zoomable" src="/cartopy_clip_outside/fig3.png" alt="fig3" />
+</p>
+<p>只用加一行，矩形边界地图的出界问题就解决了。但扇形边界的地图里，左上角仍有少许出界的部分。因为 <code>GeoAxes.bbox</code> 只是框住整个 <code>GeoAxes</code> 的方框，而 <code>GeoAxes.patch</code> 不一定与之重合。为此下面再给出第二种方法。</p>
+<h3 id="与地图边界求与">与地图边界求与</h3>
+<p>思路是提取地图边界在 data 坐标系里的坐标点，构造一个多边形对象，与做过坐标变换的、同样在 data 坐标系里的国界多边形求与（即取两个多边形相重叠的部分），用得到的新多边形去做裁剪。代码为：</p>
+<pre><code class="language-Python">patch = ax.patch
+ax.draw_artist(patch)
+trans = patch.get_transform() - ax.transData
+path = patch.get_path().transformed(trans)
+boundary = sgeom.Polygon(path.vertices)
+
+geom = ax.projection.project_geometry(country, crs)
+geom = geom &amp; boundary
+path = Path.make_compound_path(*geos_to_path(geom))
+for col in cf.collections:
+    col.set_clip_path(path, ax.transData)
+</code></pre>
+<p><code>GeoAxes.patch</code> 一般基于 data 坐标系，但如果调用过 <code>GeoAxes.set_boundary</code>，也可能变到其它坐标系上，因此这里通过 <code>Transform</code> 对象的减法操作来得到 data 坐标系上的坐标点。同时注意到，<code>GeoAxes.patch</code> 的具体数值是在渲染过程中决定的，所以需要先调用 <code>Axes.draw_artist</code> 或 <code>Canvas.draw</code> 方法。效果如下图：</p>
+<p><img class="img-zoomable" src="/cartopy_clip_outside/fig4.png" alt="fig4" />
+</p>
+<p>Bbox 法代码简单，但是不能正确处理非矩形边界的地图，并且有些情况下耗时更长；求与法能保证效果，但如果之后修改地图的显示范围，或者在交互模式中进行拖拽，则会出现填色图缺漏的情况。</p>
+<h2 id="结语">结语</h2>
+<p>本文找出了 Cartopy 裁剪填色图出界的原因，并给出了两种解决方法。但两种方法都不算完美，也许应该考虑在 <code>draw_event</code> 事件中进行裁剪并缓存 <code>Path</code> 对象？如果读者有好的方法的话还请多多交流。</p>
+<p>另外笔者上传的 frykit 包里实现了求与法，可以通过 <code>clip_by_cn_border</code> 函数直接用国界裁剪 <code>contourf</code> 和 <code>pcolormesh</code> 等画图结果，感兴趣的读者也可以用用。</p>
+<h2 id="参考链接">参考链接</h2>
+<p><a href="https://matplotlib.org/stable/api/transformations.html" target="_blank">matplotlib.transforms</a></p>
+<p><a href="https://github.com/SciTools/cartopy/issues/1580" target="_blank">Apply set_clip_path to contours, but the set_extend is not work. #1580</a></p>
+<p><a href="https://github.com/SciTools/cartopy/issues/2052" target="_blank">contour.set_clip_path(clip) beyond borders #2052</a></p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pandas/">pandas</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pytorch/">pytorch</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#出界的原因">出界的原因</a></li>
+    <li><a href="#解决方法">解决方法</a>
+      <ul>
+        <li><a href="#设定-bbox">设定 bbox</a></li>
+        <li><a href="#与地图边界求与">与地图边界求与</a></li>
+      </ul>
+    </li>
+    <li><a href="#结语">结语</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>Pages</h3>
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">Archives</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/search/">Search</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>Links</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/ZhaJiMan" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>Tags</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/cartopy/">cartopy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/github/">github</a>
+            </span>
+            
+            <span>
+                <a href="/tags/hugo/">hugo</a>
+            </span>
+            
+            <span>
+                <a href="/tags/matplotlib/">matplotlib</a>
+            </span>
+            
+            <span>
+                <a href="/tags/net/">net</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nonsense/">nonsense</a>
+            </span>
+            
+            <span>
+                <a href="/tags/numpy/">numpy</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pandas/">pandas</a>
+            </span>
+            
+            <span>
+                <a href="/tags/python/">python</a>
+            </span>
+            
+            <span>
+                <a href="/tags/pytorch/">pytorch</a>
+            </span>
+            
+            <span>
+                <a href="/tags/radiation/">radiation</a>
+            </span>
+            
+            <span>
+                <a href="/tags/satellite/">satellite</a>
+            </span>
+            
+            <span>
+                <a href="/tags/shapely/">shapely</a>
+            </span>
+            
+            <span>
+                <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">时间序列</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#出界的原因">出界的原因</a></li>
+    <li><a href="#解决方法">解决方法</a>
+      <ul>
+        <li><a href="#设定-bbox">设定 bbox</a></li>
+        <li><a href="#与地图边界求与">与地图边界求与</a></li>
+      </ul>
+    </li>
+    <li><a href="#结语">结语</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2020-2023
+                <a href="https://zhajiman.github.io/">炸鸡人</a>
+                 | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
+                | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 
+                
+                | Visits: <span id="busuanzi_value_site_pv"></span>
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.staticfile.org/medium-zoom/1.0.6/medium-zoom.min.js"></script>
+<script defer src="https://cdn.staticfile.org/lazysizes/5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.staticfile.org/prism/1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

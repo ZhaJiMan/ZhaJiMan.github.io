@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/cartopy/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2022-07-31T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-06-14T00:00:00+00:00" />
 
 
 <style>
@@ -108,6 +108,45 @@
 </div>
 
 
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/cartopy_clip_outside/">Cartopy 系列：裁剪填色图出界问题</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-06-14</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1718 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="前言">前言</h2>
+<p>裁剪或者说白化，就是让填色图只显示在多边形里面，不显示在多边形外面，例如只显示 <code>GeoAxes.contourf</code> 在中国境内的结果。实现方法为：</p>
+<pre><code class="language-Python">from matplotlib.path import Path
+from cartopy.mpl.patch import geos_to_path
+from cartopy.io.shapereader import Reader
+
+reader = Reader(filepath)
+geom = next(reader.geometries())
+reader.close()
+
+cf = ax.contourf(X, Y, Z, transform=crs)
+geom = ax.projection.project_geometry(geom, crs)
+path = Path.make_compound_path(*geos_to_path(geom))
+for col in cf.collections:
+    col.set_clip_path(path, ax.transData)
+</code></pre>
+<ul>
+<li>将 <code>crs</code> 坐标系上的多边形对象变换到 data 坐标系上。</li>
+<li>利用 <code>geos_to_path</code> 和 <code>make_compound_path</code> 将变换后的多边形转为 <code>Path</code> 对象。</li>
+<li>对 <code>QuadContourSet.collections</code> 里的每个成员调用 <code>set_clip_path</code> 方法，并且指定 data 坐标系。</li>
+</ul>
+<p><img class="img-zoomable" src="/cartopy_clip_outside/fig1.png" alt="fig1" />
+</p>
+  </div>
+</div>
 
 <div class="post">
   <h2 class="post-item post-title">
