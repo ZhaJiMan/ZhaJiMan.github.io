@@ -5,6 +5,7 @@ showToc: true
 tags:
 - pytorch
 - 时间序列
+- 翻译
 ---
 
 ![xkcd](/pytorch_time_series_tutorial/xkcd.png)

@@ -6,6 +6,7 @@ math: true
 tags:
 - 时间序列
 - 机器学习
+- 翻译
 ---
 
 > Nicolas Vandeput 发布在 [Towards Data Science 上的文章](https://towardsdatascience.com/forecast-kpi-rmse-mae-mape-bias-cdc5703d242d)，同时也是其著作《[Data Science for Supply Chain Forecasting](https://www.amazon.com/Data-Science-Supply-Chain-Forecasting/dp/3110671107)》中的一章。

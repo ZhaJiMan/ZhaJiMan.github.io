@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-06-14T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-07-24T00:00:00+00:00" />
 
 
 <style>
@@ -107,6 +107,27 @@
 
 <div class="post">
     <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/color_matching_function/">如何从最初的颜色匹配实验导出 CIE 1931 RGB 颜色匹配函数</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-07-24</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;12481 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6">色度学</a>&nbsp;<a href="/tags/%E7%BF%BB%E8%AF%91">翻译</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <blockquote>
+<p>罗切斯特大学朱禺皓的 <a href="https://yuhaozhu.com/blog/cmf.html" target="_blank">博客文章</a>，基于颜色匹配实验的原始论文跟后人的调查，先从单位系统和色度系数讲起，再引入颜色匹配函数的概念和计算方法，并直接指出颜色匹配函数就是匹配单位功率单色光的亮度时，红绿蓝三基色的亮度经亮度系数缩放后的值。本文讲解的顺序跟一般教科书相反，显得更加自然和易于理解。专业术语的翻译可能有误，还请读者指正。</p>
+</blockquote>
+<p><img class="img-zoomable" src="/color_matching_function/cover.png" alt="cover" />
+</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
         <a href="https://zhajiman.github.io/post/cartopy_clip_outside/">Cartopy 系列：裁剪填色图出界问题</a>
     </h2>
     <div class="post-item post-meta">
@@ -153,7 +174,7 @@ for col in cf.collections:
 
 <span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;529 words</span>
 
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E8%B5%84%E6%BA%90">资源</a>&nbsp;</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E8%B5%84%E6%BA%90">资源</a>&nbsp;<a href="/tags/%E7%BF%BB%E8%AF%91">翻译</a>&nbsp;</span>
 
     </div>
     <div class="post-item post-summary markdown-body">
@@ -267,7 +288,7 @@ print(ax.xaxis.get_major_formatter())
 
 <span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4027 words</span>
 
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97">时间序列</a>&nbsp;<a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0">机器学习</a>&nbsp;</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97">时间序列</a>&nbsp;<a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0">机器学习</a>&nbsp;<a href="/tags/%E7%BF%BB%E8%AF%91">翻译</a>&nbsp;</span>
 
     </div>
     <div class="post-item post-summary markdown-body">
@@ -373,43 +394,6 @@ x % n = x - x // n = r
 <li><code>12</code> 向右超出窗口两格， <code>12 % 10 = 2</code>，即右边出两格那就左边进两格。</li>
 <li><code>-12</code> 向左超出窗口 12 格，<code>-12 % n = 8</code>，即左边出 12 格那就右边进 12 格，发现还是超出左边两格，再从右边进两格，最后距离零点 8 格。</li>
 </ul>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/pytorch_time_series_tutorial/">PyTorch 时间序列预测入门</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-10-15</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;12481 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/pytorch">pytorch</a>&nbsp;<a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97">时间序列</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <p><img class="img-zoomable" src="/pytorch_time_series_tutorial/xkcd.png" alt="xkcd" />
-</p>
-<blockquote>
-<p>最近学习用 PyTorch 做时间序列预测，发现只有 <a href="https://www.tensorflow.org/tutorials/structured_data/time_series" target="_blank">TensorFlow 官网的教程</a> 把时间窗口的选取和模型的设置讲得直观易懂，故改编如下。本人也只是入门水平，翻译错误之处还请指正。</p>
-</blockquote>
-<p>本文是利用深度学习做时间序列预测的入门教程，用到的模型包括卷积神经网络（CNN）和循环神经网络（RNN）。全文分为两大部分，又可以细分为：</p>
-<ul>
-<li>预测单个时间步：
-<ul>
-<li>预测一个特征。</li>
-<li>预测所有特征。</li>
-</ul>
-</li>
-<li>预测多个时间步：
-<ul>
-<li>单发预测：模型跑一次输出所有时间步的结果。</li>
-<li>自回归：每次输出一个时间步的预测，再把结果喂给模型得到下一步的预测。</li>
-</ul>
-</li>
-</ul>
-<p>本文用到的数据和 notebook 可以在 <a href="https://github.com/ZhaJiMan/pytorch_time_series_tutorial" target="_blank">GitHub 仓库</a> 找到。</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-item pag-current">
@@ -542,6 +526,14 @@ x % n = x - x // n = r
             
             <span>
                 <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E7%BF%BB%E8%AF%91/">翻译</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6/">色度学</a>
             </span>
             
             <span>
@@ -682,6 +674,14 @@ x % n = x - x // n = r
             
             <span>
                 <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E7%BF%BB%E8%AF%91/">翻译</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6/">色度学</a>
             </span>
             
             <span>

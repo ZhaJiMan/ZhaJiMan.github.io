@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/post/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-06-14T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-07-24T00:00:00+00:00" />
 
 
 <style>
@@ -104,6 +104,24 @@
                 
 
 
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/matplotlib_quiver/">Matplotlib 系列：图解 quiver</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-12-18</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3305 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <h2 id="前言">前言</h2>
+<p>Matplotlib 中用箭头表示风场或电磁场等矢量场时需要用到 <code>quiver</code> 方法，据字典，quiver 一词的意思是颤动、颤抖或箭袋，貌似也就最后一个意思跟箭头搭得上边。相比于其它画图方法，<code>quiver</code> 的参数又多又容易混淆，所以本文将以图解的方式逐一介绍。这些参数按功能可分为三种：控制箭头位置和数值的、控制箭头长度和角度的，以及控制箭头尺寸和形状的。下面会按照这个分组顺序来解说。本文代码基于 Matplotlib 3.3.4。</p>
+    </div>
+</div>
 
 <div class="post">
     <h2 class="post-item post-title">
@@ -295,27 +313,6 @@
 </p>
     </div>
 </div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/connected_component_labelling/">二值图像的连通域标记</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-19</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3305 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86">图像处理</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="简介">简介</h2>
-<p>连通域标记（connected component labelling）即找出二值图像中互相独立的各个连通域并加以标记，如下图所示（引自 <a href="https://gist.github.com/MarcWang/5f346375246e1cdb88dbe745b840cfaa" target="_blank">MarcWang 的 Gist</a>）</p>
-<p><img class="img-zoomable" src="/connected_component_labelling/diagram.jpg" alt="diagram" />
-</p>
-<p>可以看到图中有三个独立的区域，我们希望找到并用数字标记它们，以便计算各个区域的轮廓、外接形状、质心等参数。连通域标记最基本的两个算法是 Seed-Filling 算法和 Two-Pass 算法，下面便来分别介绍它们，并用 Python 加以实现。</p>
-    </div>
-</div>
 <div class="pagination"><div class="pag-first">
     <a href="/post/"><i class="iconfont icon-caret-back-circle-sharp"></i></a>
   </div><div class="pag-previous">
@@ -450,6 +447,14 @@
             
             <span>
                 <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E7%BF%BB%E8%AF%91/">翻译</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6/">色度学</a>
             </span>
             
             <span>
@@ -590,6 +595,14 @@
             
             <span>
                 <a href="/tags/%E6%B5%8B%E5%9C%B0%E5%AD%A6/">测地学</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E7%BF%BB%E8%AF%91/">翻译</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6/">色度学</a>
             </span>
             
             <span>

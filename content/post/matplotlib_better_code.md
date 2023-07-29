@@ -4,6 +4,7 @@ date: 2022-09-17
 showToc: false
 tags:
 - matplotlib
+- 翻译
 ---
 
 > 这是物理海洋学家 Ken Hughes 在 2021 年发表的博客文章，原文标题为 [A better way to code up scientific figures](https://brushingupscience.com/2021/11/02/a-better-way-to-code-up-scientific-figures/)。以 Matplotlib 和 Matlab 为例，强调了模块化思想对于科研作图代码的帮助。我很少看到关于作图方法论的文章，所以翻译出来交流学习。

@@ -6,7 +6,20 @@
     <description>Recent content in Posts on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 14 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 24 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>如何从最初的颜色匹配实验导出 CIE 1931 RGB 颜色匹配函数</title>
+      <link>https://zhajiman.github.io/post/color_matching_function/</link>
+      <pubDate>Mon, 24 Jul 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/color_matching_function/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;罗切斯特大学朱禺皓的 &lt;a href=&#34;https://yuhaozhu.com/blog/cmf.html&#34; target=&#34;_blank&#34;&gt;博客文章&lt;/a&gt;，基于颜色匹配实验的原始论文跟后人的调查，先从单位系统和色度系数讲起，再引入颜色匹配函数的概念和计算方法，并直接指出颜色匹配函数就是匹配单位功率单色光的亮度时，红绿蓝三基色的亮度经亮度系数缩放后的值。本文讲解的顺序跟一般教科书相反，显得更加自然和易于理解。专业术语的翻译可能有误，还请读者指正。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/color_matching_function/cover.png&#34; alt=&#34;cover&#34; /&gt;
+&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Cartopy 系列：裁剪填色图出界问题</title>
       <link>https://zhajiman.github.io/post/cartopy_clip_outside/</link>

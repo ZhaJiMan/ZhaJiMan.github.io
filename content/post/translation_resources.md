@@ -4,6 +4,7 @@ date: 2023-03-24
 showToc: true
 tags:
 - 资源
+- 翻译
 ---
 
 ![manga](/translation_resources/manga.jpg)
