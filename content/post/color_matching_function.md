@@ -3,7 +3,7 @@ title: "如何从最初的颜色匹配实验导出 CIE 1931 RGB 颜色匹配函�
 date: 2023-07-24
 showToc: true
 tags:
-- 色度学
+- 色彩
 - 翻译
 ---
 
@@ -21,7 +21,7 @@ tags:
 
 > The functions relating each set of matching weights to the test patch wavelengths...
 
-第四版的《Foundations of Computer Graphics》 里说：
+第四版的《Fundamentals of Computer Graphics》 里说：
 
 > The amount of each (light) required to match a given wavelength λ is encoded in color matching functions…
 

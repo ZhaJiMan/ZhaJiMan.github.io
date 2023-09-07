@@ -13,7 +13,11 @@
       <pubDate>Sat, 05 Jun 2021 00:00:00 +0000</pubDate>
       
       <guid>https://zhajiman.github.io/post/distance_on_earth/</guid>
-      <description>&lt;p&gt;最近又碰到了给出地球上两点的经纬度，然后计算它们之间距离的问题。之前曾经通过查维基写过简单的博文，不过现在实践时发现博文里问题较多，故重撰如下。&lt;/p&gt;</description>
+      <description>&lt;p&gt;最近又碰到了给出地球上两点的经纬度，然后计算它们之间距离的问题。之前曾经通过查维基写过简单的博文，不过现在实践时发现博文里问题较多，故重撰如下。&lt;/p&gt;
+&lt;h2 id=&#34;地球的形状&#34;&gt;地球的形状&lt;/h2&gt;
+&lt;p&gt;为了计算地球上两点之间的距离，首先需要对地球的形状有个概念，以定义距离的几何表示。我们的一般常识是：地球是一个赤道方向略长、两极方向略短的椭球，且表面有着不规则起伏的地形。这种形状肯定无法直接计算，所以希望能简化为一个能用简单数学式子描述的形状。下面是一个简单且夸张的图示&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/distance_on_earth/earth_ellipsoid.jpg&#34; alt=&#34;earth_ellipsoid&#34; /&gt;
+&lt;/p&gt;</description>
     </item>
     
   </channel>

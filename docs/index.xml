@@ -6,7 +6,17 @@
     <description>Recent content on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 24 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 03 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>搞颜色系列：绘制 CIE 1931 色度图</title>
+      <link>https://zhajiman.github.io/post/chromaticity_diagram/</link>
+      <pubDate>Sun, 03 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/chromaticity_diagram/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;1920 年代末 Wright 和 Guild 的颜色匹配实验发展出了用红绿蓝三基色（primaries）定量表示所有人眼可见颜色的 CIE RGB 色彩空间，1931 年国际照明委员会（CIE）通过对 CIE RGB 色彩空间做线性变换得到了 CIE XYZ 色彩空间。XYZ 空间里的人眼可见色域（gamut of human vision）是一块从原点出发，向无限远处不断延伸的立体区域。将这块区域投影到 $X + Y + Z = 1$ 的平面上，就能画出方便展示的 CIE 1931 色度图（chromaticity diagram）（图自 &lt;a href=&#34;https://en.wikipedia.org/wiki/CIE_1931_color_space&#34; target=&#34;_blank&#34;&gt;维基&lt;/a&gt;）：&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>如何从最初的颜色匹配实验导出 CIE 1931 RGB 颜色匹配函数</title>
       <link>https://zhajiman.github.io/post/color_matching_function/</link>
@@ -580,7 +590,11 @@ plt.show()
       <pubDate>Sat, 05 Jun 2021 00:00:00 +0000</pubDate>
       
       <guid>https://zhajiman.github.io/post/distance_on_earth/</guid>
-      <description>&lt;p&gt;最近又碰到了给出地球上两点的经纬度，然后计算它们之间距离的问题。之前曾经通过查维基写过简单的博文，不过现在实践时发现博文里问题较多，故重撰如下。&lt;/p&gt;</description>
+      <description>&lt;p&gt;最近又碰到了给出地球上两点的经纬度，然后计算它们之间距离的问题。之前曾经通过查维基写过简单的博文，不过现在实践时发现博文里问题较多，故重撰如下。&lt;/p&gt;
+&lt;h2 id=&#34;地球的形状&#34;&gt;地球的形状&lt;/h2&gt;
+&lt;p&gt;为了计算地球上两点之间的距离，首先需要对地球的形状有个概念，以定义距离的几何表示。我们的一般常识是：地球是一个赤道方向略长、两极方向略短的椭球，且表面有着不规则起伏的地形。这种形状肯定无法直接计算，所以希望能简化为一个能用简单数学式子描述的形状。下面是一个简单且夸张的图示&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/distance_on_earth/earth_ellipsoid.jpg&#34; alt=&#34;earth_ellipsoid&#34; /&gt;
+&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -666,7 +680,11 @@ os.system(f&#39;mv {filepath} {dirpath}&#39;)
       <pubDate>Sun, 27 Oct 2019 00:00:00 +0000</pubDate>
       
       <guid>https://zhajiman.github.io/post/solid_angle/</guid>
-      <description>&lt;p&gt;这里简单介绍一下立体角的概念。&lt;/p&gt;</description>
+      <description>&lt;p&gt;这里简单介绍一下立体角的概念。&lt;/p&gt;
+&lt;h2 id=&#34;定义&#34;&gt;定义&lt;/h2&gt;
+&lt;p&gt;在考虑辐射传输问题时，为了度量源点对某一范围的视场角大小，我们引入立体角的概念。通常教材上的定义如下图所示，一个半径为 $r$ 的球体，用顶点与球心重合的圆锥去截球面，截取的球面积 $A$ 的大小除以半径的平方，即是立体角。&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/solid_angle/defination.png&#34; alt=&#34;defination&#34; /&gt;
+&lt;/p&gt;</description>
     </item>
     
     <item>

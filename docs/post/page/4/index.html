@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/post/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-07-24T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-09-03T00:00:00+00:00" />
 
 
 <style>
@@ -104,6 +104,25 @@
                 
 
 
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/vim_config/">简单的 Vim 配置</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-09-20</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2266 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/vim">vim</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <p>最近越发老年痴呆，连自己写的 Vim 配置的作用都忘光了，所以在本文记录并解说一下我常用的配置以便查阅。这里的配置非常简单，仅用以强化基本的使用体验。由于我同时工作在能联网的 PC 和内网的服务器上，所以也会分开介绍如何在这两种环境下安装插件。文中 Vim 版本分别是 8.1（PC）和 7.4（服务器）。</p>
+<p><img class="img-zoomable" src="/vim_config/vim.png" alt="vim" />
+</p>
+    </div>
+</div>
 
 <div class="post">
     <h2 class="post-item post-title">
@@ -203,6 +222,10 @@
     </div>
     <div class="post-item post-summary markdown-body">
         <p>最近又碰到了给出地球上两点的经纬度，然后计算它们之间距离的问题。之前曾经通过查维基写过简单的博文，不过现在实践时发现博文里问题较多，故重撰如下。</p>
+<h2 id="地球的形状">地球的形状</h2>
+<p>为了计算地球上两点之间的距离，首先需要对地球的形状有个概念，以定义距离的几何表示。我们的一般常识是：地球是一个赤道方向略长、两极方向略短的椭球，且表面有着不规则起伏的地形。这种形状肯定无法直接计算，所以希望能简化为一个能用简单数学式子描述的形状。下面是一个简单且夸张的图示</p>
+<p><img class="img-zoomable" src="/distance_on_earth/earth_ellipsoid.jpg" alt="earth_ellipsoid" />
+</p>
     </div>
 </div>
 
@@ -294,23 +317,6 @@ os.system(f'mv {filepath} {dirpath}')
 </p>
 <p>此前 Python 最常用的地图包是 Basemap，然而它将于 2020 年被弃用，官方推荐使用 Cartopy 包作为替代。Cartopy 是英国气象局开发的地图绘图包，实现了 Basemap 的大部分功能，还可以通过 Matplotlib 的 API 实现丰富的自定义效果。</p>
 <p>本文将会从一个 NCL 转 Python 的入门者的角度，介绍如何安装 Cartopy，如何绘制地图，并实现一些常用的效果。代码基于 0.18.0 版本的 Cartopy。</p>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/numpy_missing_value/">NumPy 系列：缺测值处理</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-07-13</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3209 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/numpy">numpy</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <p>现实中观测的数据或多或少会有缺失的部分，通常称为缺测值（missing value）。NumPy 因为设计上的问题，不能像 R 和 NCL 那样原生支持缺测类型，而是有两种处理缺测的实现：NaN 和 masked array。下面便来依次介绍它们。代码基于 NumPy 1.20.1。</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-first">
@@ -418,19 +424,15 @@ os.system(f'mv {filepath} {dirpath}')
             </span>
             
             <span>
-                <a href="/tags/radiation/">radiation</a>
-            </span>
-            
-            <span>
-                <a href="/tags/satellite/">satellite</a>
-            </span>
-            
-            <span>
                 <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>
                 <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%8D%AB%E6%98%9F/">卫星</a>
             </span>
             
             <span>
@@ -454,11 +456,15 @@ os.system(f'mv {filepath} {dirpath}')
             </span>
             
             <span>
-                <a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6/">色度学</a>
+                <a href="/tags/%E8%89%B2%E5%BD%A9/">色彩</a>
             </span>
             
             <span>
                 <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BE%90%E5%B0%84/">辐射</a>
             </span>
             
         </div>
@@ -566,19 +572,15 @@ os.system(f'mv {filepath} {dirpath}')
             </span>
             
             <span>
-                <a href="/tags/radiation/">radiation</a>
-            </span>
-            
-            <span>
-                <a href="/tags/satellite/">satellite</a>
-            </span>
-            
-            <span>
                 <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>
                 <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%8D%AB%E6%98%9F/">卫星</a>
             </span>
             
             <span>
@@ -602,11 +604,15 @@ os.system(f'mv {filepath} {dirpath}')
             </span>
             
             <span>
-                <a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6/">色度学</a>
+                <a href="/tags/%E8%89%B2%E5%BD%A9/">色彩</a>
             </span>
             
             <span>
                 <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BE%90%E5%B0%84/">辐射</a>
             </span>
             
         </div>
@@ -650,6 +656,24 @@ os.system(f'mv {filepath} {dirpath}')
 
 
 <script defer src="/assets/js/fuji.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.6/katex.min.css" integrity="sha384-ZPe7yZ91iWxYumsBEOn7ieg8q/o+qh/hQpSaPow8T6BwALcXSCS6C6fSRPIAnTQs" crossorigin="anonymous">
+<script defer src="https://cdn.staticfile.org/KaTeX/0.15.6/katex.min.js" integrity="sha384-ljao5I1l+8KYFXG7LNEA7DyaFvuvSCmedUf6Y6JI7LJqiu8q5dEivP2nDdFH31V4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.staticfile.org/KaTeX/0.15.6/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError : false
+        });
+    });
+</script>
+
 
 
 

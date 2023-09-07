@@ -6,7 +6,17 @@
     <description>Recent content in matplotlib on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 14 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/matplotlib/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 03 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/matplotlib/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>搞颜色系列：绘制 CIE 1931 色度图</title>
+      <link>https://zhajiman.github.io/post/chromaticity_diagram/</link>
+      <pubDate>Sun, 03 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/chromaticity_diagram/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;1920 年代末 Wright 和 Guild 的颜色匹配实验发展出了用红绿蓝三基色（primaries）定量表示所有人眼可见颜色的 CIE RGB 色彩空间，1931 年国际照明委员会（CIE）通过对 CIE RGB 色彩空间做线性变换得到了 CIE XYZ 色彩空间。XYZ 空间里的人眼可见色域（gamut of human vision）是一块从原点出发，向无限远处不断延伸的立体区域。将这块区域投影到 $X + Y + Z = 1$ 的平面上，就能画出方便展示的 CIE 1931 色度图（chromaticity diagram）（图自 &lt;a href=&#34;https://en.wikipedia.org/wiki/CIE_1931_color_space&#34; target=&#34;_blank&#34;&gt;维基&lt;/a&gt;）：&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Cartopy 系列：裁剪填色图出界问题</title>
       <link>https://zhajiman.github.io/post/cartopy_clip_outside/</link>

@@ -123,6 +123,10 @@
   </div>
   <div class="post-item post-summary markdown-body">
     <p>最近又碰到了给出地球上两点的经纬度，然后计算它们之间距离的问题。之前曾经通过查维基写过简单的博文，不过现在实践时发现博文里问题较多，故重撰如下。</p>
+<h2 id="地球的形状">地球的形状</h2>
+<p>为了计算地球上两点之间的距离，首先需要对地球的形状有个概念，以定义距离的几何表示。我们的一般常识是：地球是一个赤道方向略长、两极方向略短的椭球，且表面有着不规则起伏的地形。这种形状肯定无法直接计算，所以希望能简化为一个能用简单数学式子描述的形状。下面是一个简单且夸张的图示</p>
+<p><img class="img-zoomable" src="/distance_on_earth/earth_ellipsoid.jpg" alt="earth_ellipsoid" />
+</p>
   </div>
 </div>
 
@@ -214,19 +218,15 @@
             </span>
             
             <span>
-                <a href="/tags/radiation/">radiation</a>
-            </span>
-            
-            <span>
-                <a href="/tags/satellite/">satellite</a>
-            </span>
-            
-            <span>
                 <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>
                 <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%8D%AB%E6%98%9F/">卫星</a>
             </span>
             
             <span>
@@ -250,11 +250,15 @@
             </span>
             
             <span>
-                <a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6/">色度学</a>
+                <a href="/tags/%E8%89%B2%E5%BD%A9/">色彩</a>
             </span>
             
             <span>
                 <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BE%90%E5%B0%84/">辐射</a>
             </span>
             
         </div>
@@ -362,19 +366,15 @@
             </span>
             
             <span>
-                <a href="/tags/radiation/">radiation</a>
-            </span>
-            
-            <span>
-                <a href="/tags/satellite/">satellite</a>
-            </span>
-            
-            <span>
                 <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>
                 <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%8D%AB%E6%98%9F/">卫星</a>
             </span>
             
             <span>
@@ -398,11 +398,15 @@
             </span>
             
             <span>
-                <a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6/">色度学</a>
+                <a href="/tags/%E8%89%B2%E5%BD%A9/">色彩</a>
             </span>
             
             <span>
                 <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BE%90%E5%B0%84/">辐射</a>
             </span>
             
         </div>
@@ -439,6 +443,24 @@
 
 
 <script defer src="/assets/js/fuji.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.6/katex.min.css" integrity="sha384-ZPe7yZ91iWxYumsBEOn7ieg8q/o+qh/hQpSaPow8T6BwALcXSCS6C6fSRPIAnTQs" crossorigin="anonymous">
+<script defer src="https://cdn.staticfile.org/KaTeX/0.15.6/katex.min.js" integrity="sha384-ljao5I1l+8KYFXG7LNEA7DyaFvuvSCmedUf6Y6JI7LJqiu8q5dEivP2nDdFH31V4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.staticfile.org/KaTeX/0.15.6/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError : false
+        });
+    });
+</script>
+
 
 
 

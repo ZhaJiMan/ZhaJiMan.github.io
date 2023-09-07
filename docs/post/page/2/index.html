@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/post/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-07-24T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-09-03T00:00:00+00:00" />
 
 
 <style>
@@ -104,6 +104,41 @@
                 
 
 
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/python_modulo/">Python 系列：衔尾蛇一样的取模</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-10-24</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1207 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <p>Python 的取模运算 <code>r = m % n</code> 相当于</p>
+<pre><code class="language-Python"># 或q = math.floor(m / n)
+q = m // n
+r = m - q * n
+</code></pre>
+<p>即取模的结果是被除数减去地板除的商和除数的乘积，这一规则对正数、负数乃至浮点数皆适用。</p>
+<p>当 <code>n</code> 为正数时。显然任意实数 <code>x</code> 可以表示为 <code>x = r + k * n</code>，其中 <code>0 &lt;= r &lt; n</code>，<code>k</code> 是某个整数。那么有</p>
+<pre><code>x // n = floor(r/n + k) = k
+x % n = x - x // n = r
+</code></pre>
+<p>即 <code>x % n</code> 的结果总是一个大小在 <code>[0, n)</code> 之间的实数 <code>r</code>。当 <code>n = 10</code> 时，以 <code>x = 12</code> 和 <code>x = -12</code> 为例：</p>
+<p><img class="img-zoomable" src="/python_modulo/number.png" alt="number" />
+</p>
+<p>如果以 <code>n</code> 为一个周期，那么 <code>x = 12</code> 就相当于往右一个周期再走 2 格，<code>x % n</code> 会消去这个周期，剩下不满一个周期的 2；<code>x = -12</code> 相当于往左两个周期后再往右走 8 格，<code>x % n</code> 会消去这两个周期，剩下不满一个周期且为正数的 8。</p>
+<p>再本质点说，取模运算就是在 <code>[0, 10)</code> 的窗口内进行“衔尾蛇”移动：</p>
+<ul>
+<li><code>12</code> 向右超出窗口两格， <code>12 % 10 = 2</code>，即右边出两格那就左边进两格。</li>
+<li><code>-12</code> 向左超出窗口 12 格，<code>-12 % n = 8</code>，即左边出 12 格那就右边进 12 格，发现还是超出左边两格，再从右边进两格，最后距离零点 8 格。</li>
+</ul>
+    </div>
+</div>
 
 <div class="post">
     <h2 class="post-item post-title">
@@ -338,26 +373,6 @@ plt.show()
 <p>首先在 stack overflow 上找到了<a href="https://stackoverflow.com/questions/36504357/should-variable-names-have-adjectives-before-or-after-the-noun" target="_blank">一模一样的提问</a>：是用 <code>left_button</code> 和 <code>right_button</code>，还是 <code>button_left</code> 和 <code>button_right</code> 更好呢？提问者自己觉得前者符合英文语序，读起来更加自然，而后者强调了变量的重点在于按钮，而左和右是额外的补充信息。有评论指出后者在 IDE 里更方便，因为你一键入 <code>button</code>，就会自动联想出所有带后缀的版本。这也挺符合人的联想过程，我们肯定是先想到“我要找按钮”，再明确具体要什么样的按钮。当然也有评论给出了经典的废话：与其纠结哪一种约定，任选一种并在项目里维持一致性最重要！好家伙，要是我如此豁达还会来搜这种鸡毛蒜皮的问题吗？</p>
     </div>
 </div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/python_split_list/">Python 系列：将列表等分为 n 份</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-01-04</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1047 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <p>本文研究一个小问题：如何将长度为 <code>N</code> 的列表等分为 <code>n</code> 份？该问题的示意图如下</p>
-<p><img class="img-zoomable" src="/python_split_list/diagram1.png" alt="diagram1" />
-</p>
-<p><code>N</code> 除以 <code>n</code> 的商为 <code>size</code>，余数为 <code>rest</code>，数值满足 <code>0 &lt;= rest &lt; n or size</code>（除法规则请见 <a href="https://zhajiman.github.io/post/python_divide/" target="_blank">Python 系列：除法运算符</a>）。当 <code>N</code> 是 <code>n</code> 的倍数时，<code>rest = 0</code> ，列表正好被等分为 <code>n</code> 份，每份含 <code>size</code> 个元素；而当 <code>N</code> 不是 <code>n</code> 的倍数时，<code>rest &gt; 0</code>，按前面的分法会剩下 <code>rest</code> 个元素。对于后一种情况来说并不存在真正的等分，只能说希望尽量等分，问题的重点也落在了如何处理这 <code>rest</code> 个元素上。</p>
-    </div>
-</div>
 <div class="pagination"><div class="pag-first">
     <a href="/post/"><i class="iconfont icon-caret-back-circle-sharp"></i></a>
   </div><div class="pag-previous">
@@ -463,19 +478,15 @@ plt.show()
             </span>
             
             <span>
-                <a href="/tags/radiation/">radiation</a>
-            </span>
-            
-            <span>
-                <a href="/tags/satellite/">satellite</a>
-            </span>
-            
-            <span>
                 <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>
                 <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%8D%AB%E6%98%9F/">卫星</a>
             </span>
             
             <span>
@@ -499,11 +510,15 @@ plt.show()
             </span>
             
             <span>
-                <a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6/">色度学</a>
+                <a href="/tags/%E8%89%B2%E5%BD%A9/">色彩</a>
             </span>
             
             <span>
                 <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BE%90%E5%B0%84/">辐射</a>
             </span>
             
         </div>
@@ -611,19 +626,15 @@ plt.show()
             </span>
             
             <span>
-                <a href="/tags/radiation/">radiation</a>
-            </span>
-            
-            <span>
-                <a href="/tags/satellite/">satellite</a>
-            </span>
-            
-            <span>
                 <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>
                 <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%8D%AB%E6%98%9F/">卫星</a>
             </span>
             
             <span>
@@ -647,11 +658,15 @@ plt.show()
             </span>
             
             <span>
-                <a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6/">色度学</a>
+                <a href="/tags/%E8%89%B2%E5%BD%A9/">色彩</a>
             </span>
             
             <span>
                 <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BE%90%E5%B0%84/">辐射</a>
             </span>
             
         </div>
@@ -695,6 +710,24 @@ plt.show()
 
 
 <script defer src="/assets/js/fuji.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.6/katex.min.css" integrity="sha384-ZPe7yZ91iWxYumsBEOn7ieg8q/o+qh/hQpSaPow8T6BwALcXSCS6C6fSRPIAnTQs" crossorigin="anonymous">
+<script defer src="https://cdn.staticfile.org/KaTeX/0.15.6/katex.min.js" integrity="sha384-ljao5I1l+8KYFXG7LNEA7DyaFvuvSCmedUf6Y6JI7LJqiu8q5dEivP2nDdFH31V4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.staticfile.org/KaTeX/0.15.6/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError : false
+        });
+    });
+</script>
+
 
 
 

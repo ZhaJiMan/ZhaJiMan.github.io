@@ -61,6 +61,7 @@ paginate = 10
   # License at the end of each post
   showLicense = false
   showToc = true
+  math = true
 
   # Copyright
   copyrightStartYear = "2020"

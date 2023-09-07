@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>辐射 on 炸鸡人博客</title>
+    <link>https://zhajiman.github.io/tags/%E8%BE%90%E5%B0%84/</link>
+    <description>Recent content in 辐射 on 炸鸡人博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 27 Oct 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/%E8%BE%90%E5%B0%84/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>立体角简介</title>
+      <link>https://zhajiman.github.io/post/solid_angle/</link>
+      <pubDate>Sun, 27 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/solid_angle/</guid>
+      <description>&lt;p&gt;这里简单介绍一下立体角的概念。&lt;/p&gt;
+&lt;h2 id=&#34;定义&#34;&gt;定义&lt;/h2&gt;
+&lt;p&gt;在考虑辐射传输问题时，为了度量源点对某一范围的视场角大小，我们引入立体角的概念。通常教材上的定义如下图所示，一个半径为 $r$ 的球体，用顶点与球心重合的圆锥去截球面，截取的球面积 $A$ 的大小除以半径的平方，即是立体角。&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/solid_angle/defination.png&#34; alt=&#34;defination&#34; /&gt;
+&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

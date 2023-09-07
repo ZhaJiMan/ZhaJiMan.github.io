@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/matplotlib/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-06-14T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-09-03T00:00:00+00:00" />
 
 
 <style>
@@ -111,6 +111,24 @@
 
 <div class="post">
   <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/chromaticity_diagram/">搞颜色系列：绘制 CIE 1931 色度图</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-09-03</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4933 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E8%89%B2%E5%BD%A9">色彩</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="前言">前言</h2>
+<p>1920 年代末 Wright 和 Guild 的颜色匹配实验发展出了用红绿蓝三基色（primaries）定量表示所有人眼可见颜色的 CIE RGB 色彩空间，1931 年国际照明委员会（CIE）通过对 CIE RGB 色彩空间做线性变换得到了 CIE XYZ 色彩空间。XYZ 空间里的人眼可见色域（gamut of human vision）是一块从原点出发，向无限远处不断延伸的立体区域。将这块区域投影到 $X + Y + Z = 1$ 的平面上，就能画出方便展示的 CIE 1931 色度图（chromaticity diagram）（图自 <a href="https://en.wikipedia.org/wiki/CIE_1931_color_space" target="_blank">维基</a>）：</p>
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
     <a href="https://zhajiman.github.io/post/cartopy_clip_outside/">Cartopy 系列：裁剪填色图出界问题</a>
   </h2>
   <div class="post-item post-meta">
@@ -157,7 +175,7 @@ for col in cf.collections:
 
 <span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3530 words</span>
 
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/satellite">satellite</a>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%8D%AB%E6%98%9F">卫星</a>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
   </div>
   <div class="post-item post-summary markdown-body">
@@ -383,24 +401,6 @@ plt.show()
   </div>
 </div>
 
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/matplotlib_colorbar/">Matplotlib 系列：colorbar 的设置</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-10</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4252 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <h2 id="0-前言">0. 前言</h2>
-<p>承接 <a href="https://zhajiman.github.io/post/matplotlib_colormap/" target="_blank">Matplotlib 系列：colormap 的设置</a> 一文，这次介绍 colorbar。所谓 colorbar 即主图旁一个长条状的小图，能够辅助表示主图中 colormap 的颜色组成和颜色与数值的对应关系。本文将会依次介绍 colorbar 的基本用法、如何设置刻度，以及怎么为组图添加 colorbar。代码基于 Matplotlib 3.3.4。</p>
-  </div>
-</div>
-
 
 <div class="pagination"><div class="pag-item pag-current">
     <a href="/tags/matplotlib/">1</a>
@@ -497,19 +497,15 @@ plt.show()
             </span>
             
             <span>
-                <a href="/tags/radiation/">radiation</a>
-            </span>
-            
-            <span>
-                <a href="/tags/satellite/">satellite</a>
-            </span>
-            
-            <span>
                 <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>
                 <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%8D%AB%E6%98%9F/">卫星</a>
             </span>
             
             <span>
@@ -533,11 +529,15 @@ plt.show()
             </span>
             
             <span>
-                <a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6/">色度学</a>
+                <a href="/tags/%E8%89%B2%E5%BD%A9/">色彩</a>
             </span>
             
             <span>
                 <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BE%90%E5%B0%84/">辐射</a>
             </span>
             
         </div>
@@ -645,19 +645,15 @@ plt.show()
             </span>
             
             <span>
-                <a href="/tags/radiation/">radiation</a>
-            </span>
-            
-            <span>
-                <a href="/tags/satellite/">satellite</a>
-            </span>
-            
-            <span>
                 <a href="/tags/shapely/">shapely</a>
             </span>
             
             <span>
                 <a href="/tags/vim/">vim</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%8D%AB%E6%98%9F/">卫星</a>
             </span>
             
             <span>
@@ -681,11 +677,15 @@ plt.show()
             </span>
             
             <span>
-                <a href="/tags/%E8%89%B2%E5%BA%A6%E5%AD%A6/">色度学</a>
+                <a href="/tags/%E8%89%B2%E5%BD%A9/">色彩</a>
             </span>
             
             <span>
                 <a href="/tags/%E8%B5%84%E6%BA%90/">资源</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BE%90%E5%B0%84/">辐射</a>
             </span>
             
         </div>
@@ -722,6 +722,24 @@ plt.show()
 
 
 <script defer src="/assets/js/fuji.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.6/katex.min.css" integrity="sha384-ZPe7yZ91iWxYumsBEOn7ieg8q/o+qh/hQpSaPow8T6BwALcXSCS6C6fSRPIAnTQs" crossorigin="anonymous">
+<script defer src="https://cdn.staticfile.org/KaTeX/0.15.6/katex.min.js" integrity="sha384-ljao5I1l+8KYFXG7LNEA7DyaFvuvSCmedUf6Y6JI7LJqiu8q5dEivP2nDdFH31V4" crossorigin="anonymous"></script>
+<script defer src="https://cdn.staticfile.org/KaTeX/0.15.6/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError : false
+        });
+    });
+</script>
+
 
 
 
