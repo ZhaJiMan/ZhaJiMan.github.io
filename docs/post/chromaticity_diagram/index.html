@@ -37,9 +37,13 @@
 <meta name="twitter:title" content="搞颜色系列：绘制 CIE 1931 色度图" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://zhajiman.github.io/post/chromaticity_diagram/" /><meta property="og:description" content="前言
-1920 年代末 Wright 和 Guild 的颜色匹配实验发展出了用红绿蓝三基色（primaries）定量表示所有人眼可见颜色的 CIE RGB 色彩空间，1931 年国际照明委员会（CIE）通过对 CIE RGB 色彩空间做线性变换得到了 CIE XYZ 色彩空间。XYZ 空间里的人眼可见色域（gamut of human vision）是一块从原点出发，向无限远处不断延伸的立体区域。将这块区域投影到 $X &#43; Y &#43; Z = 1$ 的平面上，就能画出方便展示的 CIE 1931 色度图（chromaticity diagram）（图自 维基）：" />
+1920 年代末 Wright 和 Guild 的颜色匹配实验发展出了用红绿蓝三基色（primaries）定量表示所有人眼可见颜色的 CIE RGB 色彩空间，1931 年国际照明委员会（CIE）通过对 CIE RGB 色彩空间做线性变换得到了 CIE XYZ 色彩空间。XYZ 空间里的人眼可见色域（gamut of human vision）是一块从原点出发，向无限远处不断延伸的立体区域。将这块区域投影到 $X &#43; Y &#43; Z = 1$ 的平面上，就能画出方便展示的 CIE 1931 色度图（chromaticity diagram）（图自 维基）：
+
+" />
 <meta name="twitter:description" content="前言
-1920 年代末 Wright 和 Guild 的颜色匹配实验发展出了用红绿蓝三基色（primaries）定量表示所有人眼可见颜色的 CIE RGB 色彩空间，1931 年国际照明委员会（CIE）通过对 CIE RGB 色彩空间做线性变换得到了 CIE XYZ 色彩空间。XYZ 空间里的人眼可见色域（gamut of human vision）是一块从原点出发，向无限远处不断延伸的立体区域。将这块区域投影到 $X &#43; Y &#43; Z = 1$ 的平面上，就能画出方便展示的 CIE 1931 色度图（chromaticity diagram）（图自 维基）：" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+1920 年代末 Wright 和 Guild 的颜色匹配实验发展出了用红绿蓝三基色（primaries）定量表示所有人眼可见颜色的 CIE RGB 色彩空间，1931 年国际照明委员会（CIE）通过对 CIE RGB 色彩空间做线性变换得到了 CIE XYZ 色彩空间。XYZ 空间里的人眼可见色域（gamut of human vision）是一块从原点出发，向无限远处不断延伸的立体区域。将这块区域投影到 $X &#43; Y &#43; Z = 1$ 的平面上，就能画出方便展示的 CIE 1931 色度图（chromaticity diagram）（图自 维基）：
+
+" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2023-09-03T00:00:00+00:00" /><meta property="article:modified_time" content="2023-09-03T00:00:00+00:00" />
 
@@ -114,7 +118,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-09-03</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4933 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5621 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E8%89%B2%E5%BD%A9">色彩</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -127,14 +131,14 @@
 <p>1920 年代末 Wright 和 Guild 的颜色匹配实验发展出了用红绿蓝三基色（primaries）定量表示所有人眼可见颜色的 CIE RGB 色彩空间，1931 年国际照明委员会（CIE）通过对 CIE RGB 色彩空间做线性变换得到了 CIE XYZ 色彩空间。XYZ 空间里的人眼可见色域（gamut of human vision）是一块从原点出发，向无限远处不断延伸的立体区域。将这块区域投影到 $X + Y + Z = 1$ 的平面上，就能画出方便展示的 CIE 1931 色度图（chromaticity diagram）（图自 <a href="https://en.wikipedia.org/wiki/CIE_1931_color_space" target="_blank">维基</a>）：</p>
 <p><img class="img-zoomable" src="/chromaticity_diagram/wikipeida-CIE1931xy.png" alt="wikipeida-CIE1931xy" />
 </p>
-<p>图中彩色马蹄形（horseshoe）的边界对应于单色光的颜色，并标出了波长的刻度；马蹄形内部则是单色光混合产生的颜色。解释一下色度图的横纵坐标：XYZ 空间可以理解为选取了三个假想色（imaginary colors）作为色彩空间里的基向量，使人眼可见色域恰好落入 XYZ 空间的第一卦限。混合颜色 $C$ 需要 $(X, Y, Z)$ 份的假想色，将这些份数用总和归一化为比值，前两个比值就是色度图的坐标。</p>
+<p>图中彩色马蹄形（horseshoe）的边界对应于单色光的颜色，并标出了波长的刻度；马蹄形内部则是单色光混合产生的颜色。解释一下色度图的横纵坐标：XYZ 空间可以理解为选取了三个假想色（imaginary colors）作为色彩空间里的基向量，使人眼可见色域恰好落入 XYZ 空间的第一卦限。混合颜色 $\boldsymbol{C}$ 需要 $(X, Y, Z)$ 份的假想色，将这些份数用总和归一化为比值，前两个比值就是色度图的坐标。</p>
 <p>这张图在色彩科学教程中经常出现，不过日常里见得最多的场合估计还是电脑显示器的广告：显示器的每个像素由 RGB 子像素组成，依据三基色理论可以混合出任意颜色。但由于现实世界的功率不能为负数，所以三基色只能在色度图上圈出一个三角形的区域，对应于显示器所能产生的所有色度的颜色。广告里通常会给色度图叠上 sRGB 和 NTSC 的色域三角形，然后强调显示器能做到 100% 覆盖 sRGB 色域。</p>
 <p>我想动手画一张色度图试试，通过实践加深对色彩的理解，本文的目的便是总结相关经验。另外我在网上搜索时发现除了 <a href="https://blog.csdn.net/weixin_43194305/article/details/115468614" target="_blank">一篇用 Qt C++ 的博文</a>，其它教程都是直接调用 <a href="https://colour.readthedocs.io/en" target="_blank">python 的 Colour 包</a>，或 Matlab 和 Mathematica 的内置函数来画的。所以本文也想填补 Python 从零实现的空白。</p>
-<p>本文用到的 Python 包是 NumPy、Pandas 和 Matplotlib。</p>
+<p>本文用到的 Python 包是 NumPy、Pandas 和 Matplotlib。完整代码和用到的数据可见 <a href="https://github.com/ZhaJiMan/do_color" target="_blank">我的 Github 仓库</a>。</p>
 <h2 id="画图思路">画图思路</h2>
 <ol>
 <li>在 xy 平面上用 <code>np.linspace</code> 和 <code>np.meshgrid</code> 构造网格。</li>
-<li>计算每个网格点的坐标 $(x, y)$ 对应的 sRGB 值。</li>
+<li>计算每个网格点的坐标 $(x, y)$ 对应的 sRGB。</li>
 <li>用 <code>imshow</code> 将网格当作彩色图片画出来。</li>
 <li>读取 XYZ 颜色匹配函数的色度坐标，构造马蹄形的 <code>Polygon</code> 去裁剪 <code>imshow</code> 的结果。</li>
 <li>在马蹄图边缘添加波长刻度。</li>
@@ -146,9 +150,9 @@
 <li><code>CIE 1931 2-deg, XYZ CMFs</code></li>
 <li><code>CIE 1931 2-deg xyz chromaticity coordinates</code></li>
 </ul>
-<p>第一样是 CIE 1931 XYZ 颜色匹配函数（Color Matching Function, CMF），第二样是 CMF 的色度坐标，范围从 360 nm 到 830 nm，分辨率为 1nm。</p>
+<p>第一样是 CIE 1931 XYZ 颜色匹配函数（Color Matching Function, CMF），第二样是 CMF 的色度坐标，范围从 360 到 830 nm，分辨率为 1nm。</p>
 <h2 id="构造网格">构造网格</h2>
-<p>人眼可见色域落在 xy 平面上的 $x,y \in [0, 1]$ 范围内，所以网格只需要在 <code>[0, 1]</code> 之间取：</p>
+<p>人眼可见色域落在 xy 平面上的 $x,y \in [0, 1]$ 范围内，所以网格只需要在 $[0, 1]$ 之间取：</p>
 <pre><code class="language-Python">import numpy as np
 
 N = 256
@@ -157,9 +161,9 @@ y = np.linspace(0, 1, N).clip(1e-3, 1)
 x, y = np.meshgrid(x, y)
 </code></pre>
 <p>得到形如 <code>(N, N)</code> 的 xy 网格。如果 <code>y</code> 里含有 0，那么后续计算 <code>Y / y</code> 时将会出现除零警告，所以这里设置 <code>y</code> 的下限为 <code>1e-3</code>。</p>
-<h2 id="计算-srgb-值">计算 sRGB 值</h2>
+<h2 id="计算-srgb">计算 sRGB</h2>
 <h3 id="xyz-转换-xyz">xyz 转换 XYZ</h3>
-<p>$(x, y)$ 坐标只表示颜色的色度，还要补上亮度（luminance） $Y$，将其转换为三刺激值（tristimulus） $(X, Y, Z)$ 后才能进一步变换为 sRGB 值。</p>
+<p>$(x, y)$ 坐标只表示颜色的色度，还要补上亮度（luminance） $Y$，将其转换为三刺激值（tristimulus） $(X, Y, Z)$ 后才能进一步变换为 RGB。</p>
 <p>色度坐标的定义为</p>
 <p>$$
 \begin{align*}
@@ -176,7 +180,7 @@ Z &amp;= (1 - x - y) \frac{Y}{y}
 \end{align*}
 $$</p>
 <p>色度图里颜色的亮度可以随意指定，这里不妨设 $Y = 1$。代码如下：</p>
-<pre><code class="language-Python">Y = np.ones_like(x)
+<pre><code class="language-Python">Y = np.ones_like(y)
 Y_y = Y / y
 X = x * Y_y
 Z = (1 - x - y) * Y_y
@@ -192,7 +196,7 @@ XYZ = np.dstack((X, Y, Z))
 (X_w, Y_w, Z_w) &amp;= (0.95046, 1.0, 1.08906)
 \end{align*}
 $$</p>
-<p>已知三基色的色度坐标，相当于知道了基向量的方向；已知白点的三刺激值，就可以确定基向量的长度，让 D65 白点在 RGB 空间里对应于 $(1, 1, 1)$。由此可以求得 XYZ 到 sRGB 的线性变换矩阵。具体求解过程可见 <a href="https://fujiwaratko.sakura.ne.jp/infosci/colorspace/rgb_xyz_e.html" target="_blank">Computing RGB-XYZ conversion matrix</a>，这里直接引用 <a href="https://en.wikipedia.org/wiki/CIE_1931_color_space" target="_blank">维基</a> 的结果</p>
+<p>已知三基色的色度坐标，相当于知道了基向量的方向；已知白点的三刺激值，就可以确定基向量的长度，让 D65 白点在 RGB 空间里对应于 $(1, 1, 1)$。由此可以求得 XYZ 坐标到 sRGB 坐标的线性变换矩阵。具体求解过程可见 <a href="https://fujiwaratko.sakura.ne.jp/infosci/colorspace/rgb_xyz_e.html" target="_blank">Computing RGB-XYZ conversion matrix</a>，这里直接引用 <a href="https://en.wikipedia.org/wiki/CIE_1931_color_space" target="_blank">维基</a> 的结果</p>
 <p>$$
 \begin{bmatrix}
 R \cr G \cr B
@@ -206,12 +210,12 @@ R \cr G \cr B
 X \cr Y \cr Z
 \end{bmatrix}
 $$</p>
-<p>将变换矩阵记作 $M$。前面得到的 <code>XYZ</code> 数组形如 <code>(N, N, 3)</code>，<code>M</code> 形如 <code>(3, 3)</code>，我们希望得到形如 <code>(N, N, 3)</code> 的 RGB 数组。按 NumPy 的矩阵乘法，我首先写出了：</p>
+<p>将变换矩阵记作 $\boldsymbol{M}$。前面得到的 <code>XYZ</code> 数组形如 <code>(N, N, 3)</code>，<code>M</code> 形如 <code>(3, 3)</code>，我们希望得到形如 <code>(N, N, 3)</code> 的 <code>RGB</code> 数组。按 NumPy 的矩阵乘法，我首先写出了：</p>
 <pre><code class="language-Python">RGB = M @ XYZ
 </code></pre>
-<p>这里 <code>@</code> 运算符等价于 <code>np.matmul</code>。然而 NumPy 对多维数组矩阵乘法的处理是，让它最后两维都参与计算，所以会给出错误的结果。其实这种情况下更合适的算法是张量缩并（tensor contraction），设 <code>XYZ</code> 的元素为 $x_{ijk}$，<code>RGB</code> 的元素为 $c_{ijk}$，<code>M</code> 的元素为 $m_{ij}$，缩并公式为</p>
+<p>这里 <code>@</code> 运算符等价于 <code>np.matmul</code>。然而 NumPy 对多维数组矩阵乘法的处理是，让它最后两维都参与计算，所以会给出错误的结果。其实这种情况下更合适的算法是张量缩并（tensor contraction），设 <code>XYZ</code> 的元素为 $X_{ijk}$，<code>RGB</code> 的元素为 $C_{ijk}$，<code>M</code> 的元素为 $M_{ij}$，缩并公式为</p>
 <p>$$
-c_{ijk} = \sum_{l=1}^{3} x_{ijl} m_{kl}
+C_{ijk} = \sum_{l=1}^{3} X_{ijl} M_{kl}
 $$</p>
 <p>这样计算出的 <code>RGB</code> 就是正确的。代码为：</p>
 <pre><code class="language-Python">M = np.array([
@@ -222,18 +226,18 @@ $$</p>
 RGB = np.tensordot(XYZ, M, (-1, 1))
 </code></pre>
 <p>别问什么是张量，问就是我也不会，这个矩阵乘法技巧是 <a href="https://stackoverflow.com/questions/26571199/vectorize-multiplying-rgb-array-by-color-transform-matrix-for-image-processing" target="_blank">stack overflow 上抄的</a>。</p>
-<p>sRGB 的定义要求 RGB 值在 $[0, 1]$ 范围内，即 RGB 空间里第一卦限内单位立方体的空间，超出范围的值我们可以用 <code>np.clip(RGB, 0, 1)</code> 直接抹成 0 和 1：</p>
-<pre><code class="language-Python">RGB = np.clip(RGB, 0, 1)
+<p>sRGB 的定义要求 RGB 值在 $[0, 1]$ 范围内，即 RGB 空间里第一卦限内单位立方体的空间，超出范围的值我们可以用 <code>np.clip</code> 直接削头去尾：</p>
+<pre><code class="language-Python">RGB = RGB.clip(0, 1)
 </code></pre>
 <h3 id="gamma-校正">Gamma 校正</h3>
-<p>用 <code>M</code> 乘出来的 sRGB 还只是线性 sRGB，需要经过 gamma 校正后才能得到最后的结果。CRT 显示器的显示强度跟 RGB 像素值之间呈非线性关系</p>
+<p>用 $\boldsymbol{M}$ 乘出来的 sRGB 还只是线性 sRGB，需要经过 gamma 校正后才能得到最后的结果。CRT 显示器的显示强度跟 RGB 像素值之间呈非线性关系</p>
 <p>$$
 I = A D^{\gamma}
 $$</p>
 <p>其中 $I$ 是显示亮度，$A$ 是最大亮度，$D$ 是 $[0, 1]$ 之间的 RGB 像素值，一般有 $\gamma = 2.2$。下面画出函数 $y = x^{2.2}$ 的曲线：</p>
 <p><img class="img-zoomable" src="/chromaticity_diagram/gamma_curve.png" alt="gamma_curve" />
 </p>
-<p>本来像素值跟颜色的亮度成线性关系，低像素值对应低亮度，但经过 CRT 显示器的非线性映射后，现在低像素值对应的亮度更低，并且在很大一段范围内都只能输出低亮度，只有当像素值接近于 1 时亮度才会陡然提升，这就会使图像显得更暗。为了修正这一问题，可以提前让 RGB 值变为原来的 1/2.2 次方，这样经过 CRT 显示器的映射后就能变回原来的 RGB 值，显示正确的色彩。后来淘汰了 CRT 的液晶显示器并没有 $y = x^{2.2}$ 的非线性特征，但仍会通过电路模拟出这个效果，以正常显示 sRGB 标准的图像。上图的绿线画出了 $y = x^{1/2.2}$ 的曲线（但是被蓝线挡住了……），可以看到形状往上鼓，正好能抵消 $y = x^{2.2}$ 的下凹形状。</p>
+<p>本来像素值跟颜色的亮度成线性关系，低像素值对应低亮度，但经过 CRT 显示器的非线性映射后，现在低像素值对应的亮度更低，并且在很大一段范围内都只能输出低亮度，只有当像素值接近于 1 时亮度才会陡然提升，这就会使图像显得更暗。为了修正这一问题，可以提前让 RGB 变为原来的 1/2.2 次方，这样经过 CRT 显示器的映射后就能变回原来的 RGB，显示正确的色彩。后来淘汰了 CRT 的液晶显示器并没有 $y = x^{2.2}$ 的非线性特征，但仍会通过电路模拟出这个效果，以正常显示 sRGB 标准的图像。上图的绿线画出了 $y = x^{1/2.2}$ 的曲线（几乎被蓝线挡住了），可以看到形状往上鼓，正好能抵消 $y = x^{2.2}$ 的下凹形状。</p>
 <p>对线性的 sRGB 做 $y = x^{1/2.2}$ 映射的操作叫做 gamma 编码（encoding），反过来映射的操作就叫做 gamma 解码（decoding），gamma 校正就是指编码解码的这一过程。网上有文章认为 gamma 校正的深层原因是为了契合人眼对亮度的非线性感知，或者是先做 gamma 编码再做 8 bit 量化能保留更多暗部信息。相关讨论详见 <a href="https://www.zhihu.com/question/27467127" target="_blank">色彩校正中的 gamma 值是什么？</a>，这里不再深究。</p>
 <p>sRGB 标准考虑到低亮度时的显示和量化误差等因素，设计出了跟 $y = x^{1/2.2}$ 非常接近，但存在细微区别的 gamma 编码方案</p>
 <p>$$
@@ -244,7 +248,7 @@ C' =
 \end{cases}
 $$</p>
 <p>其中 $C$ 指代 $R$、$G$ 或 $B$。这一映射的曲线在上面的图中已用蓝线画出，与 $y = x^{1/2.2}$ 的曲线几乎重合。注意 $C \in [0, 1]$ 经过映射后仍有 $C' \in [0, 1]$。</p>
-<p>经过 gamma 编码后的 sRGB 值才是最终的 sRGB 值，代码如下：</p>
+<p>经过 gamma 编码后的 RGB 值才是最终的 sRGB，代码如下：</p>
 <pre><code class="language-Python"># 使用np.where会遇到非正数求幂的问题.
 mask = RGB &gt; 0.0031308
 RGB[~mask] *= 12.92
@@ -300,28 +304,65 @@ R \cr G \cr B
 X \cr Y \cr Z
 \end{bmatrix}
 $$</p>
-<p>紫红线附近 $k$ 大 $x$ 大，量级上有 $X &gt; Z &gt; Y$。观察变换矩阵 $M$ 每一行的权重，可见第一行由正的 $X$ 主导，第二行由负的 $X$ 主导，第三行由正的 $Z$ 主导。因此紫红线附近的网格点 RGB 值大致满足 $R, B &gt; 1$，$G &lt; 0$，<code>clip</code> 后得 $(1, 0, 1)$，正好对应紫色。另外 <code>clip</code> 操作会通过削去高值降低 RGB 的量级，从而减小色度图部分区域的最终亮度。</p>
+<p>紫红线附近 $k$ 大 $x$ 大，量级上有 $X &gt; Z &gt; Y$。观察变换矩阵 $\boldsymbol{M}$ 每一行的权重，可见第一行由正的 $X$ 主导，第二行由负的 $X$ 主导，第三行由正的 $Z$ 主导。因此紫红线附近的网格点 RGB 值大致满足 $R, B &gt; 1$，$G &lt; 0$，<code>clip</code> 后得 $(1, 0, 1)$，正好对应紫色。另外 <code>clip</code> 操作会通过削去高值降低 RGB 的量级，从而减小色度图部分区域的最终亮度。</p>
 <p>进一步减小 $Y$ 能够隐去右下角的紫条，但也会使上方的颜色过于黯淡。因此考虑另外两种亮度设置：</p>
 <ol>
 <li>$Y$ 随 $y$ 从 0 到 1 线性增大。</li>
-<li>$Y$ 任取，但计算 RGB 时对让每组 RGB 除以 $C_m = \max \lbrace R, G, B \rbrace$，即用最大分量做归一化。</li>
+<li>任取正数 $Y$，先 <code>clip</code> 掉线性 sRGB 的负数分量，再除以 $C_{max} = \max \lbrace R, G, B \rbrace$，即用最大分量做归一化。</li>
 </ol>
 <p>两种设置的效果如下图：</p>
 <p><img class="img-zoomable" src="/chromaticity_diagram/test_Y2.png" alt="test_Y2" />
 </p>
-<p>设置 1 的效果很不错，颜色过渡自然，红绿蓝紫青粉都有了；设置 2 的效果比 1 更亮一点，但中间浮现出“Y”形亮纹。设置 2 里亮度任取，只要是正数就行，算出来的 RGB 值无论是高是低，都会因为除以 $C_m$，使 RGB 分量最高只有 1，这样一来就不会因为过亮被 <code>clip</code> 削头，也不会显得太暗。当然负值分量仍会被 <code>clip</code> 提高到 0，这是 sRGB 色域无法覆盖人眼可见色域的必然结果。至于亮纹，很容易推导出归一化后的亮度 $Y' = Y/C_m$，直觉告诉我 $R = G$、$R = B$、和 $G = B$ 时 $C_m$ 能取较小的值，将对应的三条直线投影到 $X + Y + Z = 1$ 平面上算出的直线确实跟“Y”形亮纹的位置重合，但你要问怎么证明我只能说不会。</p>
+<p>设置 1 的效果很不错，颜色过渡自然，红绿蓝紫青粉都有了；设置 2 的效果比 1 更明亮，但中间浮现出“Y”形亮纹。设置 2 里亮度任取，算出来的 RGB 无论是高是低，都会因为除以 $C_{max}$，使分量最高只有 1，这样一来就能在不需要用 <code>clip</code> 削头的情况下尽量提高每个网格点的亮度。至于亮纹，很容易推导出归一化后的亮度 $Y' = Y/C_m$，直觉告诉我 $R = G$、$R = B$、和 $G = B$ 时 $C_{max}$ 能取较小的值，将对应的三条直线投影到 $X + Y + Z = 1$ 平面上算出的直线确实跟“Y”形亮纹的位置重合，但你要问怎么证明我只能说不会。</p>
 <p>设置 1 的代码为：</p>
-<pre><code class="language-Python">Y = np.linspace(0, 1, N)
-Y = np.broadcast_to(Y[:, np.newaxis], x.shape)
+<pre><code class="language-Python">Y = np.linspace(0, 1, y.shape[0])
+Y = np.broadcast_to(Y[:, np.newaxis], y.shape)
+&lt;计算sRGB和clip的代码&gt;
+&lt;gamma encoding的代码&gt;
 </code></pre>
 <p>设置 2 的代码为：</p>
 <pre><code class="language-Python">Y = np.ones_like(x)
 &lt;xyz转换XYZ的代码&gt;
 RGB = XYZ_to_sRGB(XYZ)
+RGB = RGB.clip(0, None)
 RGB /= RGB.max(axis=2, keepdims=True)
-&lt;clip和gamma encoding&gt;
+&lt;gamma encoding的代码&gt;
 </code></pre>
-<p>因为设置 2 的效果跟维基的图更接近，所以后续采用设置 2 调整亮度。</p>
+<p>设置 2 的亮度表现跟维基图很接近了，但左上角部分发绿，而维基图则发青（cyan）。</p>
+<h3 id="色域出界处理">色域出界处理</h3>
+<p>容易证明 XYZ 空间里两个颜色线性混合而成的颜色在色度图上正好落在两点间的连线上，所以 sRGB 三基色混合而成的颜色在色度图上对应于三基色围成的三角形区域，此即 sRGB 的色域。如果硬要用三基色混合出色域外的颜色，就会出现组合系数有负值的情况，RGB 表现为存在负数分量。前面我们的处理是简单粗暴地将负数分量修改为零（<code>clip</code>），这里介绍另一种处理方式：色度图上让色域外的颜色沿直线向白点移动，直至遇到三角形边界，用边界上的交点近似表示界外色。优点是能尽量维持界外色的色相（hue）。
+设 $\boldsymbol{C_1}$ 为色域外的颜色，$\boldsymbol{C_2}$ 为 D65 白点</p>
+<p>$$
+\begin{align*}
+\boldsymbol{C_1} &amp;= (R, G, B) \cr
+\boldsymbol{C_2} &amp;= (1, 1, 1)
+\end{align*}
+$$</p>
+<p>色域外要求 RGB 最小分量为负数</p>
+<p>$$
+C_{min} = \min \lbrace R, G, B \rbrace &lt; 0
+$$</p>
+<p>色度图上让 $\boldsymbol{C_1}$ 向 $\boldsymbol{C_2}$ 移动相当于线性混合这两个颜色。不妨令混合色 $\boldsymbol{C_3} = \boldsymbol{C_1} + k\boldsymbol{C_2}$，比例系数 $k$ 使 $\boldsymbol{C_3}$ 的最小分量恰好为零，即 $\boldsymbol{C_3}$ 恰好落在三角形边界上。显然 $k = -C_{min}$，于是</p>
+<p>$$
+\begin{align*}
+\boldsymbol{C_3}
+&amp;= \boldsymbol{C_1} + k\boldsymbol{C_2} \cr
+&amp;= \boldsymbol{C_1} - C_{min} \boldsymbol{C_2} \cr
+&amp;= (R - C_{min}, G - C_{min}, B - C_{min}) \cr
+\end{align*}
+$$</p>
+<p>$\boldsymbol{C_3}$ 的最小分量为 $C_{min} - C_{min} = 0$。一句话概括该方法：如果一个颜色的最小分量为负数，那么让每个分量都减去这个负数。如此处理后分量可能超过 1，可以再应用上一节的设置 2，除以新的 $C_{max}$ 做归一化。跟 <code>clip</code> 处理的对比如下图：</p>
+<p><img class="img-zoomable" src="/chromaticity_diagram/test_Y3.png" alt="test_Y3" />
+</p>
+<p>区别是左半区域显得更青，色彩跟维基的图几乎一致了。所以本文最后决定通过混合白色处理出界色，用最大分量做归一化设置亮度。如果读者不喜欢这种发青的效果，可以自行尝试不同的设置。</p>
+<p>代码如下：</p>
+<pre><code class="language-Python">Y = np.ones_like(x)
+&lt;xyz转换XYZ的代码&gt;
+RGB = XYZ_to_sRGB(XYZ)
+RGB -= RGB.min(axis=2, keepdims=True).clip(None, 0)
+RGB /= RGB.max(axis=2, keepdims=True)
+&lt;gamma encoding的代码&gt;
+</code></pre>
 <h2 id="波长刻度">波长刻度</h2>
 <p>马蹄形边界一圈（不含紫红线）对应于单色光的颜色，维基的图中给边界标注了对应波长的刻度，可以看到从紫色到红色，波长从 460 nm 升至 620 nm。Matplotlib 只支持给 <code>Axes</code> 的四周标刻度，像这种曲线上的刻度我们只能自己用 <code>plot</code> 方法来画。以边界曲线上一点 $(x_i, y_i)$ 为例，刻度长度自定，如果已知该点的法向方向，就能根据刻度长度 $L$ 和方向确定刻度终点 $(x'_i, y'_i)$。求离散曲线的法向方向，网上有说直接用差分近似导数的，有说用三点共圆的，还有三次样条插值后再求导的。我参考的是论文 <a href="https://kougei.repo.nii.ac.jp/?action=repository_action_common_download&amp;item_id=510&amp;item_no=1&amp;attribute_id=21&amp;file_no=1" target="_blank">色度図の着色</a> 里的做法，核心思路是对于相邻的三点 $P_1$、$P_2$ 和 $P_3$，以连线 $P_1 P_3$ 的垂线方向作为 $P_2$ 点的法向：</p>
 <p><img class="img-zoomable" src="/chromaticity_diagram/ticks.png" alt="ticks" />
@@ -339,24 +380,33 @@ y'_i = y_i + L \sin \theta_i
 \end{gather*}
 $$</p>
 <p>其中 $\theta_i$ 是法向跟 x 轴的夹角。代码为：</p>
-<pre><code class="language-Python">xy = cc[['x', 'y']].to_numpy()
-dc = np.zeros_like(xy)
-dc[0] = xy[1] - xy[0]
-dc[-1] = xy[-1] - xy[-2]
-dc[1:-1] = xy[2:] - xy[:-2]
-dc = pd.DataFrame(dc, index=cc.index, columns=['dx', 'dy'])
-dc['dl'] = np.hypot(dc['dx'], dc['dy'])
-dc.loc[(dc.index &lt; 430) | (dc.index &gt; 660)] = np.nan
-dc = dc.ffill().bfill()
-dc['cos'] = -dc['dy'] / dc['dl']
-dc['sin'] = dc['dx'] / dc['dl']
+<pre><code class="language-Python">x, y = cc['x'], cc['y']
+xy = np.column_stack((x, y))
+dxdy = np.zeros_like(xy)
+dxdy[0] = xy[1] - xy[0]
+dxdy[-1] = xy[-1] - xy[-2]
+dxdy[1:-1] = xy[2:] - xy[:-2]
+dx, dy = dxdy[:, 0], dxdy[:, 1]
+dl = np.hypot(dx, dy)
+dl[dl &lt;= 0] = np.nan
+cos = -dy / dl
+sin = dx / dl
+
+cs = pd.DataFrame(
+    data=np.column_stack((cos, sin)),
+    index=cc.index,
+    columns=['cos', 'sin']
+)
+cs.loc[(cs.index &lt; 430) | (cs.index &gt; 660)] = np.nan
+cs = cs.ffill().bfill()
+cos, sin = cs['cos'], cs['sin']
 
 tick_len = 0.03
 tick_df = pd.DataFrame({
-    'x0': cc['x'],
-    'y0': cc['y'],
-    'x1': cc['x'] + tick_len * dc['cos'],
-    'y1': cc['y'] + tick_len * dc['sin'],
+    'x0': x,
+    'y0': y,
+    'x1': x + tick_len * cos,
+    'y1': y + tick_len * sin,
 })
 
 ticks = [380, *range(460, 601, 10), 620, 700]
@@ -368,13 +418,12 @@ for row in tick_df.itertuples():
         c='k', lw=0.6
     )
 </code></pre>
-<p>中间用到了 <code>DataFrame</code> 能用标签进行索引的特性。这里还有一个隐藏的坑：波长很小时 CMF 的色度坐标不是很精准，放大后会看到曲线歪歪扭扭，因此算出的法向一会儿朝左一会儿朝下，并不稳定；波长很大时 $\Delta x_i$ 和 $\Delta y_i$ 全为零，无法计算夹角。这里将波长小于 430 nm 部分的 $\Delta x_i$ 和 $\Delta y_i$ 都修改成 430 nm 处的值，波长大于 660 nm 的部分处理类似。具体到代码里是通过 Pandas 的 <code>ffill</code> 和 <code>bfill</code> 实现的。</p>
+<p>中间用到了 <code>DataFrame</code> 能用标签进行索引的特性。这里还有一个隐藏的坑：波长很小时 CMF 的色度坐标不是很精准，放大后会看到曲线歪歪扭扭，因此算出的法向一会儿朝左一会儿朝下，并不稳定；波长很大时 $\Delta x_i$ 和 $\Delta y_i$ 全为零，无法计算夹角。这里将波长小于 430 nm 部分的 $\Delta x_i$ 和 $\Delta y_i$ 都修改成 430 nm 处的值，波长大于 660 nm 的部分同理。具体到代码是通过 Pandas 的 <code>ffill</code> 和 <code>bfill</code> 实现的。</p>
 <p>给刻度加标签的操作类似，无非是将刻度长度拉长，计算出距离更远的 $(x'_i, y'_i)$，然后用 <code>text</code> 方法加字。</p>
 <h2 id="最终效果">最终效果</h2>
-<p>用到的数据和完整代码可见 <a href="https://github.com/ZhaJiMan/do_color" target="_blank">我的 Github 仓库</a>，效果如下：</p>
 <p><img class="img-zoomable" src="/chromaticity_diagram/xy_chromaticity_diagram.png" alt="xy_chromaticity_diagram" />
 </p>
-<p>还额外画上了表示 sRGB 色域的三角形和 D65 白点。我们的色度图在左上角是绿色的，而维基百科的图是青色（cyan）的，除此之外基本一致。</p>
+<p>还额外画上了表示 sRGB 色域的三角形和 D65 白点。</p>
 <p>最后再顺手实现一下基于 CIE RGB 空间的 rg 色度图。同样是在 rg 空间里拉出网格，将 rg 按比例放大为 RGB，计算 CIE RGB -&gt; XYZ -&gt; sRGB，其中 CIE RGB 到 XYZ 的变换公式为</p>
 <p>$$
 \begin{bmatrix}
@@ -400,6 +449,7 @@ $$</p>
 <p><a href="https://en.wikipedia.org/wiki/SRGB" target="_blank">Wikipedia: sRGB</a></p>
 <p><a href="https://www.imaging.org/common/uploaded%20files/pdfs/Papers/1998/RP-0-69/2233.pdf" target="_blank">Proposal for a Standard Default Color Space for the Internet—sRGB</a></p>
 <p><a href="https://fujiwaratko.sakura.ne.jp/infosci/colorspace/colorspace2_e.html" target="_blank">Color space conversion (2)  RGB-XYZ conversion</a></p>
+<p><a href="https://aty.sdsu.edu/explain/optics/rendering.html" target="_blank">Rendering Spectra</a></p>
 <p><a href="https://kougei.repo.nii.ac.jp/?action=repository_action_common_download&amp;item_id=510&amp;item_no=1&amp;attribute_id=21&amp;file_no=1" target="_blank">色度図の着色</a></p>
 <p><a href="https://blog.csdn.net/weixin_43194305/article/details/115468614" target="_blank">如何绘制CIE1931xy色度图</a></p>
     </div>
@@ -573,7 +623,7 @@ $$</p>
     <li><a href="#画图思路">画图思路</a></li>
     <li><a href="#准备数据">准备数据</a></li>
     <li><a href="#构造网格">构造网格</a></li>
-    <li><a href="#计算-srgb-值">计算 sRGB 值</a>
+    <li><a href="#计算-srgb">计算 sRGB</a>
       <ul>
         <li><a href="#xyz-转换-xyz">xyz 转换 XYZ</a></li>
         <li><a href="#xyz-转-srgb">XYZ 转 sRGB</a></li>
@@ -585,6 +635,7 @@ $$</p>
         <li><a href="#绘制马蹄形轨迹">绘制马蹄形轨迹</a></li>
         <li><a href="#imshow-填色">imshow 填色</a></li>
         <li><a href="#亮度设置">亮度设置</a></li>
+        <li><a href="#色域出界处理">色域出界处理</a></li>
       </ul>
     </li>
     <li><a href="#波长刻度">波长刻度</a></li>
@@ -749,7 +800,7 @@ $$</p>
     <li><a href="#画图思路">画图思路</a></li>
     <li><a href="#准备数据">准备数据</a></li>
     <li><a href="#构造网格">构造网格</a></li>
-    <li><a href="#计算-srgb-值">计算 sRGB 值</a>
+    <li><a href="#计算-srgb">计算 sRGB</a>
       <ul>
         <li><a href="#xyz-转换-xyz">xyz 转换 XYZ</a></li>
         <li><a href="#xyz-转-srgb">XYZ 转 sRGB</a></li>
@@ -761,6 +812,7 @@ $$</p>
         <li><a href="#绘制马蹄形轨迹">绘制马蹄形轨迹</a></li>
         <li><a href="#imshow-填色">imshow 填色</a></li>
         <li><a href="#亮度设置">亮度设置</a></li>
+        <li><a href="#色域出界处理">色域出界处理</a></li>
       </ul>
     </li>
     <li><a href="#波长刻度">波长刻度</a></li>

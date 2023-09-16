@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-09-03T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-09-14T00:00:00+00:00" />
 
 
 <style>
@@ -104,6 +104,29 @@
                 
 
 
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/python_position_of_adjective/">Python 系列：变量命名时形容词应该放在名词前面还是后面？</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-01-05</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1421 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <p>今天改程序时脑海里突然蹦出这个问题，更宽泛地说，是修饰词或者偏正结构的先后顺序，例如</p>
+<ul>
+<li><code>upper_ax</code> 和 <code>bottom_ax</code>，<code>ax_upper</code> 和 <code>ax_bottom</code>。</li>
+<li><code>start_date</code> 和 <code>end_date</code>，<code>date_start</code> 和 <code>date_end</code>。</li>
+</ul>
+<p>一旦开始疑惑，焦虑便随之而来：哪一种比较好呢？我之前的代码里好像两种写法都出现过，有没有什么现成的规范可以参考呢？越想越不痛快，所以赶紧上网找点前人经验来背书。意外的是，网上大部分文章都在讨论如何取有意义的变量名，而关于这个问题的寥寥无几，也许是因为太细节、太“语法”了？现归纳两篇我看过的帖子以供参考。</p>
+<p>首先在 stack overflow 上找到了<a href="https://stackoverflow.com/questions/36504357/should-variable-names-have-adjectives-before-or-after-the-noun" target="_blank">一模一样的提问</a>：是用 <code>left_button</code> 和 <code>right_button</code>，还是 <code>button_left</code> 和 <code>button_right</code> 更好呢？提问者自己觉得前者符合英文语序，读起来更加自然，而后者强调了变量的重点在于按钮，而左和右是额外的补充信息。有评论指出后者在 IDE 里更方便，因为你一键入 <code>button</code>，就会自动联想出所有带后缀的版本。这也挺符合人的联想过程，我们肯定是先想到“我要找按钮”，再明确具体要什么样的按钮。当然也有评论给出了经典的废话：与其纠结哪一种约定，任选一种并在项目里维持一致性最重要！好家伙，要是我如此豁达还会来搜这种鸡毛蒜皮的问题吗？</p>
+    </div>
+</div>
 
 <div class="post">
     <h2 class="post-item post-title">
@@ -294,24 +317,6 @@
 <p>下面就来简单讲讲魔法的基本法。</p>
 <p><img class="img-zoomable" src="/vim_grammar/vim_keys.png" alt="vim_keys" />
 </p>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/numpy_random/">Numpy 系列：random 模块的变化</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-09-21</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2912 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/numpy">numpy</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="前言">前言</h2>
-<p>这几天要用 NumPy 生成随机数，所以去查了一下 <code>np.random</code> 模块的官方文档，却惊讶地发现里面介绍的用法跟我的记忆有很大出入：例如以前用 <code>np.random.rand</code> 便能生成 [0, 1) 之间均匀分布的随机数，现在文档里记载的却是面向对象风格的写法（创建随机数生成器再调用方法……）。调查一番后发现原来这一改动发生于 NumPy 1.17 版本（2020 年 1 月），并且网上对此的中文介绍也比较少，所以现撰文简单介绍一下该模块在改动前后的两套用法。</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-first">

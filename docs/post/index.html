@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/post/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-09-03T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-09-14T00:00:00+00:00" />
 
 
 <style>
@@ -107,12 +107,39 @@
 
 <div class="post">
     <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/monochromatic_light/">搞颜色系列：单色光光谱</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-09-14</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3862 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E8%89%B2%E5%BD%A9">色彩</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <h2 id="前言">前言</h2>
+<p>人眼可见色域在色度图中表现为彩色的马蹄形，单色光（monochromatic light）的颜色对应于马蹄的弧形边界。本文想将单色光的颜色按波长线性增大的顺序一字排开，用类似彩虹渐变图的形式展示单色光光谱。用 Python 的 Matplotlib 包来实现的话，很快就能决定画图思路：</p>
+<ol>
+<li>读取 XYZ 颜色匹配函数（CMF）作为 XYZ 三刺激值。</li>
+<li>XYZ 变换为 sRGB，接着做 gamma 校正。</li>
+<li>用 RGB 数组构造 <code>ListedColormap</code> 对象，用 <code>plt.colorbar</code> 画出。</li>
+</ol>
+<p>RGB 要求范围在 $[0, 1]$，但 CMF 直接计算出的 RGB 既有负数分量，也有大于 1 的分量，所以必须采用一种方法处理范围外的分量。最后的画图效果会因处理方法的不同产生很大差别，例如下图的三条光谱：</p>
+<p><img class="img-zoomable" src="/monochromatic_light/three_colorbars.png" alt="three_colorbars.png" />
+</p>
+<p>就采取了不同的处理方式，因此在发色、颜色过渡，和亮度表现上都大有不同。本文将尝试实现不同的效果并加以分析。完整代码和相关数据见 <a href="https://github.com/ZhaJiMan/do_color" target="_blank">我的 Github 仓库</a>。</p>
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
         <a href="https://zhajiman.github.io/post/chromaticity_diagram/">搞颜色系列：绘制 CIE 1931 色度图</a>
     </h2>
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-09-03</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4933 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5621 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E8%89%B2%E5%BD%A9">色彩</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -120,6 +147,8 @@
     <div class="post-item post-summary markdown-body">
         <h2 id="前言">前言</h2>
 <p>1920 年代末 Wright 和 Guild 的颜色匹配实验发展出了用红绿蓝三基色（primaries）定量表示所有人眼可见颜色的 CIE RGB 色彩空间，1931 年国际照明委员会（CIE）通过对 CIE RGB 色彩空间做线性变换得到了 CIE XYZ 色彩空间。XYZ 空间里的人眼可见色域（gamut of human vision）是一块从原点出发，向无限远处不断延伸的立体区域。将这块区域投影到 $X + Y + Z = 1$ 的平面上，就能画出方便展示的 CIE 1931 色度图（chromaticity diagram）（图自 <a href="https://en.wikipedia.org/wiki/CIE_1931_color_space" target="_blank">维基</a>）：</p>
+<p><img class="img-zoomable" src="/chromaticity_diagram/wikipeida-CIE1931xy.png" alt="wikipeida-CIE1931xy" />
+</p>
     </div>
 </div>
 
@@ -339,44 +368,6 @@ x2 &lt;- func2(x1, arg2)
 x3 &lt;- func3(x2, arg3)
 y &lt;- func4(x3, arg4)
 </code></pre>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/pandas_interpolate/">Pandas 系列：图解插值</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-10-28</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1901 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/pandas">pandas</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <p>相信大伙对 NumPy 和 SciPy 里的插值比较熟：已知坐标值 <code>xp</code> 和变量值 <code>fp</code>，调用函数计算变量在目标坐标 <code>x</code> 上的数值。例如 <code>np.interp</code> 的 API 就是</p>
-<pre><code class="language-Python">np.interp(x, xp, fp)
-</code></pre>
-<p>Pandas 的 <code>Series</code> 和 <code>DataFrame</code> 对象也有插值方法 <code>interpolate</code>，默认做线性插值。但其功能与 NumPy 和 SciPy 不太一样。以一个序列对象 <code>s</code> 为例：</p>
-<pre><code class="language-Python"># 缺测部分和有效部分.
-invalid = s.isna()
-valid = ~invalid
-
-# 对应于xp.
-s.index[valid]
-
-# 对应于fp.
-s.values[valid]
-
-# 对应于x.
-s.index
-
-# 两式大致等价.
-s.interpolate(method='index').values
-np.interp(s.index, s.index[valid], s.values[valid])
-</code></pre>
-<p>即 Pandas 的插值是要利用序列的有效值当 <code>xp</code> 和 <code>fp</code>，去填补缺测的部分。所以调用 <code>s.interpolate</code> 时我们不需要传入形如 <code>x</code> 的参数，而是应该在调用前就通过 <code>s.reindex</code> 之类的方法将 <code>x</code> 融合到 <code>s</code> 的索引中。这么说可能有点抽象，下面就以图像直观展示 Pandas 里插值的效果。本文不会涉及到具体的插值算法（最邻近、三次样条……），仅以线性插值为例。</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-item pag-current">

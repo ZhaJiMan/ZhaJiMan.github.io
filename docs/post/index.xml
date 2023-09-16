@@ -6,7 +6,26 @@
     <description>Recent content in Posts on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 03 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 14 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>搞颜色系列：单色光光谱</title>
+      <link>https://zhajiman.github.io/post/monochromatic_light/</link>
+      <pubDate>Thu, 14 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/monochromatic_light/</guid>
+      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;人眼可见色域在色度图中表现为彩色的马蹄形，单色光（monochromatic light）的颜色对应于马蹄的弧形边界。本文想将单色光的颜色按波长线性增大的顺序一字排开，用类似彩虹渐变图的形式展示单色光光谱。用 Python 的 Matplotlib 包来实现的话，很快就能决定画图思路：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;读取 XYZ 颜色匹配函数（CMF）作为 XYZ 三刺激值。&lt;/li&gt;
+&lt;li&gt;XYZ 变换为 sRGB，接着做 gamma 校正。&lt;/li&gt;
+&lt;li&gt;用 RGB 数组构造 &lt;code&gt;ListedColormap&lt;/code&gt; 对象，用 &lt;code&gt;plt.colorbar&lt;/code&gt; 画出。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;RGB 要求范围在 $[0, 1]$，但 CMF 直接计算出的 RGB 既有负数分量，也有大于 1 的分量，所以必须采用一种方法处理范围外的分量。最后的画图效果会因处理方法的不同产生很大差别，例如下图的三条光谱：&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/monochromatic_light/three_colorbars.png&#34; alt=&#34;three_colorbars.png&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;就采取了不同的处理方式，因此在发色、颜色过渡，和亮度表现上都大有不同。本文将尝试实现不同的效果并加以分析。完整代码和相关数据见 &lt;a href=&#34;https://github.com/ZhaJiMan/do_color&#34; target=&#34;_blank&#34;&gt;我的 Github 仓库&lt;/a&gt;。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>搞颜色系列：绘制 CIE 1931 色度图</title>
       <link>https://zhajiman.github.io/post/chromaticity_diagram/</link>
@@ -14,7 +33,9 @@
       
       <guid>https://zhajiman.github.io/post/chromaticity_diagram/</guid>
       <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
-&lt;p&gt;1920 年代末 Wright 和 Guild 的颜色匹配实验发展出了用红绿蓝三基色（primaries）定量表示所有人眼可见颜色的 CIE RGB 色彩空间，1931 年国际照明委员会（CIE）通过对 CIE RGB 色彩空间做线性变换得到了 CIE XYZ 色彩空间。XYZ 空间里的人眼可见色域（gamut of human vision）是一块从原点出发，向无限远处不断延伸的立体区域。将这块区域投影到 $X + Y + Z = 1$ 的平面上，就能画出方便展示的 CIE 1931 色度图（chromaticity diagram）（图自 &lt;a href=&#34;https://en.wikipedia.org/wiki/CIE_1931_color_space&#34; target=&#34;_blank&#34;&gt;维基&lt;/a&gt;）：&lt;/p&gt;</description>
+&lt;p&gt;1920 年代末 Wright 和 Guild 的颜色匹配实验发展出了用红绿蓝三基色（primaries）定量表示所有人眼可见颜色的 CIE RGB 色彩空间，1931 年国际照明委员会（CIE）通过对 CIE RGB 色彩空间做线性变换得到了 CIE XYZ 色彩空间。XYZ 空间里的人眼可见色域（gamut of human vision）是一块从原点出发，向无限远处不断延伸的立体区域。将这块区域投影到 $X + Y + Z = 1$ 的平面上，就能画出方便展示的 CIE 1931 色度图（chromaticity diagram）（图自 &lt;a href=&#34;https://en.wikipedia.org/wiki/CIE_1931_color_space&#34; target=&#34;_blank&#34;&gt;维基&lt;/a&gt;）：&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/chromaticity_diagram/wikipeida-CIE1931xy.png&#34; alt=&#34;wikipeida-CIE1931xy&#34; /&gt;
+&lt;/p&gt;</description>
     </item>
     
     <item>

@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/matplotlib/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-09-03T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-09-14T00:00:00+00:00" />
 
 
 <style>
@@ -111,12 +111,39 @@
 
 <div class="post">
   <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/monochromatic_light/">搞颜色系列：单色光光谱</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-09-14</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3862 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E8%89%B2%E5%BD%A9">色彩</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="前言">前言</h2>
+<p>人眼可见色域在色度图中表现为彩色的马蹄形，单色光（monochromatic light）的颜色对应于马蹄的弧形边界。本文想将单色光的颜色按波长线性增大的顺序一字排开，用类似彩虹渐变图的形式展示单色光光谱。用 Python 的 Matplotlib 包来实现的话，很快就能决定画图思路：</p>
+<ol>
+<li>读取 XYZ 颜色匹配函数（CMF）作为 XYZ 三刺激值。</li>
+<li>XYZ 变换为 sRGB，接着做 gamma 校正。</li>
+<li>用 RGB 数组构造 <code>ListedColormap</code> 对象，用 <code>plt.colorbar</code> 画出。</li>
+</ol>
+<p>RGB 要求范围在 $[0, 1]$，但 CMF 直接计算出的 RGB 既有负数分量，也有大于 1 的分量，所以必须采用一种方法处理范围外的分量。最后的画图效果会因处理方法的不同产生很大差别，例如下图的三条光谱：</p>
+<p><img class="img-zoomable" src="/monochromatic_light/three_colorbars.png" alt="three_colorbars.png" />
+</p>
+<p>就采取了不同的处理方式，因此在发色、颜色过渡，和亮度表现上都大有不同。本文将尝试实现不同的效果并加以分析。完整代码和相关数据见 <a href="https://github.com/ZhaJiMan/do_color" target="_blank">我的 Github 仓库</a>。</p>
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
     <a href="https://zhajiman.github.io/post/chromaticity_diagram/">搞颜色系列：绘制 CIE 1931 色度图</a>
   </h2>
   <div class="post-item post-meta">
     <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-09-03</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4933 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5621 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E8%89%B2%E5%BD%A9">色彩</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -124,6 +151,8 @@
   <div class="post-item post-summary markdown-body">
     <h2 id="前言">前言</h2>
 <p>1920 年代末 Wright 和 Guild 的颜色匹配实验发展出了用红绿蓝三基色（primaries）定量表示所有人眼可见颜色的 CIE RGB 色彩空间，1931 年国际照明委员会（CIE）通过对 CIE RGB 色彩空间做线性变换得到了 CIE XYZ 色彩空间。XYZ 空间里的人眼可见色域（gamut of human vision）是一块从原点出发，向无限远处不断延伸的立体区域。将这块区域投影到 $X + Y + Z = 1$ 的平面上，就能画出方便展示的 CIE 1931 色度图（chromaticity diagram）（图自 <a href="https://en.wikipedia.org/wiki/CIE_1931_color_space" target="_blank">维基</a>）：</p>
+<p><img class="img-zoomable" src="/chromaticity_diagram/wikipeida-CIE1931xy.png" alt="wikipeida-CIE1931xy" />
+</p>
   </div>
 </div>
 
@@ -374,30 +403,6 @@ plt.show()
 <p><img class="img-zoomable" src="/matplotlib_artist/fig_0.jpg" alt="fig_0" />
 </p>
 <p>毫无疑问 Python 里的 matplotlib 是个非常棒的可视化工具，但在 matplotlib 中慢慢调细节也是件很烦人的事。你很容易浪费好几个小时去找修改图里细节的方法，有时你连那个细节的名字也不知道的话，搜索起来会更加困难。就算你在 Stack Overflow 上找到了相关的提示，也可能再花几个小时根据需求来修改它。不过，只要了解了 matplotlib 图的具体组成，以及你可以对组件执行的操作，就能避开这些徒劳无益的工作。我想，我跟你们中的大多数人一样，做图时遇到的困难都是靠读 Stack Overflow 上那些 matplotlib 高手们的答案来解决的。最近我发现 <a href="https://matplotlib.org/stable/tutorials/intermediate/artists.html" target="_blank">官方的 <code>Artist</code> 对象教程</a> 信息很丰富，有助于我们理解 matplotlib 的画图过程并节省调图时间<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。本文里我会分享一些关于 matplotlib 里 <code>Artist</code> 对象的基本知识，以避免浪费数小时调图的情况出现。</p>
-  </div>
-</div>
-
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/cartopy_appendix/">Cartopy 系列：对入门教程的补充</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-11-06</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6211 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <h2 id="前言">前言</h2>
-<p>几年前曾写过 <a href="https://zhajiman.github.io/post/cartopy_introduction/" target="_blank">Cartopy 系列：从入门到放弃</a>，但现在来看还是遗漏了不少细节，比如初学者可能会遇到以下问题</p>
-<ul>
-<li>经度是用 [-180°, 180°] 还是 [0°, 360°] 范围？</li>
-<li>为什么有时候设置的刻度显示不全？</li>
-<li>怎么截取跨越地图边界的区域，画图又怎么跨越边界？</li>
-</ul>
-<p>本文将会用坐标变换的思想来解答以上问题，希望能给读者一些实用的启示。本来应该把这些内容写到入门教程里的，但可能会太长，所以现在单独成篇。文中的讨论主要针对最常用的 Plate Carrée 投影，其它投影需要读者自己测试。代码基于 Cartopy 0.18.0，虽然现在已经更新到 0.20.0 了，但基本思想是一致的。</p>
   </div>
 </div>
 
