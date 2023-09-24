@@ -162,7 +162,7 @@ Python 绘制 CALIPSO L2 VFM 产品
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-03-21</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3530 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3527 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%8D%AB%E6%98%9F">卫星</a>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -396,9 +396,7 @@ ticklabels = [
 cmap, norm, ticks = fplt.make_qualitative_cmap(colors)
 
 # 构造截面图所需的x轴刻度.
-x, xticks, xticklabels = fplt.get_slice_xticks(
-    lon, lat, ntick=5, decimals=1
-)
+x, xticks, xticklabels = fplt.get_cross_section_xticks(lon, lat, ntick=5)
 
 crs = ccrs.PlateCarree()
 fig = plt.figure(figsize=(8, 6))
@@ -453,7 +451,7 @@ cbar.ax.tick_params(length=0, labelsize='x-small')
 
 plt.show()
 </code></pre>
-<p><img class="img-zoomable" src="/calipso_vfm/main_type_.png" alt="main_type.png" />
+<p><img class="img-zoomable" src="/calipso_vfm/main_type.png" alt="main_type.png" />
 </p>
 <p>如果要画气溶胶的 Sub-type，只需要在上面的代码中进行少量修改：</p>
 <pre><code class="language-Python">ftype = np.where(fcf[:, :, 0] == 3, fcf[:, :, 4], 0)
@@ -467,7 +465,7 @@ ticklabels = [
     'clean\ncontinental', 'pullted\ndust', 'smoke', 'other'
 ]
 </code></pre>
-<p><img class="img-zoomable" src="/calipso_vfm/aerosol_type_.png" alt="aerosol_type.png" />
+<p><img class="img-zoomable" src="/calipso_vfm/aerosol_type.png" alt="aerosol_type.png" />
 </p>
 <p>注意图中 <code>'not aerosol'</code> 的像元，实际上包含 Feature Type 不为气溶胶和 Sub-type 无法确定的两类像元。</p>
 <h2 id="结语">结语</h2>

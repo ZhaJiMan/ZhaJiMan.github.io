@@ -134,7 +134,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-05</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5504 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5726 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -499,7 +499,43 @@ plt.show()
 </p>
 <p>在对 <code>contourf</code> 应用 <code>BoundaryNorm</code> 时，很容易联想到，等高线就相当于 <code>bins</code> 的边缘，等高线之间的填色正好对应于每个 bin 中的颜色，所以指定 <code>levels=bins</code> 是非常自然的。如果不这样做，<code>contourf</code> 默认会根据数据的范围，利用 <code>MaxNLocator</code> 自动生成 <code>levels</code>，此时由于 <code>levels</code> 与 <code>bins</code> 不匹配，填色就会乱套。</p>
 <h3 id="33-红蓝-colormap">3.3 红蓝 colormap</h3>
-<p>当数据表示瞬时值与长时间平均值之间的差值时，我们常用两端分别为蓝色和红色的 colormap，并将数据的负值和正值分别映射到蓝色和红色上，这样画出来的图一眼就能看出哪里偏高哪里偏低。下面分别用 <code>TwoSlopeNorm</code> 和 <code>BoundaryNorm</code> 来实现</p>
+<p>当数据表示瞬时值与长时间平均值之间的差值时，我们常用两端分别为蓝色和红色的 colormap，并将数据的负值和正值分别映射到蓝色和红色上，这样画出来的图一眼就能看出哪里偏高哪里偏低。如果只需要以白色为中心，左右对称的 colormap，使用 <code>Normalize</code> 就行</p>
+<pre><code class="language-Python">Normalize(vmin=-10, vmax=10)
+</code></pre>
+<p>如果左右不对称，就改用 <code>TwoSlopeNorm</code></p>
+<pre><code class="language-Python">TwoSlopeNorm(vmin=-5, vcenter=0, vmax=10)
+</code></pre>
+<p>既想要 <code>BoundaryNorm</code> 那种非线性的映射，又想让含有 0 的 bin 对应白色的话，可以基于 <code>BoundaryNorm</code> 自定义一个类</p>
+<pre><code class="language-Python">class CenteredBoundaryNorm(mcolors.BoundaryNorm):
+    '''将vcenter所在的bin映射到cmap中间的BoundaryNorm.'''
+    def __init__(self, boundaries, vcenter=0, clip=None):
+        super().__init__(boundaries, len(boundaries) - 1, clip)
+        boundaries = np.asarray(boundaries)
+        self.N1 = np.count_nonzero(boundaries &lt; vcenter)
+        self.N2 = np.count_nonzero(boundaries &gt; vcenter)
+        if self.N1 &lt; 1 or self.N2 &lt; 1:
+            raise ValueError('vcenter两侧至少各有一条边界')
+
+    def __call__(self, value, clip=None):
+        # 将BoundaryNorm的[0, N-1]又映射到[0.0, 1.0]内.
+        result = super().__call__(value, clip)
+        if self.N1 + self.N2 == self.N - 1:
+            result = np.ma.where(
+                result &lt; self.N1,
+                result / (2 * self.N1),
+                (result - self.N1 + self.N2 + 1) / (2 * self.N2)
+            )
+        else:
+            # 当result是MaskedArray时除以零不会报错.
+            result = np.ma.where(
+                result &lt; self.N1,
+                result / (2 * (self.N1 - 1)),
+                (result - self.N1 + self.N2) / (2 * (self.N2 - 1))
+            )
+
+        return result
+</code></pre>
+<p>读者可以思考一下这个类的原理。下面展示 <code>TwoSlopeNorm</code> 和 <code>CenteredBoundaryNorm</code> 的效果</p>
 <pre><code class="language-python"># 生成测试数据.
 X, Y = np.meshgrid(np.linspace(-2, 2, 100), np.linspace(-2, 2, 100))
 Z1 = np.exp(-X**2 - Y**2)
@@ -508,44 +544,36 @@ Z = ((Z1 - Z2) * 2)
 # 将Z的值缩放到[-5, 10]内.
 Z = (Z - Z.min()) / (Z.max() - Z.min()) * 15 - 5
 
-# 设定两种colormap和norm.
-cmap1 = cm.RdBu_r
-norm1 = mcolors.TwoSlopeNorm(vmin=-5, vcenter=0, vmax=10)
-bins = np.array([-5, -3, -2, -1, 1, 2, 4, 6, 8, 10])
-nbin = len(bins) - 1
-n_negative = np.count_nonzero(bins &lt; 0)
-n_positive = np.count_nonzero(bins &gt; 0)
-colors = np.vstack((
-    cmap1(np.linspace(0, 0.5, n_negative))[:-1],
-    cmap1(np.linspace(0.5, 1, n_positive))
-))  # 根据bins的区间数新建colormap.
-cmap2 = mcolors.ListedColormap(colors)
-norm2 = mcolors.BoundaryNorm(bins, nbin)
-
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+fig.subplots_adjust(wspace=0.1)
 
 # TwoSlopeNorm的图.
-levels = np.linspace(bins.min(), bins.max(), 16)
-im = axes[0].contourf(
-    X, Y, Z, levels=levels,
-    cmap=cmap1, norm=norm1, extend='both'
+cf = axes[0].contourf(
+    X, Y, Z,
+    levels=np.linspace(-5, 10, 16),
+    cmap='RdBu_r',
+    norm=mcolors.TwoSlopeNorm(vmin=-5, vcenter=0, vmax=10),
+    extend='both'
 )
-cbar = fig.colorbar(im, ax=axes[0], ticks=levels[1::2])
+cbar = fig.colorbar(cf, ax=axes[0], ticks=cf.levels)
 axes[0].set_title('TwoSlopeNorm')
 
 # BoundaryNorm的图.
+boundaries = [-5, -3, -2, -1, -0.1, 0.1, 1, 2, 4, 6, 8, 10]
 im = axes[1].contourf(
-    X, Y, Z, levels=bins,
-    cmap=cmap2, norm=norm2, extend='both'
+    X, Y, Z,
+    levels=boundaries,
+    cmap='RdBu_r',
+    norm=CenteredBoundaryNorm(boundaries),
+    extend='both'
 )
-cbar = fig.colorbar(im, ax=axes[1], ticks=bins)
+cbar = fig.colorbar(im, ax=axes[1], ticks=boundaries)
 axes[1].set_title('BoundaryNorm')
 
 plt.show()
 </code></pre>
 <p><img class="img-zoomable" src="/matplotlib_colormap/applications_4.png" alt="applications_4" />
 </p>
-<p>如果只需要对称的线性红蓝 colormap，用 <code>vmin</code> 和 <code>vmax</code> 成相反数的 <code>Normalize</code> 来实现也是一个选择。</p>
 <h2 id="4-结语">4. 结语</h2>
 <p>自 Matplotlib 3.5 起内置的 colormap 将被移入 <code>matplotlib.colormap</code> 模块，从中获取的 colormap 不再是全局对象，而是可以修改的拷贝；并且 <code>get_cmap</code> 函数以后可能被废弃。所以本文的代码不一定长期有效，望读者注意。</p>
 <p>以上便是对 Matplotlib 中 colormap 的简要介绍，有错误的话烦请在评论区指出。而与 colormap 密切相关的 colorbar 的介绍请继续收看 <a href="https://zhajiman.github.io/post/matplotlib_colorbar/" target="_blank">Matplotlib 系列：colorbar 的设置</a>。</p>

@@ -267,9 +267,7 @@ ticklabels = [
 cmap, norm, ticks = fplt.make_qualitative_cmap(colors)
 
 # 构造截面图所需的x轴刻度.
-x, xticks, xticklabels = fplt.get_slice_xticks(
-    lon, lat, ntick=5, decimals=1
-)
+x, xticks, xticklabels = fplt.get_cross_section_xticks(lon, lat, ntick=5)
 
 crs = ccrs.PlateCarree()
 fig = plt.figure(figsize=(8, 6))
@@ -325,7 +323,7 @@ cbar.ax.tick_params(length=0, labelsize='x-small')
 plt.show()
 ```
 
-![main_type.png](/calipso_vfm/main_type_.png)
+![main_type.png](/calipso_vfm/main_type.png)
 
 如果要画气溶胶的 Sub-type，只需要在上面的代码中进行少量修改：
 
@@ -344,7 +342,7 @@ ticklabels = [
 ]
 ```
 
-![aerosol_type.png](/calipso_vfm/aerosol_type_.png)
+![aerosol_type.png](/calipso_vfm/aerosol_type.png)
 
 注意图中 `'not aerosol'` 的像元，实际上包含 Feature Type 不为气溶胶和 Sub-type 无法确定的两类像元。
 
