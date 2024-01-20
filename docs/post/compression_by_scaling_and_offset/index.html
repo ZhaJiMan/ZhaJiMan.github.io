@@ -21,7 +21,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<title>python - 炸鸡人博客</title>
+<title>通过缩放和偏移压缩数据 - 炸鸡人博客</title>
 
 
 <meta name="author" content="炸鸡人" />
@@ -30,14 +30,22 @@
 <meta name="description" content="A minimal Hugo theme with nice theme color." />
 
 
-<link rel="alternate" type="application/rss+xml" href="https://zhajiman.github.io/tags/python/index.xml" title="炸鸡人博客" />
+<meta name="keywords" content="卫星, 翻译" />
 
-<meta property="og:title" content="python" />
-<meta name="twitter:title" content="python" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://zhajiman.github.io/tags/python/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+
+<meta property="og:title" content="通过缩放和偏移压缩数据" />
+<meta name="twitter:title" content="通过缩放和偏移压缩数据" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/compression_by_scaling_and_offset/" /><meta property="og:description" content="
+ERA5 的 NetCDF 文件或卫星的 HDF 文件为了压缩文件体积会用 16 位整数存储变量，读取时跟属性里的 add_offset 和 scale_factor 做运算恢复成 64 位浮点数。如果你是用 Python 的 NetCDF4 或 xarray 包处理 NetCDF 文件，甚至都不用关心这些细节，它们默认会帮你解包成浮点数。问题是，如果自己也想用这种方法压缩数据，那么 add_offset 和 scale_factor 该如何设置，压缩率能有多高，又会损失多少精度呢？一番搜索后发现 Unidata Developer&rsquo;s Blog 上的博文 Compression by Scaling and Offfset（原文标题确实把 offset 拼错了）清晰地介绍了压缩的原理和参数选择，现翻译前半部分，后半部分关于 GRIB 压缩的看不懂感觉也用不上，偷懒不翻了。
+
+今天来深入了解一下存储浮点数据时如何指定所需的精度，抛弃那些对于精度来说多余的比特。这些多余的比特往往很随机所以不可压缩，导致标准压缩算法的效果有限。需要注意这种操作是一种有损压缩。" />
+<meta name="twitter:description" content="
+ERA5 的 NetCDF 文件或卫星的 HDF 文件为了压缩文件体积会用 16 位整数存储变量，读取时跟属性里的 add_offset 和 scale_factor 做运算恢复成 64 位浮点数。如果你是用 Python 的 NetCDF4 或 xarray 包处理 NetCDF 文件，甚至都不用关心这些细节，它们默认会帮你解包成浮点数。问题是，如果自己也想用这种方法压缩数据，那么 add_offset 和 scale_factor 该如何设置，压缩率能有多高，又会损失多少精度呢？一番搜索后发现 Unidata Developer&rsquo;s Blog 上的博文 Compression by Scaling and Offfset（原文标题确实把 offset 拼错了）清晰地介绍了压缩的原理和参数选择，现翻译前半部分，后半部分关于 GRIB 压缩的看不懂感觉也用不上，偷懒不翻了。
+
+今天来深入了解一下存储浮点数据时如何指定所需的精度，抛弃那些对于精度来说多余的比特。这些多余的比特往往很随机所以不可压缩，导致标准压缩算法的效果有限。需要注意这种操作是一种有损压缩。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-03-23T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2024-01-20T00:00:00+00:00" /><meta property="article:modified_time" content="2024-01-20T00:00:00+00:00" />
 
 
 <style>
@@ -102,91 +110,110 @@
             
             <div class="col-12 col-md-9 float-left content">
                 
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/compression_by_scaling_and_offset/">通过缩放和偏移压缩数据</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2024-01-20</span>
 
-<div class="page-info">
-  <span>Posts with the tag python: </span>
-</div>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1527 words</span>
 
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%8D%AB%E6%98%9F">卫星</a>&nbsp;<a href="/tags/%E7%BF%BB%E8%AF%91">翻译</a>&nbsp;</span>
 
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <blockquote>
+<p>ERA5 的 NetCDF 文件或卫星的 HDF 文件为了压缩文件体积会用 16 位整数存储变量，读取时跟属性里的 <code>add_offset</code> 和 <code>scale_factor</code> 做运算恢复成 64 位浮点数。如果你是用 Python 的 NetCDF4 或 xarray 包处理 NetCDF 文件，甚至都不用关心这些细节，它们默认会帮你解包成浮点数。问题是，如果自己也想用这种方法压缩数据，那么 <code>add_offset</code> 和 <code>scale_factor</code> 该如何设置，压缩率能有多高，又会损失多少精度呢？一番搜索后发现 <a href="https://www.unidata.ucar.edu/blogs/developer/en/" target="_blank">Unidata Developer&rsquo;s Blog</a> 上的博文 <a href="https://www.unidata.ucar.edu/blogs/developer/entry/compression_by_scaling_and_offfset" target="_blank">Compression by Scaling and Offfset</a>（原文标题确实把 offset 拼错了）清晰地介绍了压缩的原理和参数选择，现翻译前半部分，后半部分关于 GRIB 压缩的看不懂感觉也用不上，偷懒不翻了。</p>
+</blockquote>
+<p>今天来深入了解一下存储浮点数据时如何指定所需的精度，抛弃那些对于精度来说多余的比特。这些多余的比特往往很随机所以不可压缩，导致标准压缩算法的效果有限。需要注意这种操作是一种<strong>有损压缩</strong>。</p>
+<p>实现方法之一是选择所需精度，用它将浮点数转换为一个能用 <code>scale</code> 和 <code>offset</code> 还原回去的整数。换句话说：</p>
+<p>给定浮点数组和浮点精度，找出浮点数 <code>scale</code> 和 <code>offset</code>，以及最小整数 <code>n</code>，使数组中每个值 <code>F</code> 满足：</p>
+<pre><code>UF = scale * P + offset
 
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/python_namespace_scope/">Python 系列：命名空间和作用域</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-23</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4063 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <h2 id="定义">定义</h2>
-<h3 id="命名空间">命名空间</h3>
-<p><strong>命名空间（namespace）</strong>：官方说法是从名称到对象的映射，实际上就是保存变量名与变量值绑定关系的一个空间。赋值语句会将绑定关系写入命名空间，而引用变量时则会根据变量名在命名空间中查询出对应的值。并且大部分的命名空间都是利用 Python 的字典来实现的（例外如类的 <code>__slots__</code> 属性）。程序中出现在全局的变量构成一个命名空间，Python 内置的函数和异常类也有它们自己的命名空间，每次定义函数或类时也会创建专属于它们的命名空间。命名空间之间相互独立，同名的变量可以存在于不同的命名空间中，例如两个函数内部可以使用同名的局部变量，这有助于我们在不引发冲突的同时合理复用变量名。</p>
-<h3 id="作用域">作用域</h3>
-<p><strong>作用域（scope）</strong>：官方说法是 Python 程序中能直接访问一个命名空间的文本区域。听起来有点抽象，实际上就是指出程序中哪些区域的文本归哪个命名空间管理，例如函数的作用域显然就是函数体（定义函数的所有语句），全局作用域就是从头到尾整个程序。但并不是说出现在一个作用域中的变量就一定属于该作用域（的命名空间）：若在该区域内通过赋值语句等操作创建（或修改）了该变量的绑定关系后，那它就属于该作用域；否则它就属于其它作用域，在当前区域引用它需要根据特定的规则向其它作用域进行查询。例如常见的在函数中引用全局变量。本文的一个重点就是要来仔细说说这一规则。</p>
-  </div>
-</div>
-
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/python_divide/">Python 系列：除法运算符</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-19</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;437 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <p>在 Python 3 中关于除法的运算符有三种：</p>
-<ul>
-<li><code>/</code>：表示精确的真除法。魔法方法为 <code>__truediv__</code>。</li>
-<li><code>//</code>：表示地板除。魔法方法为 <code>__floordiv__</code>。</li>
-<li><code>%</code>：表示求模。魔法方法为 <code>__mod__</code>。</li>
-</ul>
-  </div>
-</div>
-
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/python_path/">Python 系列：操作文件和目录的路径</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-26</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4400 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <h2 id="前言">前言</h2>
-<p>之前在 Linux 上用 Python 处理系统的文件和目录时，我都是简单粗暴地用 <code>os.system</code> 函数直接执行 shell 命令来实现的。例如新建一个目录并把文件移动进去，我会这么写</p>
-<pre><code class="language-Python">dirpath = './result'
-filepath = './data.txt'
-os.system(f'mkdir {dirpath}')
-os.system(f'mv {filepath} {dirpath}')
+其中:
+    F 是原始的浮点数
+    P 是 n 位整数 (打包值)
+    UF 是还原的浮点数 (解包值)
+同时:
+    abs(F - UF) &lt;= precision
 </code></pre>
-<p>即把 shell 命令硬编码到程序中。但最近在 Windows 上运行老程序时，因为 <code>os.system</code> 默认调用 CMD，所以这种写法的老代码全部木大。</p>
-<p>其实借助 Python 标准库中用于系统交互和路径处理的模块，就能尽可能降低代码对平台的依赖，并且模块中也提供有许多方便的函数。本文会记录那些最常用的功能。</p>
-  </div>
+<p>这里用到的是绝对精度，单位跟数组相同，比如说 0.25 开尔文。</p>
+<p>下面是具体实现。给定数组和精度，找出数组的最小值和最大值，然后：</p>
+<pre><code>nvalues = 1 + Math.ceil((dataMax - dataMin) / (2 * precision))
+n = Math.ceil(log2(nvalues))
+offset = dataMin
+scale = (dataMax - dataMin) / (2^n - 1)
+</code></pre>
+<p>让我们来理解一下这段。想象你沿着实数轴观察 <code>dataMin</code> 到 <code>dataMax</code> 之间的浮点数，从 <code>dataMin</code> 开始每隔 <code>2 * precision</code> 间隔在轴上做一个标记，并将这个间隔称为数据的<strong>分辨率</strong>。如果数据范围是 0 到 10 K，精度是 0.25 K，你需要每隔 0.5 K 做一个标记，最后得到 21 个标记，<code>nvalues</code> 的公式就是在说这个操作。再想象一下你在 <code>dataMin</code> 到 <code>dataMax</code> 之间挑选任意一个数 <code>F</code>，总会有一个标记离 <code>F</code> 不到半个间隔（0.25 K），此即前面要求的 <code>abs(F - UF) &lt;= precision</code>。</p>
+<p>现在我们知道在目标精度内表示浮点数据需要 <code>nvalues</code> 个标记，而 <code>nvalues</code> 个标记对应整数 0 到 <code>nvalues - 1</code>，<code>n</code> 个比特能表示 0 到 <code>2^n - 1</code> 个整数，所以表示 <code>nvalues</code> 个标记正好需要 <code>log2(nvalues)</code> 个比特。在前面的例子里 <code>log2(21) = ln(21) / ln(2) = 4.39</code>，向上取整得 5。因为 <code>2^5 = 32</code>，所以我们最多能表示 32 个标记，包含 21。</p>
+<p>如果按上面的方式从 0 到 10 每隔 0.5 K 做标记，并认为这些标记就是 UF 的值，那么：</p>
+<pre><code>offset = dataMin
+scale = 2 * precision
+P = round((F - offset) / scale)        (A)
+</code></pre>
+<p>用上述公式计算 <code>P</code>，当 <code>F = dataMin</code> 时 <code>P = 0</code>，当 <code>F = dataMax</code> 时 <code>P = 20</code>。其它 <code>F</code> 都在 <code>dataMin</code> 到 <code>dataMax</code> 之间，所以 <code>P</code> 的值只能是 0 到 20 的 21 个整数（包含边界）。</p>
+<p>原理讲完了，但还有改进的空间。在我们的例子里 <code>nvalues = 21</code> 不是 2 的幂，但比特数只能取整数，<code>n = 5</code> 对应 <code>2^5 = 32</code> 个标记。也就是说 5 位整数最多表示 32 个打包值，但其中 <code>(32 - 21) / 32 = 34%</code> 我们没用到。</p>
+<p>虽然比特数只能取整数，没法让 <code>2^n</code> 正好等于 <code>nvalues</code>，但可以通过降低分辨率的数值（即提高精度）来用上所有的比特位。方法是 <code>dataMin</code> 依旧映射到 <code>P = 0</code>，但 <code>dataMax</code> 映射到 <code>P</code> 的最大值，即 <code>2^n - 1</code>。为此需要设置</p>
+<pre><code>scale = (dataMax - dataMin) / (2^n - 1)
+</code></pre>
+<p>于是当 <code>F = dataMax</code> 时有</p>
+<pre><code>P = round((F - offset) / scale)
+P = round((dataMax - dataMin) / scale)
+P = round((dataMax - dataMin) / (dataMax - dataMin) / (2^n - 1))
+P = 2^n - 1
+</code></pre>
+<p>一个变体是保留 <code>P</code> 的一个值，比如说最大值 <code>2^n - 1</code> 来表示缺测，此时 <code>dataMax</code> 应该映射到 <code>2^n - 2</code>，因此：</p>
+<pre><code>scale = (dataMax - dataMin) / (2^n - 2)    /*保留一个值作为缺测*/
+</code></pre>
+<p>(注意：为缺测留出一个值时需要给 <code>nvalues</code> 加 1，可能导致比特数 <code>n</code> 也跟着增大。)</p>
+<p>此时数据的分辨率是多少呢？还记得</p>
+<pre><code>UF = scale * P + offset
+</code></pre>
+<p><code>P</code> 增大 1 时 <code>UF</code> 增大 <code>scale</code>，所以 <code>scale</code> 就是分辨率。又因为 <code>precision = resolution / 2</code>，所以在我们新的缩放里精度等于</p>
+<pre><code>precision = scale / 2 = (dataMax - dataMin) / (2 * (2^n - 2))
+</code></pre>
+<p>可以证明新的精度的数值总是小于一开始指定的精度：点数（标记数）提高到 2 的幂后分辨率更小，因而精度更优。不过使用这种扩展的精度是否会影响压缩还有待研究。</p>
+<blockquote>
+<p>译注：虽然文中 <code>P</code> 是 5 位整数，现实里位数从 8 起步，以 NumPy 为例，常用的是 <code>np.uint8</code>、<code>np.uint16</code>、<code>np.uint32</code> 等。</p>
+</blockquote>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
 </div>
 
 
-<div class="pagination"><div class="pag-first">
-    <a href="/tags/python/"><i class="iconfont icon-caret-back-circle-sharp"></i></a>
-  </div><div class="pag-previous">
-    <a href="/tags/python/"><i class="iconfont icon-chevron-back-circle-sharp"></i></a>
-  </div><div class="pag-item">
-    <a href="/tags/python/">1</a>
-  </div><div class="pag-item pag-current">
-    <a href="/tags/python/page/2/">2</a>
-  </div></div>
             </div>
             <aside class="col-12 col-md-3 float-left sidebar">
     
@@ -318,8 +345,6 @@ os.system(f'mv {filepath} {dirpath}')
             
         </div>
     </div>
-    
-    
     
 </aside>
 
@@ -466,6 +491,8 @@ os.system(f'mv {filepath} {dirpath}')
             
         </div>
     </div>
+    
+    
     
     
   </div>

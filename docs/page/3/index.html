@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-09-14T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2024-01-20T00:00:00+00:00" />
 
 
 <style>
@@ -104,6 +104,31 @@
                 
 
 
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/matplotlib_pcolor/">Matplotlib 系列：网格数据与 pcolor</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-01-15</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3566 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <h2 id="前言">前言</h2>
+<p>Matplotlib 的 <code>pcolor</code> 函数能够绘制由一个个四边形（quadrilateral）单元构成的网格数据的彩色图像，相比绘制等值填色图的 <code>contourf</code> 函数，不会产生过度的平滑效果，能忠实反映像元的数值大小，因而在科学可视化中也很常用。本文并不打算介绍该函数的种种，只想着重讨论网格数据的显示效果、<code>shading</code> 参数发挥的作用，以及 <code>pcolor</code> 和 <code>pcolormesh</code> 这对双胞胎间的差异。本文基于 Matplotlib 3.3.4。</p>
+<h2 id="图解网格数据">图解网格数据</h2>
+<p><code>pcolor</code> 全名 pseudo color，即伪彩色。函数签名为</p>
+<pre><code class="language-python">pcolor([X, Y], C, **kw)
+</code></pre>
+<p>其中 <code>X</code> 和 <code>Y</code> 分别是网格的横纵坐标，<code>C</code> 是网格单元内变量的数值。之所以称之为“伪”，是因为 <code>pcolor</code> 并不像 <code>imshow</code> 那样直接用 RGB(A) 数组表示颜色，而是将 <code>C</code> 的数值归一化之后，在一个颜色查找表中查找对应的颜色，进而用颜色差异表现数值大小（原理详见 <a href="https://zhajiman.github.io/post/matplotlib_colormap/" target="_blank">Matplotlib 系列：colormap 的设置</a>）。<code>C</code> 数组的形状为 <code>(ny, nx)</code>，<code>X</code> 和 <code>Y</code> 的形状要比 <code>C</code> 大上一圈，即 <code>(ny + 1, nx + 1)</code>，<code>ny</code> 在前表示纵坐标会随数组的行号变动，<code>nx</code> 在后表示横坐标会随数组的列号变动。<code>pcolor</code> 对网格数据的显示效果如下图所示</p>
+<p><img class="img-zoomable" src="/matplotlib_pcolor/regular_and_irregular_grids.png" alt="regular_and_irregular_grids" />
+</p>
+    </div>
+</div>
 
 <div class="post">
     <h2 class="post-item post-title">
@@ -295,28 +320,6 @@
 <li><code>//</code>：表示地板除。魔法方法为 <code>__floordiv__</code>。</li>
 <li><code>%</code>：表示求模。魔法方法为 <code>__mod__</code>。</li>
 </ul>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/vim_grammar/">Vim 的语法</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-17</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3818 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/vim">vim</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <p>Vim 是一个拥有魔力的文本编辑器——这并不是比喻，而是说你在 Vim 中真的可以念咒语来操纵文本。看看我们的键盘，在 normal 模式下几乎每个键都有特定的功能，尤其是其中的数字和 26 个字母。如果把每个键都看作 Vim 这门语言中的单词，那么只要依据特定的语法，通过连续击键来遣词造句，就能施展操作文本的魔法。并且 Vim 语言的语法简单到用一句话就能描述：</p>
-<pre><code>verb + noun
-</code></pre>
-<p>下面就来简单讲讲魔法的基本法。</p>
-<p><img class="img-zoomable" src="/vim_grammar/vim_keys.png" alt="vim_keys" />
-</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-first">
@@ -627,7 +630,7 @@
     <div class="container-lg clearfix">
         <div class="col-12 footer">
             
-            <span>&copy; 2020-2023
+            <span>&copy; 2020-2024
                 <a href="https://zhajiman.github.io/">炸鸡人</a>
                  | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
                 | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"

@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/post/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-09-14T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2024-01-20T00:00:00+00:00" />
 
 
 <style>
@@ -104,6 +104,26 @@
                 
 
 
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/compression_by_scaling_and_offset/">通过缩放和偏移压缩数据</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2024-01-20</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1527 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%8D%AB%E6%98%9F">卫星</a>&nbsp;<a href="/tags/%E7%BF%BB%E8%AF%91">翻译</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <blockquote>
+<p>ERA5 的 NetCDF 文件或卫星的 HDF 文件为了压缩文件体积会用 16 位整数存储变量，读取时跟属性里的 <code>add_offset</code> 和 <code>scale_factor</code> 做运算恢复成 64 位浮点数。如果你是用 Python 的 NetCDF4 或 xarray 包处理 NetCDF 文件，甚至都不用关心这些细节，它们默认会帮你解包成浮点数。问题是，如果自己也想用这种方法压缩数据，那么 <code>add_offset</code> 和 <code>scale_factor</code> 该如何设置，压缩率能有多高，又会损失多少精度呢？一番搜索后发现 <a href="https://www.unidata.ucar.edu/blogs/developer/en/" target="_blank">Unidata Developer&rsquo;s Blog</a> 上的博文 <a href="https://www.unidata.ucar.edu/blogs/developer/entry/compression_by_scaling_and_offfset" target="_blank">Compression by Scaling and Offfset</a>（原文标题确实把 offset 拼错了）清晰地介绍了压缩的原理和参数选择，现翻译前半部分，后半部分关于 GRIB 压缩的看不懂感觉也用不上，偷懒不翻了。</p>
+</blockquote>
+<p>今天来深入了解一下存储浮点数据时如何指定所需的精度，抛弃那些对于精度来说多余的比特。这些多余的比特往往很随机所以不可压缩，导致标准压缩算法的效果有限。需要注意这种操作是一种<strong>有损压缩</strong>。</p>
+    </div>
+</div>
 
 <div class="post">
     <h2 class="post-item post-title">
@@ -345,29 +365,6 @@ print(ax.xaxis.get_major_formatter())
 <p>为预测任务挑选一个合适的指标并没有想象中那么简单，所以这次我们来研究一下 RMSE、MAE、MAPE 和 Bias 的优缺点。<em>剧透：MAPE 是其中最差的，别用。</em></p>
 <p><img class="img-zoomable" src="/forecast_kpis/fig1.png" alt="fig1" />
 </p>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/pandas_pipe/">Pandas 系列：管道风格</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-10-29</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1932 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/pandas">pandas</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="r-语言的管道">R 语言的管道</h2>
-<p>这回来介绍一下如何利用管道（pipe）风格将 Pandas 相关的代码写得更易读，不过首先让我们看看隔壁 R 语言中管道是怎么用的。假设输入是 <code>x</code>，经过连续四个函数的处理后得到输出 <code>y</code>，代码可以按顺序写：</p>
-<pre><code class="language-R">x1 &lt;- func1(x, arg1)
-x2 &lt;- func2(x1, arg2)
-x3 &lt;- func3(x2, arg3)
-y &lt;- func4(x3, arg4)
-</code></pre>
     </div>
 </div>
 <div class="pagination"><div class="pag-item pag-current">
@@ -681,7 +678,7 @@ y &lt;- func4(x3, arg4)
     <div class="container-lg clearfix">
         <div class="col-12 footer">
             
-            <span>&copy; 2020-2023
+            <span>&copy; 2020-2024
                 <a href="https://zhajiman.github.io/">炸鸡人</a>
                  | <a href="https://github.com/ZhaJiMan/ZhaJiMan.github.io">Source code</a> 
                 | Powered by <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"

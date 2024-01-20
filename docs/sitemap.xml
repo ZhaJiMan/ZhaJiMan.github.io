@@ -2,16 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://zhajiman.github.io/post/</loc>
+    <lastmod>2024-01-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/tags/%E5%8D%AB%E6%98%9F/</loc>
+    <lastmod>2024-01-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/</loc>
+    <lastmod>2024-01-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/tags/%E7%BF%BB%E8%AF%91/</loc>
+    <lastmod>2024-01-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://zhajiman.github.io/post/compression_by_scaling_and_offset/</loc>
+    <lastmod>2024-01-20T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://zhajiman.github.io/tags/matplotlib/</loc>
     <lastmod>2023-09-14T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhajiman.github.io/post/</loc>
-    <lastmod>2023-09-14T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://zhajiman.github.io/post/monochromatic_light/</loc>
-    <lastmod>2023-09-14T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhajiman.github.io/</loc>
     <lastmod>2023-09-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/tags/%E8%89%B2%E5%BD%A9/</loc>
@@ -21,9 +30,6 @@
     <lastmod>2023-09-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/post/color_matching_function/</loc>
-    <lastmod>2023-07-24T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhajiman.github.io/tags/%E7%BF%BB%E8%AF%91/</loc>
     <lastmod>2023-07-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/tags/cartopy/</loc>
@@ -45,9 +51,6 @@
     <lastmod>2023-03-23T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/post/calipso_vfm/</loc>
-    <lastmod>2023-03-21T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhajiman.github.io/tags/%E5%8D%AB%E6%98%9F/</loc>
     <lastmod>2023-03-21T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://zhajiman.github.io/post/matplotlib_time_tick/</loc>
