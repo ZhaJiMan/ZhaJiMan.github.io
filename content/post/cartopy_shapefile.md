@@ -351,9 +351,9 @@ for shape in reader.iterShapes():
 | Code      | Vertices    | Description                                             |
 | :-------- | :---------- | :------------------------------------------------------ |
 | MOVETO    | 1           | 结束上一条折线，提起画笔从当前顶点开始画。                 |
-| LINETO    | 1           | 从上一个顶点画直线到当前顶点。                            |
-| STOP      | 1 (ignored) | 忽略当前顶点，连线停留在上一个顶点。                       |
-| CLOSEPOLY | 1 (ignored) | 忽略当前顶点，从上一个顶点画直线到当前折线的起点以实现闭合。 |
+| LINETO    | 2           | 从上一个顶点画直线到当前顶点。                            |
+| STOP      | 0 (ignored) | 忽略当前顶点，连线停留在上一个顶点。                       |
+| CLOSEPOLY | 79 (ignored) | 忽略当前顶点，从上一个顶点画直线到当前折线的起点以实现闭合。 |
 
 除此之外还有指定二次贝塞尔曲线的 `CURVE3` 和三次贝塞尔曲线的 `CURVE4`，不过因为和本文的主题无关，所以这里省略掉了。类似 shapefile 的 `PolyLine`，一条路径可以由多条折线构成，只要用控制代码标识出折线的分组即可。当折线首尾相连成环，或者每条折线的最后一个顶点都设置成 `CLOSEPOLY` 时，即可用路径来描述多边形。Shapefile 中要求多边形的外环沿顺时针方向，内环沿逆时针方向，而路径只需要内环和外环的绕行方向不同即可（参考 [Matplotlib 的甜甜圈示例](https://matplotlib.org/stable/gallery/shapes_and_collections/donut.html)）。以一个镂空的正方形为例，路径需要描述两段方向相反的环
 

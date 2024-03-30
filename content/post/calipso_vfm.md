@@ -264,7 +264,7 @@ ticklabels = [
     'invalid', 'clear air', 'cloud', 'aerosol',
     'stratospheric\nfeature', 'surface', 'subsurface', 'no signal'
 ]
-cmap, norm, ticks = fplt.make_qualitative_cmap(colors)
+cmap, norm, ticks = fplt.get_qualitative_palette(colors)
 
 # 构造截面图所需的x轴刻度.
 x, xticks, xticklabels = fplt.get_cross_section_xticks(lon, lat, ntick=5)
