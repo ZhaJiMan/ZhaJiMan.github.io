@@ -162,7 +162,7 @@ Python 绘制 CALIPSO L2 VFM 产品
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-03-21</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3527 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3521 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%8D%AB%E6%98%9F">卫星</a>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -405,12 +405,7 @@ fig = plt.figure(figsize=(8, 6))
 ax1 = fig.add_axes([0.1, 0.4, 0.8, 0.5], projection=crs)
 fplt.add_cn_province(ax1, lw=0.5)
 ax1.coastlines(resolution='10m', lw=0.5)
-fplt.set_extent_and_ticks(
-    ax1, extents=extents,
-    yticks=np.arange(-90, 91, 5),
-    xticks=np.arange(-180, 181, 5),
-    nx=1, ny=1
-)
+fplt.set_map_ticks(ax1, extents, dx=5, dy=5, mx=1, my=1)
 ax1.tick_params(labelsize='small')
 
 # 画出VFM在h0高度的水平分布.
@@ -426,7 +421,7 @@ ax1.set_title(mean_time, loc='left', fontsize='small')
 ax1.set_title(f'VFM at {h0} km', loc='right', fontsize='small')
 
 # 画出VFM的垂直剖面.
-ax2 = fplt.add_side_axes(ax1, loc='bottom', pad=0.06, depth=0.16)
+ax2 = fplt.add_side_axes(ax1, loc='bottom', pad=0.06, width=0.16)
 pc = ax2.pcolormesh(x, height, ftype.T, cmap=cmap, norm=norm, shading='nearest')
 ax2.axhline(h0, ls='--', c='r', lw=1, label=f'{h0} km')
 ax2.legend(loc='upper right', fontsize='x-small')
@@ -443,7 +438,7 @@ ax2.yaxis.set_minor_locator(mticker.AutoMinorLocator(2))
 ax2.tick_params(labelsize='small')
 
 # 设置colorbar.
-cax = fplt.add_side_axes([ax1, ax2], loc='right', pad=0.05, depth=0.02)
+cax = fplt.add_side_axes([ax1, ax2], loc='right', pad=0.05, width=0.02)
 cbar = fig.colorbar(pc, cax=cax)
 cbar.set_ticks(ticks)
 cbar.set_ticklabels(ticklabels)

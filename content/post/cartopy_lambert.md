@@ -17,6 +17,10 @@ Cartopy 中的 Plate Carrée 投影使用方便，但在展示中国地图时会
 
 <!--more-->
 
+## 更新
+
+2024-05-11：本文提到的方法已经在笔者开发的 [frykit](https://github.com/ZhaJiMan/frykit) 包里实现（`set_map_ticks` 函数）。
+
 ## Lambert 投影的简单介绍
 
 这里的 Lambert 投影指的是 Lambert conformal conic 投影（兰勃特等角圆锥投影），是通过让圆锥面与地球相切（割），然后将地球表面投影到圆锥面上来实现的。作为一种等角地图投影，Lambert 投影能够较好地保留区域的角度和形状，适合用于对中纬度东西方向分布的大陆板块进行制图。详细的描述请见维基和 [ArcMap 上的介绍](https://desktop.arcgis.com/zh-cn/arcmap/latest/map/projections/lambert-conformal-conic.htm)。

@@ -21,7 +21,7 @@ tags:
 
 ## 提示
 
-本文其实更新过数次，每次都修正了一些表述或 bug，如果还存在问题的话请读者在评论区指出。另外强烈建议读完本文后继续阅读 [Cartopy 系列：对入门教程的补充](https://zhajiman.github.io/post/cartopy_appendix/)，解答了更多常见的问题。
+本文其实更新过数次，每次都修正了一些表述或 bug，如果还存在问题的话请读者在评论区指出。另外建议读完本文后继续阅读 [Cartopy 系列：对入门教程的补充](https://zhajiman.github.io/post/cartopy_appendix/)，解答了更多常见的问题。也可以了解一下笔者开发的画中国地图的包 [frykit](https://zhajiman.github.io/post/frykit/)。
 
 ## 安装 Cartopy 和相关的库
 

@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/matplotlib/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2023-09-14T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2024-05-11T00:00:00+00:00" />
 
 
 <style>
@@ -108,6 +108,27 @@
 </div>
 
 
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/frykit/">Cartopy 系列：画中国地图的工具箱 frykit</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2024-05-11</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1295 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <p><img class="img-zoomable" src="/frykit/contourf.png" alt="contourf" />
+</p>
+<h2 id="前言">前言</h2>
+<p>最早笔者用 Python 画中国地图时，会准备 <code>bou2_4p.shp</code> 文件，然后封装一个读取 shapefile 并添加到 <code>GeoAxes</code> 上的函数，别的项目要用时就把数据和函数复制粘贴过去。<a href="https://zhajiman.github.io/post/cartopy_introduction/" target="_blank">Cartopy 系列：从入门到放弃</a> 里就是这么做的。</p>
+<p>后来工作中用到了 Clarmy 开发的 <a href="https://github.com/cnmetlab/cnmaps" target="_blank">cnmaps</a> 包，只用两行就能快速绘制地图，非常方便。不过其依赖的 GeoPandas 经常和我现有的环境冲突，于是萌生了自己实现一个功能类似，但依赖更精简的包的想法，遂开发出了 <a href="https://github.com/ZhaJiMan/frykit" target="_blank">frykit</a>。</p>
+  </div>
+</div>
 
 <div class="post">
   <h2 class="post-item post-title">
@@ -202,7 +223,7 @@ for col in cf.collections:
   <div class="post-item post-meta">
     <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-03-21</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3527 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3521 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%8D%AB%E6%98%9F">卫星</a>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -381,28 +402,6 @@ plt.show()
   <div class="post-item post-summary markdown-body">
     <h2 id="前言">前言</h2>
 <p>Matplotlib 中用箭头表示风场或电磁场等矢量场时需要用到 <code>quiver</code> 方法，据字典，quiver 一词的意思是颤动、颤抖或箭袋，貌似也就最后一个意思跟箭头搭得上边。相比于其它画图方法，<code>quiver</code> 的参数又多又容易混淆，所以本文将以图解的方式逐一介绍。这些参数按功能可分为三种：控制箭头位置和数值的、控制箭头长度和角度的，以及控制箭头尺寸和形状的。下面会按照这个分组顺序来解说。本文代码基于 Matplotlib 3.3.4。</p>
-  </div>
-</div>
-
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/matplotlib_artist/">Matplotlib 中的 Artist——你在浪费时间瞎百度之前应该知道的东西</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-11-23</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;6701 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <blockquote>
-<p>这是 <a href="https://sites.google.com/view/kotarosaito/" target="_blank">@skotaro</a> 在 2018 年发布的一篇关于 Matplotlib Artist 的通俗易懂的介绍，很适合作为官方教程的前置读物，故翻译于此，原文标题是 <a href="https://dev.to/skotaro/artist-in-matplotlib---something-i-wanted-to-know-before-spending-tremendous-hours-on-googling-how-tos--31oo" target="_blank">&ldquo;Artist&rdquo; in Matplotlib - something I wanted to know before spending tremendous hours on googling how-tos.</a>。文中绝大部分链接都重定向到了最新版本的 Matplotlib 文档，还请读者注意。</p>
-</blockquote>
-<p><img class="img-zoomable" src="/matplotlib_artist/fig_0.jpg" alt="fig_0" />
-</p>
-<p>毫无疑问 Python 里的 matplotlib 是个非常棒的可视化工具，但在 matplotlib 中慢慢调细节也是件很烦人的事。你很容易浪费好几个小时去找修改图里细节的方法，有时你连那个细节的名字也不知道的话，搜索起来会更加困难。就算你在 Stack Overflow 上找到了相关的提示，也可能再花几个小时根据需求来修改它。不过，只要了解了 matplotlib 图的具体组成，以及你可以对组件执行的操作，就能避开这些徒劳无益的工作。我想，我跟你们中的大多数人一样，做图时遇到的困难都是靠读 Stack Overflow 上那些 matplotlib 高手们的答案来解决的。最近我发现 <a href="https://matplotlib.org/stable/tutorials/intermediate/artists.html" target="_blank">官方的 <code>Artist</code> 对象教程</a> 信息很丰富，有助于我们理解 matplotlib 的画图过程并节省调图时间<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。本文里我会分享一些关于 matplotlib 里 <code>Artist</code> 对象的基本知识，以避免浪费数小时调图的情况出现。</p>
   </div>
 </div>
 
