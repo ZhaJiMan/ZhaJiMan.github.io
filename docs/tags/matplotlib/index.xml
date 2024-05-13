@@ -17,7 +17,7 @@
 &lt;/p&gt;
 &lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
 &lt;p&gt;最早笔者用 Python 画中国地图时，会准备 &lt;code&gt;bou2_4p.shp&lt;/code&gt; 文件，然后封装一个读取 shapefile 并添加到 &lt;code&gt;GeoAxes&lt;/code&gt; 上的函数，别的项目要用时就把数据和函数复制粘贴过去。&lt;a href=&#34;https://zhajiman.github.io/post/cartopy_introduction/&#34; target=&#34;_blank&#34;&gt;Cartopy 系列：从入门到放弃&lt;/a&gt; 里就是这么做的。&lt;/p&gt;
-&lt;p&gt;后来工作中用到了 Clarmy 开发的 &lt;a href=&#34;https://github.com/cnmetlab/cnmaps&#34; target=&#34;_blank&#34;&gt;cnmaps&lt;/a&gt; 包，只用两行就能快速绘制地图，非常方便。不过其依赖的 GeoPandas 经常和我现有的环境冲突，于是萌生了自己实现一个功能类似，但依赖更精简的包的想法，遂开发出了 &lt;a href=&#34;https://github.com/ZhaJiMan/frykit&#34; target=&#34;_blank&#34;&gt;frykit&lt;/a&gt;。&lt;/p&gt;</description>
+&lt;p&gt;后来工作中用到了 Clarmy 开发的 &lt;a href=&#34;https://github.com/cnmetlab/cnmaps&#34; target=&#34;_blank&#34;&gt;cnmaps&lt;/a&gt; 包，只用两行就能快速绘制地图，非常方便。同时萌生了自己实现一个功能类似的包的想法，遂开发出了 &lt;a href=&#34;https://github.com/ZhaJiMan/frykit&#34; target=&#34;_blank&#34;&gt;frykit&lt;/a&gt;。&lt;/p&gt;</description>
     </item>
     
     <item>

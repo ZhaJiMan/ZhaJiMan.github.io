@@ -13,7 +13,7 @@ tags:
 
 最早笔者用 Python 画中国地图时，会准备 `bou2_4p.shp` 文件，然后封装一个读取 shapefile 并添加到 `GeoAxes` 上的函数，别的项目要用时就把数据和函数复制粘贴过去。[Cartopy 系列：从入门到放弃](https://zhajiman.github.io/post/cartopy_introduction/) 里就是这么做的。
 
-后来工作中用到了 Clarmy 开发的 [cnmaps](https://github.com/cnmetlab/cnmaps) 包，只用两行就能快速绘制地图，非常方便。不过其依赖的 GeoPandas 经常和我现有的环境冲突，于是萌生了自己实现一个功能类似，但依赖更精简的包的想法，遂开发出了 [frykit](https://github.com/ZhaJiMan/frykit)。
+后来工作中用到了 Clarmy 开发的 [cnmaps](https://github.com/cnmetlab/cnmaps) 包，只用两行就能快速绘制地图，非常方便。同时萌生了自己实现一个功能类似的包的想法，遂开发出了 [frykit](https://github.com/ZhaJiMan/frykit)。
 
 <!--more-->
 
@@ -48,12 +48,13 @@ fig, ax = plt.subplots()
 ax.set_aspect(1)  # 记得调比例
 fplt.set_map_ticks(ax, [70, 140, 0, 60])  # 设置范围和刻度
 fplt.add_cn_province(ax, fc=colors)  # 添加省界
+fplt.label_cn_province(ax)  # 添加省名
 fplt.add_nine_line(ax)  # 添加九段线
 
 plt.show()
 ```
 
-![on_axes](/frykit/on_axes.png)
+![axes](/frykit/axes.png)
 
 懒得导入 Cartopy 了，就想用 Matplotlib 原生的 `Axes` 画一张等距圆柱投影的地图，那么 frykit 的画图函数都支持，经纬度标签也给安排上。
 

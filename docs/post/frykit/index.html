@@ -40,12 +40,12 @@
 
 前言
 最早笔者用 Python 画中国地图时，会准备 bou2_4p.shp 文件，然后封装一个读取 shapefile 并添加到 GeoAxes 上的函数，别的项目要用时就把数据和函数复制粘贴过去。Cartopy 系列：从入门到放弃 里就是这么做的。
-后来工作中用到了 Clarmy 开发的 cnmaps 包，只用两行就能快速绘制地图，非常方便。不过其依赖的 GeoPandas 经常和我现有的环境冲突，于是萌生了自己实现一个功能类似，但依赖更精简的包的想法，遂开发出了 frykit。" />
+后来工作中用到了 Clarmy 开发的 cnmaps 包，只用两行就能快速绘制地图，非常方便。同时萌生了自己实现一个功能类似的包的想法，遂开发出了 frykit。" />
 <meta name="twitter:description" content="
 
 前言
 最早笔者用 Python 画中国地图时，会准备 bou2_4p.shp 文件，然后封装一个读取 shapefile 并添加到 GeoAxes 上的函数，别的项目要用时就把数据和函数复制粘贴过去。Cartopy 系列：从入门到放弃 里就是这么做的。
-后来工作中用到了 Clarmy 开发的 cnmaps 包，只用两行就能快速绘制地图，非常方便。不过其依赖的 GeoPandas 经常和我现有的环境冲突，于是萌生了自己实现一个功能类似，但依赖更精简的包的想法，遂开发出了 frykit。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+后来工作中用到了 Clarmy 开发的 cnmaps 包，只用两行就能快速绘制地图，非常方便。同时萌生了自己实现一个功能类似的包的想法，遂开发出了 frykit。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2024-05-11T00:00:00+00:00" /><meta property="article:modified_time" content="2024-05-11T00:00:00+00:00" />
 
@@ -120,7 +120,7 @@
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2024-05-11</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1295 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1275 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/cartopy">cartopy</a>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;</span>
 
@@ -133,7 +133,7 @@
 </p>
 <h2 id="前言">前言</h2>
 <p>最早笔者用 Python 画中国地图时，会准备 <code>bou2_4p.shp</code> 文件，然后封装一个读取 shapefile 并添加到 <code>GeoAxes</code> 上的函数，别的项目要用时就把数据和函数复制粘贴过去。<a href="https://zhajiman.github.io/post/cartopy_introduction/" target="_blank">Cartopy 系列：从入门到放弃</a> 里就是这么做的。</p>
-<p>后来工作中用到了 Clarmy 开发的 <a href="https://github.com/cnmetlab/cnmaps" target="_blank">cnmaps</a> 包，只用两行就能快速绘制地图，非常方便。不过其依赖的 GeoPandas 经常和我现有的环境冲突，于是萌生了自己实现一个功能类似，但依赖更精简的包的想法，遂开发出了 <a href="https://github.com/ZhaJiMan/frykit" target="_blank">frykit</a>。</p>
+<p>后来工作中用到了 Clarmy 开发的 <a href="https://github.com/cnmetlab/cnmaps" target="_blank">cnmaps</a> 包，只用两行就能快速绘制地图，非常方便。同时萌生了自己实现一个功能类似的包的想法，遂开发出了 <a href="https://github.com/ZhaJiMan/frykit" target="_blank">frykit</a>。</p>
 <p>主要功能就是三块：</p>
 <ul>
 <li>画中国省市</li>
@@ -157,11 +157,12 @@ fig, ax = plt.subplots()
 ax.set_aspect(1)  # 记得调比例
 fplt.set_map_ticks(ax, [70, 140, 0, 60])  # 设置范围和刻度
 fplt.add_cn_province(ax, fc=colors)  # 添加省界
+fplt.label_cn_province(ax)  # 添加省名
 fplt.add_nine_line(ax)  # 添加九段线
 
 plt.show()
 </code></pre>
-<p><img class="img-zoomable" src="/frykit/on_axes.png" alt="on_axes" />
+<p><img class="img-zoomable" src="/frykit/axes.png" alt="axes" />
 </p>
 <p>懒得导入 Cartopy 了，就想用 Matplotlib 原生的 <code>Axes</code> 画一张等距圆柱投影的地图，那么 frykit 的画图函数都支持，经纬度标签也给安排上。</p>
 <h2 id="加快画图速度">加快画图速度</h2>
