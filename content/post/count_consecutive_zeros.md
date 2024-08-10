@@ -36,12 +36,11 @@ series = series[counts < 24]
 
 ```Python
 def count_consecutive_zeros(series):
-    not_zero_mask = series != 0
-    value_id = np.r_[0, np.diff(not_zero_mask).cumsum()] + 1
-    value_id[not_zero_mask] = 0
+    mask = series == 0
+    value_id = np.r_[0, np.diff(mask).cumsum()]
     unique, unique_counts = np.unique(value_id, return_counts=True)
     value_counts = unique_counts[np.searchsorted(unique, value_id)]
-    value_counts[not_zero_mask] = 0
+    value_counts[~mask] = 0
 
     return value_counts
 ```
@@ -49,36 +48,33 @@ def count_consecutive_zeros(series):
 接下来逐行讲解：
 
 ```Python
-not_zero_mask = series != 0
+mask = series == 0
 ```
 
-首先用布尔数组 `not_zero_mask` 标出哪些元素是 0，哪些不是。严格来说浮点数和 0 做比较应该用 `np.isclose`，这里为了简单直接用的 `!=`。
+首先用布尔数组 `mask` 标出哪些元素是 0，哪些不是。严格来说浮点数和 0 做比较应该用 `np.isclose`，这里为了简单直接用的 `==`。
 
 ```Python
-value_id = np.r_[0, np.diff(not_zero_mask).cumsum()] + 1
-value_id[not_zero_mask] = 0
+value_id = np.r_[0, np.diff(mask).cumsum()]
 ```
 
-然后对 `not_zero_mask` 做差分，注意布尔数组差分的结果依旧是布尔类型。发现 `not_zero_mask` 里相邻两个元素如果出现了零 -> 非零或非零 -> 零的跳变时，对应的差分值会是 `True`。接着对差分求累计和，发生跳变的每个段落会按跳变次数得到对应的数值，由于这个数值是唯一的，相当于每个段落都获得了唯一的 ID。
+然后对 `mask` 做差分，注意布尔数组差分的结果依旧是布尔类型。发现 `series` 里相邻两个元素如果出现了零 -> 非零或非零 -> 零的跳变时，对应 `mask` 的差分值会是 `True`。接着对差分求累计和，发生跳变的每个段落会按跳变次数得到对应的数值，由于这个数值是唯一的，相当于每个段落都获得了唯一的 ID。
 
 注意对形为 `(n + 1,)` 的数组应用 `np.diff`，会得到形如 `(n,)` 的数组，并且第一个段落的 ID 为 0，所以用 `np.r_` 在累计和前补一个零。
-
-我们只关心零值段落的 ID，不关心非零段落的 ID，所以让 ID 向上偏移加一，然后令非零段落的 ID 为 0。
 
 ```Python
 unique, unique_counts = np.unique(value_id, return_counts=True)
 value_counts = unique_counts[np.searchsorted(unique, value_id)]
-value_counts[not_zero_mask] = 0
+value_counts[~mask] = 0
 ```
 
-`np.unique` 函数返回唯一且有序的零值段落 ID，并用 `return_counts` 参数返回每个 ID 出现的次数，即我们想统计的零值出现次数。接着用 `np.seachsorted` 函数确定 `value_id` 里的每个元素在 `unique` 数组里的索引，将结果传给 `unique_counts` 做花式索引，从而将零值出现次数填入到对应的段落中，让结果与 `series` 形状相同。我们的计数结果里非零段落其实填充了 ID 为 0 的元素的出现次数，所以最后利用 `not_zero_mask` 将它们赋值为零。
+`np.unique` 函数返回唯一且有序的段落 ID，并用 `return_counts` 参数返回每个 ID 出现的次数，即每个段落的长度。接着用 `np.seachsorted` 函数确定 `value_id` 里的每个元素在 `unique` 数组里的索引，将结果传给 `unique_counts` 做花式索引，从而将段落长度填到段落位置上，让结果与 `series` 形状相同。最后我们只关心零值段落的计数，所以用 `~mask` 将非零段落的计数置零。
 
-其实这步的目标可以总结为：每段零值有唯一的 ID，目标是统计零值段落的长度，将长度填充回原来的序列里。熟悉 Pandas 的读者应该会想到用 `groupby` 和 `transform` 秒了：
+简单来说，这步是按 ID 对段落进行分组，统计段落长度，再变换回原来的序列里。熟悉 Pandas 的读者应该会想到用 `groupby` 和 `transform` 秒了：
 
 ```Python
 value_id = pd.Series(value_id)
 value_count = value_id.groupby(value_id).transform('count')
-value_count[not_zero_mask] = 0
+value_count[~mask] = 0
 ```
 
 前面用 `np.unique` 和 `np.seachsorted` 只是想演示 NumPy 如何在不写循环的前提下实现相同的效果。
@@ -87,10 +83,9 @@ value_count[not_zero_mask] = 0
 
 ```Python
 [0, 0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 3, 4, 3, 0]  # series
-[F, F, T, T, T, F, F, F, F, T, T, T, T, T, F, F, F, F, F, F, T, T, T, F]  # not_zero_mask
-   [F, T, F, F, T, F, F, F, T, F, F, F, F, T, F, F, F, F, F, T, F, F, T]  # np.diff(not_zero_mask)
-[0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 6]  # np.r_[0, np.diff(not_zero_mask).cumsum()]
-[1, 1, 0, 0, 0, 3, 3, 3, 3, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0, 0, 0, 7]  # value_id
+[T, T, F, F, F, T, T, T, T, F, F, F, F, F, T, T, T, T, T, T, F, F, F, T]  # mask
+   [F, T, F, F, T, F, F, F, T, F, F, F, F, T, F, F, F, F, F, T, F, F, T]  # np.diff(mask)
+[0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 6]  # value_id
 [2, 2, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 6, 6, 6, 6, 6, 6, 0, 0, 0, 1]  # value_counts
 ```
 
@@ -118,27 +113,27 @@ def count_consecutive_values(
     series: ArrayLike, cond: Union[ArrayLike, Callable[[NDArray], NDArray]]
 ) -> NDArray:
     series = np.asarray(series)
-    if series.ndim != 1 or len(series) == 0:
-        raise ValueError('series 应该是长度大于零的一维序列')
+    assert series.ndim == 1
 
     if callable(cond):
-        not_value_mask = ~cond(series)
-    else:
-        not_value_mask = ~np.asarray(cond)
-    assert not_value_mask.dtype == bool
+        cond = cond(series)
+    cond = np.asarray(cond, dtype=bool)
+    assert cond.shape == series.shape
 
-    value_id = np.r_[0, np.diff(not_value_mask).cumsum()] + 1
-    value_id[not_value_mask] = 0
+    if len(series) == 0:
+        return np.array([], dtype=int)
+
+    value_id = np.r_[0, np.diff(cond).cumsum()]
     unique, unique_counts = np.unique(value_id, return_counts=True)
     value_counts = unique_counts[np.searchsorted(unique, value_id)]
-    value_counts[not_value_mask] = 0
+    value_counts[~cond] = 0
 
     return value_counts
 ```
 
 模仿 `DataFrame.where` 用 `cond` 参数筛选想要统计的元素，这样一来传入 `lambda x: np.isclose(x, 0)` 就能数零，传入 `np.isnan` 就能数缺测。
 
-此外还加上了类型和防御性的判断。
+此外还加上了类型和防御性语句。
 
 ## 应用
 
@@ -153,16 +148,22 @@ s.interpolate().mask(counts > 3)
 从降水序列中区分出下雨时段，要求下雨时段之间至少有三个时次没有下雨：
 
 ```Python
-rain = pd.Series([0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 4, 3, 0, 1, 0, 0])
+rain = np.array([0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 4, 3, 0, 1, 0, 0])
+
+def trim_zeros(arr):
+    '''去掉首尾的零值'''
+    i, j = np.nonzero(arr > 0)[0][[0, -1]]
+    return arr[i:j+1].copy()
+
+def split_mask(mask):
+    '''分段返回布尔数组里连续真值段落的索引'''
+    inds = np.nonzero(mask)[0]
+    return np.split(inds, np.nonzero(np.diff(inds) != 1)[0] + 1)
+
+rain = trim_zeros(rain)
 counts = count_consecutive_values(rain, lambda x: x <= 0)
-
-not_rain_mask = counts > 3
-rain_id = np.r_[0, np.diff(not_rain_mask).cumsum()] + 1
-rain_id[not_rain_mask] = 0
-rain_events = [group for label, group in rain.groupby(rain_id) if label > 0]
+rain_events = [rain[inds] for inds in split_mask(counts < 3)]
 ```
-
-(可能还需要修剪序列开头结尾的零值？)
 
 ## 参考链接
 
