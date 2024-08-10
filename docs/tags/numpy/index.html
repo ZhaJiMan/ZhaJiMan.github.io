@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/tags/numpy/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2021-09-21T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2024-08-10T00:00:00+00:00" />
 
 
 <style>
@@ -108,6 +108,30 @@
 </div>
 
 
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://zhajiman.github.io/post/count_consecutive_zeros/">Numpy 系列：统计序列里零值连续出现的次数</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2024-08-10</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1534 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/numpy">numpy</a>&nbsp;<a href="/tags/pandas">pandas</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    <h2 id="需求">需求</h2>
+<p>以前处理功率时间序列时经常遇到一大段时间里功率值虽然没有缺失，但全是零的异常情况，为了找出这些连续为零的时段，当时设计了一个统计序列里零值连续出现次数的函数，效果如下图所示：</p>
+<p><img class="img-zoomable" src="/count_consecutive_zeros/goal.png" alt="goal" />
+</p>
+<p>输入序列是</p>
+<pre><code class="language-Python">series = np.array([0, 0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 3, 4, 3, 0])
+</code></pre>
+<p>其中有四段零值，长度依次为 2、4、6、1。输出序列与输入序列等长，输入序列中非零位置的数值为零，零值位置数值为零值连续出现的次数。</p>
+  </div>
+</div>
 
 <div class="post">
   <h2 class="post-item post-title">

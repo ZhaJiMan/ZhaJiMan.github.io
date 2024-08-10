@@ -37,7 +37,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://zhajiman.github.io/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2024-05-11T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2024-08-10T00:00:00+00:00" />
 
 
 <style>
@@ -104,6 +104,30 @@
                 
 
 
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/count_consecutive_zeros/">Numpy 系列：统计序列里零值连续出现的次数</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2024-08-10</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1534 words</span>
+
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/numpy">numpy</a>&nbsp;<a href="/tags/pandas">pandas</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        <h2 id="需求">需求</h2>
+<p>以前处理功率时间序列时经常遇到一大段时间里功率值虽然没有缺失，但全是零的异常情况，为了找出这些连续为零的时段，当时设计了一个统计序列里零值连续出现次数的函数，效果如下图所示：</p>
+<p><img class="img-zoomable" src="/count_consecutive_zeros/goal.png" alt="goal" />
+</p>
+<p>输入序列是</p>
+<pre><code class="language-Python">series = np.array([0, 0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 3, 4, 3, 0])
+</code></pre>
+<p>其中有四段零值，长度依次为 2、4、6、1。输出序列与输入序列等长，输入序列中非零位置的数值为零，零值位置数值为零值连续出现的次数。</p>
+    </div>
+</div>
 
 <div class="post">
     <h2 class="post-item post-title">
@@ -327,43 +351,6 @@ for col in cf.collections:
 </ul>
 <p>本文是对旧教程的翻新，会对 VFM 数据的结构进行更多解释，对代码也进行了更新。本文使用 <a href="https://github.com/fhs/pyhdf" target="_blank">pyhdf</a> 读取 HDF4 文件，用 Matplotlib 3.6.2 画图。为了方便画图，用了一些自制的函数（<a href="https://github.com/ZhaJiMan/frykit" target="_blank">frykit</a>）。虽然基于 Python，但希望能给使用其它语言的读者提供一点思路。</p>
 <p>完整代码已放入仓库 <a href="https://github.com/ZhaJiMan/calipso-vfm-visualization" target="_blank">calipso-vfm-visualization</a>。</p>
-    </div>
-</div>
-
-<div class="post">
-    <h2 class="post-item post-title">
-        <a href="https://zhajiman.github.io/post/matplotlib_time_tick/">Matplotlib 系列：手动设置时间序列折线图的刻度</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2023-02-11</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1922 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/matplotlib">matplotlib</a>&nbsp;<a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97">时间序列</a>&nbsp;</span>
-
-    </div>
-    <div class="post-item post-summary markdown-body">
-        <h2 id="前言">前言</h2>
-<p>Matplotlib 中画折线图用 <code>ax.plot(x, y)</code>，当横坐标 <code>x</code> 是时间数组时，例如 <code>datetime</code> 或 <code>np.datetime64</code> 构成的列表，<code>x</code> 和 <code>y</code> 的组合即一条时间序列。Matplotlib 能直接画出时间序列，并自动设置刻度。下面以一条长三年的气温时间序列为例：</p>
-<pre><code class="language-Python">import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-df = pd.read_csv('test.csv', index_col=0, parse_dates=True)
-series = df.loc['2012':'2014', 'T']
-
-fig, ax = plt.subplots(figsize=(10, 4))
-ax.plot(series.index, series)
-ax.set_ylabel('Temperature (℃)')
-
-print(ax.xaxis.get_major_locator())
-print(ax.xaxis.get_major_formatter())
-</code></pre>
-<pre><code>&lt;matplotlib.dates.AutoDateLocator object at 0x000001AC6BF89A00&gt;
-&lt;matplotlib.dates.AutoDateFormatter object at 0x000001AC6BF89B20&gt;
-</code></pre>
-<p><img class="img-zoomable" src="/matplotlib_time_tick/fig_1.png" alt="fig_1" />
-</p>
     </div>
 </div>
 <div class="pagination"><div class="pag-item pag-current">

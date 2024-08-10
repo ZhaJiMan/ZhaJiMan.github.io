@@ -21,7 +21,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<title>pandas - 炸鸡人博客</title>
+<title>Numpy 系列：统计序列里零值连续出现的次数 - 炸鸡人博客</title>
 
 
 <meta name="author" content="炸鸡人" />
@@ -30,14 +30,30 @@
 <meta name="description" content="A minimal Hugo theme with nice theme color." />
 
 
-<link rel="alternate" type="application/rss+xml" href="https://zhajiman.github.io/tags/pandas/index.xml" title="炸鸡人博客" />
+<meta name="keywords" content="numpy, pandas" />
 
-<meta property="og:title" content="pandas" />
-<meta name="twitter:title" content="pandas" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://zhajiman.github.io/tags/pandas/" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
+
+<meta property="og:title" content="Numpy 系列：统计序列里零值连续出现的次数" />
+<meta name="twitter:title" content="Numpy 系列：统计序列里零值连续出现的次数" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zhajiman.github.io/post/count_consecutive_zeros/" /><meta property="og:description" content="需求
+以前处理功率时间序列时经常遇到一大段时间里功率值虽然没有缺失，但全是零的异常情况，为了找出这些连续为零的时段，当时设计了一个统计序列里零值连续出现次数的函数，效果如下图所示：
+
+
+输入序列是
+series = np.array([0, 0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 3, 4, 3, 0])
+
+其中有四段零值，长度依次为 2、4、6、1。输出序列与输入序列等长，输入序列中非零位置的数值为零，零值位置数值为零值连续出现的次数。" />
+<meta name="twitter:description" content="需求
+以前处理功率时间序列时经常遇到一大段时间里功率值虽然没有缺失，但全是零的异常情况，为了找出这些连续为零的时段，当时设计了一个统计序列里零值连续出现次数的函数，效果如下图所示：
+
+
+输入序列是
+series = np.array([0, 0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 3, 4, 3, 0])
+
+其中有四段零值，长度依次为 2、4、6、1。输出序列与输入序列等长，输入序列中非零位置的数值为零，零值位置数值为零值连续出现的次数。" /><meta property="og:image" content="https://zhajiman.github.io/img/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="og:updated_time" content="2024-08-10T00:00:00+00:00" />
+<meta name="twitter:image" content="https://zhajiman.github.io/img/og.png" /><meta property="article:published_time" content="2024-08-10T00:00:00+00:00" /><meta property="article:modified_time" content="2024-08-10T00:00:00+00:00" />
 
 
 <style>
@@ -102,27 +118,24 @@
             
             <div class="col-12 col-md-9 float-left content">
                 
-
-<div class="page-info">
-  <span>Posts with the tag pandas: </span>
-</div>
-
-
-
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/count_consecutive_zeros/">Numpy 系列：统计序列里零值连续出现的次数</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2024-08-10</span>
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://zhajiman.github.io/post/count_consecutive_zeros/">Numpy 系列：统计序列里零值连续出现的次数</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2024-08-10</span>
 
 <span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1534 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/numpy">numpy</a>&nbsp;<a href="/tags/pandas">pandas</a>&nbsp;</span>
 
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <h2 id="需求">需求</h2>
+        
+        <span><i class="iconfont icon-time-sharp"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>&nbsp;views</span>
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="需求">需求</h2>
 <p>以前处理功率时间序列时经常遇到一大段时间里功率值虽然没有缺失，但全是零的异常情况，为了找出这些连续为零的时段，当时设计了一个统计序列里零值连续出现次数的函数，效果如下图所示：</p>
 <p><img class="img-zoomable" src="/count_consecutive_zeros/goal.png" alt="goal" />
 </p>
@@ -130,70 +143,141 @@
 <pre><code class="language-Python">series = np.array([0, 0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 3, 4, 3, 0])
 </code></pre>
 <p>其中有四段零值，长度依次为 2、4、6、1。输出序列与输入序列等长，输入序列中非零位置的数值为零，零值位置数值为零值连续出现的次数。</p>
-  </div>
-</div>
-
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/pandas_pipe/">Pandas 系列：管道风格</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-10-29</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1932 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/pandas">pandas</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <h2 id="r-语言的管道">R 语言的管道</h2>
-<p>这回来介绍一下如何利用管道（pipe）风格将 Pandas 相关的代码写得更易读，不过首先让我们看看隔壁 R 语言中管道是怎么用的。假设输入是 <code>x</code>，经过连续四个函数的处理后得到输出 <code>y</code>，代码可以按顺序写：</p>
-<pre><code class="language-R">x1 &lt;- func1(x, arg1)
-x2 &lt;- func2(x1, arg2)
-x3 &lt;- func3(x2, arg3)
-y &lt;- func4(x3, arg4)
+<p>这个结果乍看之下不知道怎么使用，这里举个简单的例子：假设该时间序列步长为 1 小时，认为连续出现一天的零值就说明这段数据有问题，在做进一步数据分析前应该剔除。而利用上述的函数就能快速去除问题段落：</p>
+<pre><code class="language-Python">counts = count_consecutive_zeros(series)
+series = series[counts &lt; 24]
 </code></pre>
-  </div>
-</div>
+<p>最近又频繁用到这个函数，但回看源码时却发现看不懂原理了，不禁恼羞成怒，遂用本文留作复习的笔记。</p>
+<h2 id="算法">算法</h2>
+<pre><code class="language-Python">def count_consecutive_zeros(series):
+    not_zero_mask = series != 0
+    value_id = np.r_[0, np.diff(not_zero_mask).cumsum()] + 1
+    value_id[not_zero_mask] = 0
+    unique, unique_counts = np.unique(value_id, return_counts=True)
+    value_counts = unique_counts[np.searchsorted(unique, value_id)]
+    value_counts[not_zero_mask] = 0
 
-<div class="post">
-  <h2 class="post-item post-title">
-    <a href="https://zhajiman.github.io/post/pandas_interpolate/">Pandas 系列：图解插值</a>
-  </h2>
-  <div class="post-item post-meta">
-    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-10-28</span>
-
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1901 words</span>
-
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/python">python</a>&nbsp;<a href="/tags/pandas">pandas</a>&nbsp;</span>
-
-  </div>
-  <div class="post-item post-summary markdown-body">
-    <p>相信大伙对 NumPy 和 SciPy 里的插值比较熟：已知坐标值 <code>xp</code> 和变量值 <code>fp</code>，调用函数计算变量在目标坐标 <code>x</code> 上的数值。例如 <code>np.interp</code> 的 API 就是</p>
-<pre><code class="language-Python">np.interp(x, xp, fp)
+    return value_counts
 </code></pre>
-<p>Pandas 的 <code>Series</code> 和 <code>DataFrame</code> 对象也有插值方法 <code>interpolate</code>，默认做线性插值。但其功能与 NumPy 和 SciPy 不太一样。以一个序列对象 <code>s</code> 为例：</p>
-<pre><code class="language-Python"># 缺测部分和有效部分.
-invalid = s.isna()
-valid = ~invalid
-
-# 对应于xp.
-s.index[valid]
-
-# 对应于fp.
-s.values[valid]
-
-# 对应于x.
-s.index
-
-# 两式大致等价.
-s.interpolate(method='index').values
-np.interp(s.index, s.index[valid], s.values[valid])
+<p>接下来逐行讲解：</p>
+<pre><code class="language-Python">not_zero_mask = series != 0
 </code></pre>
-<p>即 Pandas 的插值是要利用序列的有效值当 <code>xp</code> 和 <code>fp</code>，去填补缺测的部分。所以调用 <code>s.interpolate</code> 时我们不需要传入形如 <code>x</code> 的参数，而是应该在调用前就通过 <code>s.reindex</code> 之类的方法将 <code>x</code> 融合到 <code>s</code> 的索引中。这么说可能有点抽象，下面就以图像直观展示 Pandas 里插值的效果。本文不会涉及到具体的插值算法（最邻近、三次样条……），仅以线性插值为例。</p>
-  </div>
-</div>
+<p>首先用布尔数组 <code>not_zero_mask</code> 标出哪些元素是 0，哪些不是。严格来说浮点数和 0 做比较应该用 <code>np.isclose</code>，这里为了简单直接用的 <code>!=</code>。</p>
+<pre><code class="language-Python">value_id = np.r_[0, np.diff(not_zero_mask).cumsum()] + 1
+value_id[not_zero_mask] = 0
+</code></pre>
+<p>然后对 <code>not_zero_mask</code> 做差分，注意布尔数组差分的结果依旧是布尔类型。发现 <code>not_zero_mask</code> 里相邻两个元素如果出现了零 -&gt; 非零或非零 -&gt; 零的跳变时，对应的差分值会是 <code>True</code>。接着对差分求累计和，发生跳变的每个段落会按跳变次数得到对应的数值，由于这个数值是唯一的，相当于每个段落都获得了唯一的 ID。</p>
+<p>注意对形为 <code>(n + 1,)</code> 的数组应用 <code>np.diff</code>，会得到形如 <code>(n,)</code> 的数组，并且第一个段落的 ID 为 0，所以用 <code>np.r_</code> 在累计和前补一个零。</p>
+<p>我们只关心零值段落的 ID，不关心非零段落的 ID，所以让 ID 向上偏移加一，然后令非零段落的 ID 为 0。</p>
+<pre><code class="language-Python">unique, unique_counts = np.unique(value_id, return_counts=True)
+value_counts = unique_counts[np.searchsorted(unique, value_id)]
+value_counts[not_zero_mask] = 0
+</code></pre>
+<p><code>np.unique</code> 函数返回唯一且有序的零值段落 ID，并用 <code>return_counts</code> 参数返回每个 ID 出现的次数，即我们想统计的零值出现次数。接着用 <code>np.seachsorted</code> 函数确定 <code>value_id</code> 里的每个元素在 <code>unique</code> 数组里的索引，将结果传给 <code>unique_counts</code> 做花式索引，从而将零值出现次数填入到对应的段落中，让结果与 <code>series</code> 形状相同。我们的计数结果里非零段落其实填充了 ID 为 0 的元素的出现次数，所以最后利用 <code>not_zero_mask</code> 将它们赋值为零。</p>
+<p>其实这步的目标可以总结为：每段零值有唯一的 ID，目标是统计零值段落的长度，将长度填充回原来的序列里。熟悉 Pandas 的读者应该会想到用 <code>groupby</code> 和 <code>transform</code> 秒了：</p>
+<pre><code class="language-Python">value_id = pd.Series(value_id)
+value_count = value_id.groupby(value_id).transform('count')
+value_count[not_zero_mask] = 0
+</code></pre>
+<p>前面用 <code>np.unique</code> 和 <code>np.seachsorted</code> 只是想演示 NumPy 如何在不写循环的前提下实现相同的效果。</p>
+<p>这坨描述可能还是比较抽象，再给出每步计算的中间结果：</p>
+<pre><code class="language-Python">[0, 0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 3, 4, 3, 0]  # series
+[F, F, T, T, T, F, F, F, F, T, T, T, T, T, F, F, F, F, F, F, T, T, T, F]  # not_zero_mask
+   [F, T, F, F, T, F, F, F, T, F, F, F, F, T, F, F, F, F, F, T, F, F, T]  # np.diff(not_zero_mask)
+[0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 6]  # np.r_[0, np.diff(not_zero_mask).cumsum()]
+[1, 1, 0, 0, 0, 3, 3, 3, 3, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 0, 0, 0, 7]  # value_id
+[2, 2, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 6, 6, 6, 6, 6, 6, 0, 0, 0, 1]  # value_counts
+</code></pre>
+<p>分析一下时间复杂度：</p>
+<ul>
+<li><code>np.unique</code> 会做排序，<code>O(nlog(n))</code></li>
+<li><code>np.searchsorted</code> 是向量化的二分查找，<code>O(nlog(n))</code></li>
+<li>花式索引的时间复杂度是 <code>O(n)</code></li>
+</ul>
+<p>那大概是 <code>O(nlog(n))</code> 吧（心虚）……</p>
+<h2 id="代码">代码</h2>
+<p>最后封装的代码是</p>
+<pre><code class="language-Python">from collections.abc import Callable
+from typing import Union
 
+import numpy as np
+from numpy.typing import ArrayLike, NDArray
+
+
+def count_consecutive_values(
+    series: ArrayLike, cond: Union[ArrayLike, Callable[[NDArray], NDArray]]
+) -&gt; NDArray:
+    series = np.asarray(series)
+    if series.ndim != 1 or len(series) == 0:
+        raise ValueError('series 应该是长度大于零的一维序列')
+
+    if callable(cond):
+        not_value_mask = ~cond(series)
+    else:
+        not_value_mask = ~np.asarray(cond)
+    assert not_value_mask.dtype == bool
+
+    value_id = np.r_[0, np.diff(not_value_mask).cumsum()] + 1
+    value_id[not_value_mask] = 0
+    unique, unique_counts = np.unique(value_id, return_counts=True)
+    value_counts = unique_counts[np.searchsorted(unique, value_id)]
+    value_counts[not_value_mask] = 0
+
+    return value_counts
+</code></pre>
+<p>模仿 <code>DataFrame.where</code> 用 <code>cond</code> 参数筛选想要统计的元素，这样一来传入 <code>lambda x: np.isclose(x, 0)</code> 就能数零，传入 <code>np.isnan</code> 就能数缺测。</p>
+<p>此外还加上了类型和防御性的判断。</p>
+<h2 id="应用">应用</h2>
+<p>只插值填补缺测长度小于等于 3 的缺口：</p>
+<pre><code class="language-Python">s = pd.Series([1, np.nan, 2, 3, np.nan, np.nan, 4, np.nan, np.nan, np.nan, np.nan, 5])
+counts = count_consecutive_values(s, np.isnan)
+s.interpolate().mask(counts &gt; 3)
+</code></pre>
+<p>从降水序列中区分出下雨时段，要求下雨时段之间至少有三个时次没有下雨：</p>
+<pre><code class="language-Python">rain = pd.Series([0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 4, 3, 0, 1, 0, 0])
+counts = count_consecutive_values(rain, lambda x: x &lt;= 0)
+
+not_rain_mask = counts &gt; 3
+rain_id = np.r_[0, np.diff(not_rain_mask).cumsum()] + 1
+rain_id[not_rain_mask] = 0
+rain_events = [group for label, group in rain.groupby(rain_id) if label &gt; 0]
+</code></pre>
+<p>(可能还需要修剪序列开头结尾的零值？)</p>
+<h2 id="参考链接">参考链接</h2>
+<p><a href="https://numpy.org/doc/stable/reference/generated/numpy.unique.html" target="_blank">numpy.unique</a></p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.DataFrameGroupBy.transform.html" target="_blank">pandas.core.groupby.DataFrameGroupBy.transform</a></p>
+<p><a href="https://stackoverflow.com/questions/38013778/is-there-any-numpy-group-by-function/" target="_blank">Is there any numpy group by function?</a></p>
+    </div>
+</article>
+
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;Load comments
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'ZhaJiMan\/ZhaJiMan.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
 
 
             </div>
@@ -327,9 +411,16 @@ np.interp(s.index, s.index[valid], s.values[valid])
             
         </div>
     </div>
-    
-    
-    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#需求">需求</a></li>
+    <li><a href="#算法">算法</a></li>
+    <li><a href="#代码">代码</a></li>
+    <li><a href="#应用">应用</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav></div>
 </aside>
 
         </div>
@@ -474,6 +565,21 @@ np.interp(s.index, s.index[valid], s.values[valid])
             </span>
             
         </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>Table of Contents</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#需求">需求</a></li>
+    <li><a href="#算法">算法</a></li>
+    <li><a href="#代码">代码</a></li>
+    <li><a href="#应用">应用</a></li>
+    <li><a href="#参考链接">参考链接</a></li>
+  </ul>
+</nav>
     </div>
     
     

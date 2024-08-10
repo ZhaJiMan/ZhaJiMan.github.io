@@ -6,7 +6,23 @@
     <description>Recent content in numpy on 炸鸡人博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 21 Sep 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/numpy/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 10 Aug 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://zhajiman.github.io/tags/numpy/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Numpy 系列：统计序列里零值连续出现的次数</title>
+      <link>https://zhajiman.github.io/post/count_consecutive_zeros/</link>
+      <pubDate>Sat, 10 Aug 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhajiman.github.io/post/count_consecutive_zeros/</guid>
+      <description>&lt;h2 id=&#34;需求&#34;&gt;需求&lt;/h2&gt;
+&lt;p&gt;以前处理功率时间序列时经常遇到一大段时间里功率值虽然没有缺失，但全是零的异常情况，为了找出这些连续为零的时段，当时设计了一个统计序列里零值连续出现次数的函数，效果如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img class=&#34;img-zoomable&#34; src=&#34;https://zhajiman.github.io/count_consecutive_zeros/goal.png&#34; alt=&#34;goal&#34; /&gt;
+&lt;/p&gt;
+&lt;p&gt;输入序列是&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-Python&#34;&gt;series = np.array([0, 0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 3, 4, 3, 0])
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;其中有四段零值，长度依次为 2、4、6、1。输出序列与输入序列等长，输入序列中非零位置的数值为零，零值位置数值为零值连续出现的次数。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Numpy 系列：random 模块的变化</title>
       <link>https://zhajiman.github.io/post/numpy_random/</link>
