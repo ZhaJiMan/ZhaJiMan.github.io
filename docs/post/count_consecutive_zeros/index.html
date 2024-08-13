@@ -126,7 +126,7 @@ series = np.array([0, 0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 3
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2024-08-10</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1419 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1439 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/numpy">numpy</a>&nbsp;<a href="/tags/pandas">pandas</a>&nbsp;</span>
 
@@ -200,33 +200,25 @@ import numpy as np
 from numpy.typing import ArrayLike, NDArray
 
 
-def count_consecutive_values(
-    series: ArrayLike, cond: Union[ArrayLike, Callable[[NDArray], NDArray]]
-) -&gt; NDArray:
-    series = np.asarray(series)
-    assert series.ndim == 1
-
-    if callable(cond):
-        cond = cond(series)
-    cond = np.asarray(cond, dtype=bool)
-    assert cond.shape == series.shape
-
-    if len(series) == 0:
+def count_consecutive_trues(mask: ArrayLike) -&gt; NDArray:
+    '''统计布尔序列里真值连续出现的次数，返回长度相同的序列。'''
+    mask = np.asarray(mask, dtype=bool)
+    assert mask.ndim == 1
+    if len(mask) == 0:
         return np.array([], dtype=int)
 
-    value_id = np.r_[0, np.diff(cond).cumsum()]
+    value_id = np.r_[0, np.diff(mask).cumsum()]
     unique, unique_counts = np.unique(value_id, return_counts=True)
     value_counts = unique_counts[np.searchsorted(unique, value_id)]
-    value_counts[~cond] = 0
+    value_counts[~mask] = 0
 
     return value_counts
 </code></pre>
-<p>模仿 <code>DataFrame.where</code> 用 <code>cond</code> 参数筛选想要统计的元素，这样一来传入 <code>lambda x: np.isclose(x, 0)</code> 就能数零，传入 <code>np.isnan</code> 就能数缺测。</p>
-<p>此外还加上了类型和防御性语句。</p>
+<p>函数的输入是布尔序列，想要统计零值就传入 <code>series == 0</code>，想要统计缺测就传入 <code>np.isnan(series)</code>。另外还加上了类型和防御性语句。</p>
 <h2 id="应用">应用</h2>
 <p>只插值填补缺测长度小于等于 3 的缺口：</p>
 <pre><code class="language-Python">s = pd.Series([1, np.nan, 2, 3, np.nan, np.nan, 4, np.nan, np.nan, np.nan, np.nan, 5])
-counts = count_consecutive_values(s, np.isnan)
+counts = count_consecutive_trues(s.isna())
 s.interpolate().mask(counts &gt; 3)
 </code></pre>
 <p>从降水序列中区分出下雨时段，要求下雨时段之间至少有三个时次没有下雨：</p>
@@ -237,14 +229,14 @@ def trim_zeros(arr):
     i, j = np.nonzero(arr &gt; 0)[0][[0, -1]]
     return arr[i:j+1].copy()
 
-def split_mask(mask):
+def split_consecutive_trues(mask):
     '''分段返回布尔数组里连续真值段落的索引'''
     inds = np.nonzero(mask)[0]
     return np.split(inds, np.nonzero(np.diff(inds) != 1)[0] + 1)
 
 rain = trim_zeros(rain)
-counts = count_consecutive_values(rain, lambda x: x &lt;= 0)
-rain_events = [rain[inds] for inds in split_mask(counts &lt; 3)]
+counts = count_consecutive_trues(rain == 0)
+rain_events = [rain[inds] for inds in split_consecutive_trues(counts &lt; 3)]
 </code></pre>
 <h2 id="参考链接">参考链接</h2>
 <p><a href="https://numpy.org/doc/stable/reference/generated/numpy.unique.html" target="_blank">numpy.unique</a></p>

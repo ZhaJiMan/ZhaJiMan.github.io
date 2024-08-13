@@ -109,31 +109,22 @@ import numpy as np
 from numpy.typing import ArrayLike, NDArray
 
 
-def count_consecutive_values(
-    series: ArrayLike, cond: Union[ArrayLike, Callable[[NDArray], NDArray]]
-) -> NDArray:
-    series = np.asarray(series)
-    assert series.ndim == 1
-
-    if callable(cond):
-        cond = cond(series)
-    cond = np.asarray(cond, dtype=bool)
-    assert cond.shape == series.shape
-
-    if len(series) == 0:
+def count_consecutive_trues(mask: ArrayLike) -> NDArray:
+    '''统计布尔序列里真值连续出现的次数，返回长度相同的序列。'''
+    mask = np.asarray(mask, dtype=bool)
+    assert mask.ndim == 1
+    if len(mask) == 0:
         return np.array([], dtype=int)
 
-    value_id = np.r_[0, np.diff(cond).cumsum()]
+    value_id = np.r_[0, np.diff(mask).cumsum()]
     unique, unique_counts = np.unique(value_id, return_counts=True)
     value_counts = unique_counts[np.searchsorted(unique, value_id)]
-    value_counts[~cond] = 0
+    value_counts[~mask] = 0
 
     return value_counts
 ```
 
-模仿 `DataFrame.where` 用 `cond` 参数筛选想要统计的元素，这样一来传入 `lambda x: np.isclose(x, 0)` 就能数零，传入 `np.isnan` 就能数缺测。
-
-此外还加上了类型和防御性语句。
+函数的输入是布尔序列，想要统计零值就传入 `series == 0`，想要统计缺测就传入 `np.isnan(series)`。另外还加上了类型和防御性语句。
 
 ## 应用
 
@@ -141,7 +132,7 @@ def count_consecutive_values(
 
 ```Python
 s = pd.Series([1, np.nan, 2, 3, np.nan, np.nan, 4, np.nan, np.nan, np.nan, np.nan, 5])
-counts = count_consecutive_values(s, np.isnan)
+counts = count_consecutive_trues(s.isna())
 s.interpolate().mask(counts > 3)
 ```
 
@@ -155,14 +146,14 @@ def trim_zeros(arr):
     i, j = np.nonzero(arr > 0)[0][[0, -1]]
     return arr[i:j+1].copy()
 
-def split_mask(mask):
+def split_consecutive_trues(mask):
     '''分段返回布尔数组里连续真值段落的索引'''
     inds = np.nonzero(mask)[0]
     return np.split(inds, np.nonzero(np.diff(inds) != 1)[0] + 1)
 
 rain = trim_zeros(rain)
-counts = count_consecutive_values(rain, lambda x: x <= 0)
-rain_events = [rain[inds] for inds in split_mask(counts < 3)]
+counts = count_consecutive_trues(rain == 0)
+rain_events = [rain[inds] for inds in split_consecutive_trues(counts < 3)]
 ```
 
 ## 参考链接
