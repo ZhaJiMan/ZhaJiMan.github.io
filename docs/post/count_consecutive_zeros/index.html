@@ -80,8 +80,6 @@ series = np.array([0, 0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 3
 
 
 
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </head>
 
 <body
@@ -126,7 +124,7 @@ series = np.array([0, 0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 3
     <div class="post-item post-meta">
         <span><i class="iconfont icon-today-sharp"></i>&nbsp;2024-08-10</span>
 
-<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1439 words</span>
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1434 words</span>
 
 <span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/numpy">numpy</a>&nbsp;<a href="/tags/pandas">pandas</a>&nbsp;</span>
 
@@ -152,8 +150,8 @@ series = series[counts &lt; 24]
 <pre><code class="language-Python">def count_consecutive_zeros(series):
     mask = series == 0
     value_id = np.r_[0, np.diff(mask).cumsum()]
-    unique, unique_counts = np.unique(value_id, return_counts=True)
-    value_counts = unique_counts[np.searchsorted(unique, value_id)]
+    _, unique_counts = np.unique(value_id, return_counts=True)
+    value_counts = unique_counts[value_id]
     value_counts[~mask] = 0
 
     return value_counts
@@ -166,17 +164,20 @@ series = series[counts &lt; 24]
 </code></pre>
 <p>然后对 <code>mask</code> 做差分，注意布尔数组差分的结果依旧是布尔类型。发现 <code>series</code> 里相邻两个元素如果出现了零 -&gt; 非零或非零 -&gt; 零的跳变时，对应 <code>mask</code> 的差分值会是 <code>True</code>。接着对差分求累计和，发生跳变的每个段落会按跳变次数得到对应的数值，由于这个数值是唯一的，相当于每个段落都获得了唯一的 ID。</p>
 <p>注意对形为 <code>(n + 1,)</code> 的数组应用 <code>np.diff</code>，会得到形如 <code>(n,)</code> 的数组，并且第一个段落的 ID 为 0，所以用 <code>np.r_</code> 在累计和前补一个零。</p>
-<pre><code class="language-Python">unique, unique_counts = np.unique(value_id, return_counts=True)
-value_counts = unique_counts[np.searchsorted(unique, value_id)]
+<pre><code class="language-Python">_, unique_counts = np.unique(value_id, return_counts=True)
+value_counts = unique_counts[value_id]
 value_counts[~mask] = 0
 </code></pre>
-<p><code>np.unique</code> 函数返回唯一且有序的段落 ID，并用 <code>return_counts</code> 参数返回每个 ID 出现的次数，即每个段落的长度。接着用 <code>np.seachsorted</code> 函数确定 <code>value_id</code> 里的每个元素在 <code>unique</code> 数组里的索引，将结果传给 <code>unique_counts</code> 做花式索引，从而将段落长度填到段落位置上，让结果与 <code>series</code> 形状相同。最后我们只关心零值段落的计数，所以用 <code>~mask</code> 将非零段落的计数置零。</p>
+<p><code>np.unique</code> 函数返回唯一且有序的段落 ID，用 <code>return_counts</code> 参数返回每个 ID 出现的次数，即每个段落的长度。考虑到段落 ID 从零开始逐一递增，所以 <code>unique_counts[i]</code> 就代表第 <code>i</code> 个段落的长度。那么用 <code>value_id</code> 对 <code>unique_counts</code> 做花式索引，即可将段落长度填到段落位置上，让结果与 <code>series</code> 形状相同。最后我们只关心零值段落的计数，所以用 <code>~mask</code> 将非零段落的计数置零。</p>
+<blockquote>
+<p>这里原先写的是 <code>value_counts = unique_counts[np.searchsorted(unique, value_id)]</code>，经评论区 ff-script 指正，修改成了直接索引。</p>
+</blockquote>
 <p>简单来说，这步是按 ID 对段落进行分组，统计段落长度，再变换回原来的序列里。熟悉 Pandas 的读者应该会想到用 <code>groupby</code> 和 <code>transform</code> 秒了：</p>
 <pre><code class="language-Python">value_id = pd.Series(value_id)
 value_count = value_id.groupby(value_id).transform('count')
 value_count[~mask] = 0
 </code></pre>
-<p>前面用 <code>np.unique</code> 和 <code>np.seachsorted</code> 只是想演示 NumPy 如何在不写循环的前提下实现相同的效果。</p>
+<p>这里为了不引入 Pandas 的依赖，仅用 NumPy 实现。</p>
 <p>这坨描述可能还是比较抽象，再给出每步计算的中间结果：</p>
 <pre><code class="language-Python">[0, 0, 1, 2, 1, 0, 0, 0, 0, 1, 2, 3, 2, 1, 0, 0, 0, 0, 0, 0, 3, 4, 3, 0]  # series
 [T, T, F, F, F, T, T, T, T, F, F, F, F, F, T, T, T, T, T, T, F, F, F, T]  # mask
@@ -184,13 +185,7 @@ value_count[~mask] = 0
 [0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 6]  # value_id
 [2, 2, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 6, 6, 6, 6, 6, 6, 0, 0, 0, 1]  # value_counts
 </code></pre>
-<p>分析一下时间复杂度：</p>
-<ul>
-<li><code>np.unique</code> 会做排序，<code>O(nlog(n))</code></li>
-<li><code>np.searchsorted</code> 是向量化的二分查找，<code>O(nlog(n))</code></li>
-<li>花式索引的时间复杂度是 <code>O(n)</code></li>
-</ul>
-<p>那大概是 <code>O(nlog(n))</code> 吧（心虚）……</p>
+<p>时间复杂度是 <code>np.unique</code> 排序的 <code>O(nlog(n))</code> 加上花式索引的 <code>O(n)</code>，大概是 <code>O(nlog(n))</code>。</p>
 <h2 id="代码">代码</h2>
 <p>最后封装的代码是</p>
 <pre><code class="language-Python">from collections.abc import Callable
@@ -208,15 +203,15 @@ def count_consecutive_trues(mask: ArrayLike) -&gt; NDArray:
         return np.array([], dtype=int)
 
     value_id = np.r_[0, np.diff(mask).cumsum()]
-    unique, unique_counts = np.unique(value_id, return_counts=True)
-    value_counts = unique_counts[np.searchsorted(unique, value_id)]
+    _, unique_counts = np.unique(value_id, return_counts=True)
+    value_counts = unique_counts[value_id]
     value_counts[~mask] = 0
 
     return value_counts
 </code></pre>
 <p>函数的输入是布尔序列，想要统计零值就传入 <code>series == 0</code>，想要统计缺测就传入 <code>np.isnan(series)</code>。另外还加上了类型和防御性语句。</p>
 <h2 id="应用">应用</h2>
-<p>只插值填补缺测长度小于等于 3 的缺口：</p>
+<p>只线性插值填补缺测长度小于等于 3 的缺口：</p>
 <pre><code class="language-Python">s = pd.Series([1, np.nan, 2, 3, np.nan, np.nan, 4, np.nan, np.nan, np.nan, np.nan, 5])
 counts = count_consecutive_trues(s.isna())
 s.interpolate().mask(counts &gt; 3)
@@ -600,19 +595,18 @@ rain_events = [rain[inds] for inds in split_consecutive_trues(counts &lt; 3)]
 </footer>
 
     
-<script defer src="https://cdn.staticfile.org/medium-zoom/1.0.6/medium-zoom.min.js"></script>
-<script defer src="https://cdn.staticfile.org/lazysizes/5.3.2/lazysizes.min.js"></script>
-<script defer src="https://cdn.staticfile.org/prism/1.28.0/components/prism-core.min.js"></script>
-<script defer src="https://cdn.staticfile.org/prism/1.28.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script defer src="https://fastly.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://fastly.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://fastly.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+<script defer src="https://fastly.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
 
 
 <script defer src="/assets/js/fuji.min.js"></script>
 
-<link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.15.6/katex.min.css" integrity="sha384-ZPe7yZ91iWxYumsBEOn7ieg8q/o+qh/hQpSaPow8T6BwALcXSCS6C6fSRPIAnTQs" crossorigin="anonymous">
-<script defer src="https://cdn.staticfile.org/KaTeX/0.15.6/katex.min.js" integrity="sha384-ljao5I1l+8KYFXG7LNEA7DyaFvuvSCmedUf6Y6JI7LJqiu8q5dEivP2nDdFH31V4" crossorigin="anonymous"></script>
-<script defer src="https://cdn.staticfile.org/KaTeX/0.15.6/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"></script>
-<script>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://fastly.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+<script defer src="https://fastly.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script>
     document.addEventListener("DOMContentLoaded", function() {
         renderMathInElement(document.body, {
           delimiters: [

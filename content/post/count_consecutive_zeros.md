@@ -38,8 +38,8 @@ series = series[counts < 24]
 def count_consecutive_zeros(series):
     mask = series == 0
     value_id = np.r_[0, np.diff(mask).cumsum()]
-    unique, unique_counts = np.unique(value_id, return_counts=True)
-    value_counts = unique_counts[np.searchsorted(unique, value_id)]
+    _, unique_counts = np.unique(value_id, return_counts=True)
+    value_counts = unique_counts[value_id]
     value_counts[~mask] = 0
 
     return value_counts
@@ -62,12 +62,14 @@ value_id = np.r_[0, np.diff(mask).cumsum()]
 注意对形为 `(n + 1,)` 的数组应用 `np.diff`，会得到形如 `(n,)` 的数组，并且第一个段落的 ID 为 0，所以用 `np.r_` 在累计和前补一个零。
 
 ```Python
-unique, unique_counts = np.unique(value_id, return_counts=True)
-value_counts = unique_counts[np.searchsorted(unique, value_id)]
+_, unique_counts = np.unique(value_id, return_counts=True)
+value_counts = unique_counts[value_id]
 value_counts[~mask] = 0
 ```
 
-`np.unique` 函数返回唯一且有序的段落 ID，并用 `return_counts` 参数返回每个 ID 出现的次数，即每个段落的长度。接着用 `np.seachsorted` 函数确定 `value_id` 里的每个元素在 `unique` 数组里的索引，将结果传给 `unique_counts` 做花式索引，从而将段落长度填到段落位置上，让结果与 `series` 形状相同。最后我们只关心零值段落的计数，所以用 `~mask` 将非零段落的计数置零。
+`np.unique` 函数返回唯一且有序的段落 ID，用 `return_counts` 参数返回每个 ID 出现的次数，即每个段落的长度。考虑到段落 ID 从零开始逐一递增，所以 `unique_counts[i]` 就代表第 `i` 个段落的长度。那么用 `value_id` 对 `unique_counts` 做花式索引，即可将段落长度填到段落位置上，让结果与 `series` 形状相同。最后我们只关心零值段落的计数，所以用 `~mask` 将非零段落的计数置零。
+
+> 这里原先写的是 `value_counts = unique_counts[np.searchsorted(unique, value_id)]`，经评论区 ff-script 指正，修改成了直接索引。
 
 简单来说，这步是按 ID 对段落进行分组，统计段落长度，再变换回原来的序列里。熟悉 Pandas 的读者应该会想到用 `groupby` 和 `transform` 秒了：
 
@@ -77,7 +79,7 @@ value_count = value_id.groupby(value_id).transform('count')
 value_count[~mask] = 0
 ```
 
-前面用 `np.unique` 和 `np.seachsorted` 只是想演示 NumPy 如何在不写循环的前提下实现相同的效果。
+这里为了不引入 Pandas 的依赖，仅用 NumPy 实现。
 
 这坨描述可能还是比较抽象，再给出每步计算的中间结果：
 
@@ -89,13 +91,7 @@ value_count[~mask] = 0
 [2, 2, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 6, 6, 6, 6, 6, 6, 0, 0, 0, 1]  # value_counts
 ```
 
-分析一下时间复杂度：
-
-- `np.unique` 会做排序，`O(nlog(n))`
-- `np.searchsorted` 是向量化的二分查找，`O(nlog(n))`
-- 花式索引的时间复杂度是 `O(n)`
-
-那大概是 `O(nlog(n))` 吧（心虚）……
+时间复杂度是 `np.unique` 排序的 `O(nlog(n))` 加上花式索引的 `O(n)`，大概是 `O(nlog(n))`。
 
 ## 代码
 
@@ -117,8 +113,8 @@ def count_consecutive_trues(mask: ArrayLike) -> NDArray:
         return np.array([], dtype=int)
 
     value_id = np.r_[0, np.diff(mask).cumsum()]
-    unique, unique_counts = np.unique(value_id, return_counts=True)
-    value_counts = unique_counts[np.searchsorted(unique, value_id)]
+    _, unique_counts = np.unique(value_id, return_counts=True)
+    value_counts = unique_counts[value_id]
     value_counts[~mask] = 0
 
     return value_counts
@@ -128,7 +124,7 @@ def count_consecutive_trues(mask: ArrayLike) -> NDArray:
 
 ## 应用
 
-只插值填补缺测长度小于等于 3 的缺口：
+只线性插值填补缺测长度小于等于 3 的缺口：
 
 ```Python
 s = pd.Series([1, np.nan, 2, 3, np.nan, np.nan, 4, np.nan, np.nan, np.nan, np.nan, 5])
